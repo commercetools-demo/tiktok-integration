@@ -14,7 +14,7 @@ export const storeAccessToken = async (
   data: TokenResponse
 ) => {
   const docRef = firestore
-    .collection(process.env.FIRESTORE_COLLECTION_NAME as string)
+    .collection(process.env.DATABASE_COLLECTION_NAME as string)
     .doc(app_key);
 
   const tokenData = {
@@ -47,14 +47,14 @@ export async function getTokensNeedingRefresh(
     const expiringIn24Hours = now + 86400; // 24 hours from now
 
     const snapshot = await firestore
-      .collection(process.env.FIRESTORE_COLLECTION_NAME as string)
+      .collection(process.env.DATABASE_COLLECTION_NAME as string)
       .doc(app_key)
       .get();
     const tokenData = snapshot.data();
 
     // Check if token is expired
-    if (tokenData?.access_token_expire_at <= now) {
-      return tokenData;
+    if (tokenData?.access_token_expire_at <= expiringIn24Hours) {
+      return true;
     }
   } catch (error) {
     console.error('Error querying tokens:', error);
