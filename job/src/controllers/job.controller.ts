@@ -2,10 +2,7 @@ import { Request, Response } from 'express';
 
 import CustomError from '../errors/custom.error';
 import { logger } from '../utils/logger.utils';
-import {
-FirestoreClient,
-TiktokAuth,
-} from 'tiktok-integration-shared';
+import { FirestoreClient, TiktokAuth } from 'tiktok-integration-shared';
 
 /**
  * Exposed job endpoint.
@@ -17,24 +14,26 @@ TiktokAuth,
 export const post = async (_request: Request, response: Response) => {
   try {
     const firestore = FirestoreClient.createFirestoreClient();
-    const tokens = await FirestoreClient.getTokensNeedingRefresh(firestore);
+    const token = await FirestoreClient.getTokensNeedingRefresh(firestore, process.env.TIKTOK_APP_KEY as string);
 
-    logger.info('tokens needing refresh', tokens.length);
-    if (tokens.length === 0) {
+    logger.info('tokens needing refresh');
+    if (!token) {
       response.status(200).send();
       return;
     }
 
-    for await (const token of tokens) {
-      const { refresh_token } = token;
-      const { data } = await TiktokAuth.refreshAccessToken(
-        refresh_token,
+    const { refresh_token } = token;
+    const { data } = await TiktokAuth.refreshAccessToken(
+      refresh_token,
+      process.env.TIKTOK_APP_KEY as string,
+      process.env.TIKTOK_APP_SECRET as string
+    );
+    if (data) {
+      await FirestoreClient.storeAccessToken(
+        firestore,
         process.env.TIKTOK_APP_KEY as string,
-        process.env.TIKTOK_APP_SECRET as string
+        data
       );
-      if (data) {
-        await FirestoreClient.storeAccessToken(firestore, data);
-      }
     }
 
     response.status(200).send();

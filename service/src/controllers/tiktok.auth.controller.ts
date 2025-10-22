@@ -22,7 +22,7 @@ export const authorizeApp = async (req: Request, res: Response) => {
   }
 
   const firestore = FirestoreClient.createFirestoreClient();
-  await FirestoreClient.storeAccessToken(firestore, data);
+  await FirestoreClient.storeAccessToken(firestore, process.env.TIKTOK_APP_KEY as string, data);
 
   console.log(`Token stored successfully for seller: ${data.seller_name}`);
 
