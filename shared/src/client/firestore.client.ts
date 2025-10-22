@@ -38,6 +38,18 @@ export const storeAccessToken = async (
   await docRef.set(tokenData, { merge: true });
 };
 
+export const getAccessToken = async (app_key: string): Promise<string | null> => {
+  const firestore = createFirestoreClient();
+  const snapshot = await firestore
+    .collection(process.env.DATABASE_COLLECTION_NAME as string)
+    .doc(app_key)
+    .get();
+  if (!snapshot.exists) {
+    return null;
+  }
+  return snapshot.data()?.access_token;
+};
+
 export async function getTokensNeedingRefresh(
   firestore: Firestore,
   app_key: string
