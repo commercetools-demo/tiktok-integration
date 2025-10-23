@@ -3,7 +3,14 @@ import { logger } from '../utils/logger.utils';
 import { post } from '../controllers/service.controller';
 import { authorizeApp } from '../controllers/tiktok.auth.controller';
 import { getShops } from '../controllers/tiktok.shop.controller';
-import { checkListingPrerequisites, searchProducts } from '../controllers/tiktok.product.controller';
+import { 
+  checkListingPrerequisites, 
+  searchProducts,
+  uploadProductImage,
+  createProduct,
+  updateProduct,
+  activateProduct
+} from '../controllers/tiktok.product.controller';
 import { getWarehouseList } from '../controllers/tiktok.warehouse.controller';
 import { getCategories, getCategoryRules, getCategoryAttributes } from '../controllers/tiktok.category.controller';
 import { getBrands } from '../controllers/tiktok.brand.controller';
@@ -69,6 +76,34 @@ serviceRouter.get('/categories/:category_id/attributes', async (req, res, next) 
 serviceRouter.get('/brands', async (req, res, next) => {
   await getBrands(req, res).catch((error) => {
     logger.error('Error getting brands', error);
+    return res.status(500).send(error.message);
+  });
+});
+
+serviceRouter.post('/products/images/upload', async (req, res, next) => {
+  await uploadProductImage(req, res).catch((error) => {
+    logger.error('Error uploading product image', error);
+    return res.status(500).send(error.message);
+  });
+});
+
+serviceRouter.post('/products', async (req, res, next) => {
+  await createProduct(req, res).catch((error) => {
+    logger.error('Error creating product', error);
+    return res.status(500).send(error.message);
+  });
+});
+
+serviceRouter.put('/products/:product_id', async (req, res, next) => {
+  await updateProduct(req, res).catch((error) => {
+    logger.error('Error updating product', error);
+    return res.status(500).send(error.message);
+  });
+});
+
+serviceRouter.post('/products/:product_id/activate', async (req, res, next) => {
+  await activateProduct(req, res).catch((error) => {
+    logger.error('Error activating product', error);
     return res.status(500).send(error.message);
   });
 });

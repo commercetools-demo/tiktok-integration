@@ -14,15 +14,16 @@ import { FirestoreClient, TiktokAuth } from 'tiktok-integration-shared';
 export const post = async (_request: Request, response: Response) => {
   try {
     const firestore = FirestoreClient.createFirestoreClient();
-    const token = await FirestoreClient.getTokensNeedingRefresh(firestore, process.env.TIKTOK_APP_KEY as string);
+    const needsRefresh = await FirestoreClient.getTokensNeedingRefresh(firestore, process.env.TIKTOK_APP_KEY as string);
 
     logger.info('tokens needing refresh');
-    if (!token) {
+    if (!needsRefresh) {
       response.status(200).send();
       return;
     }
 
-    const { refresh_token } = token;
+    const { refresh_token } = await FirestoreClient.getAccessToken(firestore, process.env.TIKTOK_APP_KEY as string);
+
     const { data } = await TiktokAuth.refreshAccessToken(
       refresh_token,
       process.env.TIKTOK_APP_KEY as string,
