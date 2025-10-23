@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { FirestoreClient, TiktokBrand } from 'tiktok-integration-shared';
+import { TiktokBrand } from 'tiktok-integration-shared';
+import { getAccessToken } from '../utils/tiktok.utils';
 import { logger } from '../utils/logger.utils';
 
 export const getBrands = async (req: Request, res: Response) => {
@@ -18,7 +19,7 @@ export const getBrands = async (req: Request, res: Response) => {
         return res.status(400).send('No shop cipher found');
     }
     
-    const access_token = await FirestoreClient.getAccessToken(process.env.TIKTOK_APP_KEY as string);
+    const { access_token } = await getAccessToken();
     if (!access_token) {
         logger.error('No access token found getting brands');
         return res.status(401).send('No access token found');

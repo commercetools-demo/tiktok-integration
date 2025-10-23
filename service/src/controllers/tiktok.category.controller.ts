@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { FirestoreClient, TiktokCategory } from 'tiktok-integration-shared';
+import { TiktokCategory } from 'tiktok-integration-shared';
+import { getAccessToken } from '../utils/tiktok.utils';
 import { logger } from '../utils/logger.utils';
 
 export const getCategories = async (req: Request, res: Response) => {
@@ -10,7 +11,7 @@ export const getCategories = async (req: Request, res: Response) => {
         return res.status(400).send('No shop cipher found');
     }
     
-    const access_token = await FirestoreClient.getAccessToken(process.env.TIKTOK_APP_KEY as string);
+    const { access_token } = await getAccessToken();
     if (!access_token) {
         logger.error('No access token found getting categories');
         return res.status(401).send('No access token found');
@@ -44,7 +45,7 @@ export const getCategoryRules = async (req: Request, res: Response) => {
         return res.status(400).send('No category_id found');
     }
     
-    const access_token = await FirestoreClient.getAccessToken(process.env.TIKTOK_APP_KEY as string);
+    const { access_token } = await getAccessToken();
     if (!access_token) {
         logger.error('No access token found getting category rules');
         return res.status(401).send('No access token found');
@@ -76,7 +77,7 @@ export const getCategoryAttributes = async (req: Request, res: Response) => {
         return res.status(400).send('No category_id found');
     }
     
-    const access_token = await FirestoreClient.getAccessToken(process.env.TIKTOK_APP_KEY as string);
+    const { access_token } = await getAccessToken();
     if (!access_token) {
         logger.error('No access token found getting category attributes');
         return res.status(401).send('No access token found');
