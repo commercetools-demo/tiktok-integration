@@ -4,6 +4,9 @@ import { post } from '../controllers/service.controller';
 import { authorizeApp } from '../controllers/tiktok.auth.controller';
 import { getShops } from '../controllers/tiktok.shop.controller';
 import { checkListingPrerequisites, searchProducts } from '../controllers/tiktok.product.controller';
+import { getWarehouseList } from '../controllers/tiktok.warehouse.controller';
+import { getCategories, getCategoryRules, getCategoryAttributes } from '../controllers/tiktok.category.controller';
+import { getBrands } from '../controllers/tiktok.brand.controller';
 
 const serviceRouter = Router();
 
@@ -31,6 +34,41 @@ serviceRouter.post('/products/search', async (req, res, next) => {
 serviceRouter.get('/products/check-listing-prerequisites', async (req, res, next) => {
   await checkListingPrerequisites(req, res).catch((error) => {
     logger.error('Error searching products', error);
+    return res.status(500).send(error.message);
+  });
+});
+
+serviceRouter.get('/warehouses', async (req, res, next) => {
+  await getWarehouseList(req, res).catch((error) => {
+    logger.error('Error getting warehouse list', error);
+    return res.status(500).send(error.message);
+  });
+});
+
+serviceRouter.get('/categories', async (req, res, next) => {
+  await getCategories(req, res).catch((error) => {
+    logger.error('Error getting categories', error);
+    return res.status(500).send(error.message);
+  });
+});
+
+serviceRouter.get('/categories/:category_id/rules', async (req, res, next) => {
+  await getCategoryRules(req, res).catch((error) => {
+    logger.error('Error getting category rules', error);
+    return res.status(500).send(error.message);
+  });
+});
+
+serviceRouter.get('/categories/:category_id/attributes', async (req, res, next) => {
+  await getCategoryAttributes(req, res).catch((error) => {
+    logger.error('Error getting category attributes', error);
+    return res.status(500).send(error.message);
+  });
+});
+
+serviceRouter.get('/brands', async (req, res, next) => {
+  await getBrands(req, res).catch((error) => {
+    logger.error('Error getting brands', error);
     return res.status(500).send(error.message);
   });
 });

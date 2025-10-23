@@ -6,7 +6,7 @@ import {
 
 
 export const authorizeApp = async (req: Request, res: Response) => {
-  const { app_key, code } = req.query;
+  const { app_key, code, locale, shop_region } = req.query;
 
   if (app_key !== process.env.TIKTOK_APP_KEY || !code) {
     return res.status(401).send('Unauthorized');
@@ -22,7 +22,7 @@ export const authorizeApp = async (req: Request, res: Response) => {
   }
 
   const firestore = FirestoreClient.createFirestoreClient();
-  await FirestoreClient.storeAccessToken(firestore, process.env.TIKTOK_APP_KEY as string, data);
+  await FirestoreClient.storeAccessToken(firestore, process.env.TIKTOK_APP_KEY as string, data, locale as string, shop_region as string);
 
   console.log(`Token stored successfully for seller: ${data.seller_name}`);
 

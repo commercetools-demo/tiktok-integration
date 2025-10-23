@@ -16,7 +16,9 @@ export const createFirestoreClient = () => {
 export const storeAccessToken = async (
   firestore: Firestore,
   app_key: string,
-  data: TokenResponse
+  data: TokenResponse,
+  locale: string,
+  shop_region: string
 ) => {
   const docRef = firestore
     .collection(process.env.GCP_FIRESTORE_COLLECTION_NAME as string)
@@ -38,6 +40,10 @@ export const storeAccessToken = async (
     created_at: new Date(),
     updated_at: new Date(),
     last_refreshed_at: new Date(),
+
+    // Locale and shop region
+    locale: locale,
+    shop_region: shop_region,
   };
 
   await docRef.set(tokenData, { merge: true });
@@ -53,6 +59,21 @@ export const getAccessToken = async (app_key: string): Promise<string | null> =>
     return null;
   }
   return snapshot.data()?.access_token;
+};
+
+export const getLocaleAndShopRegion = async (app_key: string): Promise<{ locale: string, shop_region: string } | null> => {
+  const firestore = createFirestoreClient();
+  const snapshot = await firestore
+    .collection(process.env.GCP_FIRESTORE_COLLECTION_NAME as string)
+    .doc(app_key)
+    .get();
+  if (!snapshot.exists) {
+    return null;
+  }
+  return {
+    locale: snapshot.data()?.locale,
+    shop_region: snapshot.data()?.shop_region,
+  };
 };
 
 export async function getTokensNeedingRefresh(
