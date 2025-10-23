@@ -2,9 +2,14 @@ import { Firestore } from '@google-cloud/firestore';
 import { TokenResponse } from '../tiktok-sdk/client/token';
 
 export const createFirestoreClient = () => {
+
   return new Firestore({
-    projectId: process.env.PROJECT_ID,
-    databaseId: process.env.DATABASE_ID,
+    projectId: process.env.GCP_PROJECT_ID,
+    databaseId: process.env.GCP_FIRESTORE_DATABASE_ID,
+    credentials: {
+      client_email: process.env.GCP_SERVICE_ACCOUNT_CLIENT_EMAIL,
+      private_key: process.env.GCP_SERVICE_ACCOUNT_PRIVATE_KEY,
+    }
   });
 };
 
@@ -14,7 +19,7 @@ export const storeAccessToken = async (
   data: TokenResponse
 ) => {
   const docRef = firestore
-    .collection(process.env.DATABASE_COLLECTION_NAME as string)
+    .collection(process.env.GCP_FIRESTORE_COLLECTION_NAME as string)
     .doc(app_key);
 
   const tokenData = {
@@ -41,7 +46,7 @@ export const storeAccessToken = async (
 export const getAccessToken = async (app_key: string): Promise<string | null> => {
   const firestore = createFirestoreClient();
   const snapshot = await firestore
-    .collection(process.env.DATABASE_COLLECTION_NAME as string)
+    .collection(process.env.GCP_FIRESTORE_COLLECTION_NAME as string)
     .doc(app_key)
     .get();
   if (!snapshot.exists) {
@@ -59,7 +64,7 @@ export async function getTokensNeedingRefresh(
     const expiringIn24Hours = now + 86400; // 24 hours from now
 
     const snapshot = await firestore
-      .collection(process.env.DATABASE_COLLECTION_NAME as string)
+      .collection(process.env.GCP_FIRESTORE_COLLECTION_NAME as string)
       .doc(app_key)
       .get();
     const tokenData = snapshot.data();

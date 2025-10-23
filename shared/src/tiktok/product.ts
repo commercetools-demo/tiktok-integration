@@ -21,3 +21,30 @@ export const productSearch = async (
   );
   return body;
 };
+
+
+export const checkListingPrerequisites = async (
+  access_token: string,
+  shop_cipher: string
+) => {
+  const { body } = await client.api.ProductV202309Api.PrerequisitesGet(
+    access_token,
+    'application/json',
+    shop_cipher
+  );
+  if (!body.data || !body.data.shop) {
+    throw new Error('No data found in CheckListingPrerequisitesResponse');
+  }
+  const { shop } = body.data;
+  const shopRes= Object.entries(shop).reduce((acc, [key, value]) => {
+    if (typeof value === 'string') {
+      acc[key] = JSON.parse(value);
+    } else {
+      acc[key] = value;
+    }
+    return acc;
+  }, {} as Record<string, any>);
+
+  
+   return shopRes;
+}

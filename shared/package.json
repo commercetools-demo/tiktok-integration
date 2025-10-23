@@ -6,6 +6,7 @@
   "types": "build/index.d.ts",
   "scripts": {
     "build": "rimraf ./build && tsc",
+    "watch": "rimraf ./build && tsc --watch",
     "lint": "eslint . --ext .ts",
     "prettier": "prettier --write '**/*.{js,ts}'",
     "test": "jest --config jest.config.cjs",
