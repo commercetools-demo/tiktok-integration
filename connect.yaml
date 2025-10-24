@@ -5,58 +5,33 @@ deployAs:
     scripts:
       postDeploy: npm install && npm run build && npm run connector:post-deploy
       preUndeploy: npm install && npm run build && npm run connector:pre-undeploy
-    configuration:
-      standardConfiguration:
-        - key: CTP_REGION
-          description: commercetools Composable Commerce API region
-          required: true
-          default: "europe-west1.gcp"
-      securedConfiguration:
-        - key: CTP_PROJECT_KEY
-          description: commercetools Composable Commerce project key
-          required: true
-        - key: CTP_CLIENT_ID
-          description: commercetools Composable Commerce client ID
-          required: true
-        - key: CTP_CLIENT_SECRET
-          description: commercetools Composable Commerce client secret
-          required: true
-        - key: CTP_SCOPE
-          description: commercetools Composable Commerce client scope
-          required: true
   - name: event
     applicationType: event
     endpoint: /event
     scripts:
       postDeploy: npm install && npm run build && npm run connector:post-deploy
       preUndeploy: npm install && npm run build && npm run connector:pre-undeploy
-    configuration:
-      standardConfiguration:
-        - key: CTP_REGION
-          description: commercetools Composable Commerce API region
-          required: true
-          default: "europe-west1.gcp"
-      securedConfiguration:
-        - key: CTP_PROJECT_KEY
-          description: commercetools Composable Commerce project key
-          required: true
-        - key: CTP_CLIENT_ID
-          description: commercetools Composable Commerce client ID
-          required: true
-        - key: CTP_CLIENT_SECRET
-          description: commercetools Composable Commerce client secret
-          required: true
-        - key: CTP_SCOPE
-          description: commercetools Composable Commerce client scope
-          required: true
   - name: job
     applicationType: job
     endpoint: /job
     properties:
-      schedule: "*/5 * * * *"
+      schedule: "0 */12 * * *"
 inheritAs:
   configuration:
     standardConfiguration:
+      - key: CTP_REGION
+        description: commercetools Composable Commerce API region
+        required: true
+        default: "europe-west1.gcp"
+      - key: CTP_PROJECT_KEY
+        description: commercetools Composable Commerce project key
+        required: true
+      - key: CTP_CLIENT_ID
+        description: commercetools Composable Commerce client ID
+        required: true
+      - key: CTP_SCOPE
+        description: commercetools Composable Commerce client scope
+        required: true
       - key: TIKTOK_APP_KEY
         description: TikTok app key
         required: true
@@ -70,6 +45,9 @@ inheritAs:
         description: GCP service account email
         required: true
     securedConfiguration:
+      - key: CTP_CLIENT_SECRET
+        description: commercetools Composable Commerce client secret
+        required: true
       - key: GCP_PROJECT_ID
         description: commercetools Composable Commerce client secret
         required: true
