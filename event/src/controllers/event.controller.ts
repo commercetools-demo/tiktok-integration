@@ -38,35 +38,10 @@ export const post = async (request: Request, response: Response) => {
   if (decodedData) {
     const jsonData = JSON.parse(decodedData);
     //CoCo sending message to indicate the resource was created, does not need processing
-    if ('ResourceCreated' === jsonData.notificationType) {
-      throw new CustomError(
-        202,
-        `Incoming message is about subscription resource creation. Skip handling the message.`
-      );
-    }
-
-    customerId = jsonData.customer.id;
+    console.log('Event message received');
+    console.log(JSON.stringify(jsonData, null, 2));
   }
 
-  if (!customerId) {
-    throw new CustomError(
-      400,
-      'Bad request: No customer id in the Pub/Sub message'
-    );
-  }
-
-  try {
-    const customer = await createApiRoot()
-      .customers()
-      .withId({ ID: Buffer.from(customerId).toString() })
-      .get()
-      .execute();
-
-    // Execute the tasks in need
-    logger.info(customer);
-  } catch (error) {
-    throw new CustomError(400, `Bad request: ${error}`);
-  }
 
   // Return the response for the client
   response.status(204).send();
