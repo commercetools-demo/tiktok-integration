@@ -1,13 +1,12 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { CommercetoolsClient } from 'tiktok-integration-shared';
+import { CommercetoolsClient, Utils } from 'tiktok-integration-shared';
 import { assertError, assertString } from '../utils/assert.utils';
 import {
   createAzureServiceBusCustomerCreateSubscription,
   createGcpPubSubCustomerCreateSubscription,
 } from './actions';
-import { readConfiguration } from '../utils/config.utils';
 
 const CONNECT_GCP_TOPIC_NAME_KEY = 'CONNECT_GCP_TOPIC_NAME';
 const CONNECT_GCP_PROJECT_ID_KEY = 'CONNECT_GCP_PROJECT_ID';
@@ -17,7 +16,7 @@ const CONNECT_AZURE_CONNECTION_STRING_KEY = 'CONNECT_AZURE_CONNECTION_STRING';
 async function postDeploy(properties: Map<string, unknown>): Promise<void> {
   const connectProvider = properties.get(CONNECT_PROVIDER_KEY);
   assertString(connectProvider, CONNECT_PROVIDER_KEY);
-  const apiRoot = CommercetoolsClient.createApiRoot(readConfiguration());
+  const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
 
   switch (connectProvider) {
     case 'AZURE': {

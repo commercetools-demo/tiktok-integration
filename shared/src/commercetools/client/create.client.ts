@@ -13,4 +13,4 @@ export const createApiRoot = (config: Config): ByProjectKeyRequestBuilder => {
   return createApiBuilderFromCtpClient(createClient(config)).withProjectKey({
     projectKey: config.projectKey,
   });
-}
+};

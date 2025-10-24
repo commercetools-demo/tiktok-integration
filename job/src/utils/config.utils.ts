@@ -1,7 +1,4 @@
 import type { Types as SharedTypes } from 'tiktok-integration-shared';
-import CustomError from '../errors/custom.error';
-import envValidators from '../validators/env.validators';
-import { getValidateMessages } from '../validators/helpers.validators';
 
 /**
  * Read the configuration env vars
@@ -17,16 +14,6 @@ export const readConfiguration = (): SharedTypes.Config => {
     scope: process.env.CTP_SCOPE as string,
     region: process.env.CTP_REGION as string,
   };
-
-  const validationErrors = getValidateMessages(envValidators, envVars);
-
-  if (validationErrors.length) {
-    throw new CustomError(
-      'InvalidEnvironmentVariablesError',
-      'Invalid Environment Variables please check your .env file',
-      validationErrors
-    );
-  }
 
   return envVars;
 };

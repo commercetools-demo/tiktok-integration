@@ -6,7 +6,7 @@ import { logger } from '../utils/logger.utils';
 export const getWarehouseList = async (req: Request, res: Response) => {
     const { shop_cipher } = req.query;
     
-    const { access_token } = await getAccessToken();
+    const access_token = await getAccessToken();
     if (!access_token) {
         logger.error('No access token found getting warehouse list');
         return res.status(401).send('No access token found');

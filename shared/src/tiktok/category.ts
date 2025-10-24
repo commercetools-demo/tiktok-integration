@@ -9,7 +9,7 @@ export const getCategories = async (
     categoryVersion?: string;
     listingPlatform?: string;
     includeProhibitedCategories?: boolean;
-  }
+  },
 ) => {
   const { body } = await client.api.ProductV202309Api.CategoriesGet(
     access_token,
@@ -19,7 +19,7 @@ export const getCategories = async (
     options?.categoryVersion,
     options?.listingPlatform,
     options?.includeProhibitedCategories,
-    shop_cipher
+    shop_cipher,
   );
   return body;
 };
@@ -31,7 +31,7 @@ export const getCategoryRules = async (
   options?: {
     categoryVersion?: string;
     locale?: string;
-  }
+  },
 ) => {
   const { body } = await client.api.ProductV202309Api.CategoriesCategoryIdRulesGet(
     category_id,
@@ -39,7 +39,7 @@ export const getCategoryRules = async (
     'application/json',
     options?.categoryVersion,
     options?.locale,
-    shop_cipher
+    shop_cipher,
   );
   return body;
 };
@@ -50,7 +50,7 @@ export const getCategoryAttributes = async (
   shop_cipher: string,
   options?: {
     locale?: string;
-  }
+  },
 ) => {
   const { body } = await client.api.ProductV202309Api.CategoriesCategoryIdAttributesGet(
     category_id,
@@ -58,8 +58,7 @@ export const getCategoryAttributes = async (
     'application/json',
     options?.locale,
     'v2',
-    shop_cipher
+    shop_cipher,
   );
   return body;
 };
-

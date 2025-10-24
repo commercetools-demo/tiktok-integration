@@ -9,7 +9,7 @@ export const searchProducts = async (req: Request, res: Response) => {
         logger.error('No shop cipher found');
         return res.status(400).send('No shop cipher found');
     }
-    const { access_token } = await getAccessToken();
+    const access_token = await getAccessToken();
     if (!access_token) {
         logger.error('No access token found getting shops');
         return res.status(401).send('No access token found');
@@ -24,7 +24,7 @@ export const checkListingPrerequisites = async (req: Request, res: Response) => 
         logger.error('No shop cipher found');
         return res.status(400).send('No shop cipher found');
     }
-    const { access_token } = await getAccessToken();
+    const access_token = await getAccessToken();
     if (!access_token) {
         logger.error('No access token found getting shops');
         return res.status(401).send('No access token found');
@@ -42,7 +42,7 @@ export const uploadProductImage = async (req: Request, res: Response) => {
         return res.status(400).send('No image URL provided in request body');
     }
     
-    const { access_token } = await getAccessToken();
+    const access_token = await getAccessToken();
     if (!access_token) {
         logger.error('No access token found uploading image');
         return res.status(401).send('No access token found');
@@ -69,7 +69,7 @@ export const createProduct = async (req: Request, res: Response) => {
         return res.status(400).send('No product data provided');
     }
     
-    const { access_token } = await getAccessToken();
+    const access_token = await getAccessToken();
     if (!access_token) {
         logger.error('No access token found creating product');
         return res.status(401).send('No access token found');
@@ -102,7 +102,7 @@ export const updateProduct = async (req: Request, res: Response) => {
         return res.status(400).send('No product data provided');
     }
     
-    const { access_token } = await getAccessToken();
+    const access_token = await getAccessToken();
     if (!access_token) {
         logger.error('No access token found updating product');
         return res.status(401).send('No access token found');
@@ -131,7 +131,7 @@ export const activateProduct = async (req: Request, res: Response) => {
         return res.status(400).send('No product_id found');
     }
     
-    const { access_token } = await getAccessToken();
+    const access_token = await getAccessToken();
     if (!access_token) {
         logger.error('No access token found activating product');
         return res.status(401).send('No access token found');

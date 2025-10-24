@@ -2,12 +2,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { CommercetoolsClient } from 'tiktok-integration-shared';
-import { readConfiguration } from '../utils/config.utils';
 import { assertError, assertString } from '../utils/assert.utils';
 import {
   createCustomCartDiscountType,
   createCartUpdateExtension,
 } from './actions';
+import { Utils } from 'tiktok-integration-shared';
 
 const CONNECT_APPLICATION_URL_KEY = 'CONNECT_SERVICE_URL';
 
@@ -16,7 +16,7 @@ async function postDeploy(properties: Map<string, unknown>): Promise<void> {
 
   assertString(applicationUrl, CONNECT_APPLICATION_URL_KEY);
 
-  const apiRoot = CommercetoolsClient.createApiRoot(readConfiguration());
+  const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
   await createCartUpdateExtension(apiRoot, applicationUrl);
   await createCustomCartDiscountType(apiRoot);
 }

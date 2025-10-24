@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import {
   TiktokAuth,
-  FirestoreClient,
-  FirestoreActions,
+  CommercetoolsClient,
+  Token,
+  Utils,
 } from 'tiktok-integration-shared';
 
 
@@ -21,16 +22,9 @@ export const authorizeApp = async (req: Request, res: Response) => {
   if (!data) {
     return res.status(400).send('Failed to get access token data');
   }
+  const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
 
-  const firestore = FirestoreClient.createFirestoreClient({
-    projectId: process.env.GCP_PROJECT_ID as string,
-    databaseId: process.env.GCP_FIRESTORE_DATABASE_ID as string,
-    credentials: {
-      client_email: process.env.GCP_SERVICE_ACCOUNT_CLIENT_EMAIL as string,
-      private_key: process.env.GCP_SERVICE_ACCOUNT_PRIVATE_KEY as string,
-    },
-  });
-  await FirestoreActions.storeAccessToken(firestore, process.env.TIKTOK_APP_KEY as string, data, locale as string, shop_region as string);
+  await Token.storeAccessToken(apiRoot, process.env.TIKTOK_APP_KEY as string, data, locale as string, shop_region as string);
 
   console.log(`Token stored successfully for seller: ${data.seller_name}`);
 

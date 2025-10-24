@@ -35,24 +35,9 @@ inheritAs:
       - key: TIKTOK_APP_KEY
         description: TikTok app key
         required: true
-      - key: GCP_FIRESTORE_DATABASE_ID
-        description: commercetools Composable Commerce client scope
-        required: true
-      - key: GCP_FIRESTORE_COLLECTION_NAME
-        description: commercetools Composable Commerce client scope
-        required: true
-      - key: GCP_SERVICE_ACCOUNT_CLIENT_EMAIL
-        description: GCP service account email
-        required: true
     securedConfiguration:
       - key: CTP_CLIENT_SECRET
         description: commercetools Composable Commerce client secret
-        required: true
-      - key: GCP_PROJECT_ID
-        description: commercetools Composable Commerce client secret
-        required: true
-      - key: GCP_SERVICE_ACCOUNT_PRIVATE_KEY
-        description: GCP private key
         required: true
       - key: TIKTOK_APP_SECRET
         description: TikTok app secret

@@ -12,7 +12,7 @@ export const getBrands = async (
     isAuthorized?: boolean;
     brandName?: string;
     categoryVersion?: string;
-  }
+  },
 ) => {
   const { body } = await client.api.ProductV202309Api.BrandsGet(
     page?.pageSize ?? 100,
@@ -23,8 +23,7 @@ export const getBrands = async (
     options?.brandName,
     page?.pageToken,
     options?.categoryVersion,
-    shop_cipher
+    shop_cipher,
   );
   return body;
 };
-

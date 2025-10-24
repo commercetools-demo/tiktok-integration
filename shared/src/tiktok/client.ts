@@ -9,9 +9,6 @@ const createTiktokClient = (app_key: string, app_secret: string) => {
   });
 };
 
-const client = createTiktokClient(
-  process.env.TIKTOK_APP_KEY as string,
-  process.env.TIKTOK_APP_SECRET as string
-);
+const client = createTiktokClient(process.env.TIKTOK_APP_KEY as string, process.env.TIKTOK_APP_SECRET as string);
 
 export { client };

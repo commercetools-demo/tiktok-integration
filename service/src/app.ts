@@ -7,12 +7,12 @@ import bodyParser from 'body-parser';
 // Import routes
 import ServiceRoutes from './routes/service.route';
 
-import { readConfiguration } from './utils/config.utils';
+import { Utils } from 'tiktok-integration-shared';
 import { errorMiddleware } from './middleware/error.middleware';
 import CustomError from './errors/custom.error';
 
 // Read env variables
-readConfiguration();
+Utils.readConfiguration();
 
 // Create the express app
 const app: Express = express();

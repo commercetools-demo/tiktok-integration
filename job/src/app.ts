@@ -8,6 +8,10 @@ import JobRoutes from './routes/job.route';
 
 import { errorMiddleware } from './middleware/error.middleware';
 import CustomError from './errors/custom.error';
+import { Utils } from 'tiktok-integration-shared';
+
+// Read env variables
+Utils.readConfiguration();
 
 // Create the express app
 const app: Express = express();
