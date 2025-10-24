@@ -11,9 +11,9 @@ deployAs:
     scripts:
       postDeploy: npm install && npm run build && npm run connector:post-deploy
       preUndeploy: npm install && npm run build && npm run connector:pre-undeploy
-  - name: job
+  - name: refresh-token-job
     applicationType: job
-    endpoint: /job
+    endpoint: /refresh-token-job
     properties:
       schedule: "0 */12 * * *"
 inheritAs:
