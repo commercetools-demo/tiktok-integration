@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { logger } from '../utils/logger.utils';
-import { post } from '../controllers/service.controller';
 import { authorizeApp } from '../controllers/tiktok.auth.controller';
 import { getShops } from '../controllers/tiktok.shop.controller';
 import { 
@@ -108,14 +107,5 @@ serviceRouter.post('/products/:product_id/activate', async (req, res, next) => {
   });
 });
 
-serviceRouter.post('/', async (req, res, next) => {
-  logger.info('Service post message received');
-
-  try {
-    await post(req, res);
-  } catch (error) {
-    next(error);
-  }
-});
 
 export default serviceRouter;

@@ -4,5 +4,4 @@ export interface Config {
   projectKey: string;
   scope: string;
   region: string;
-  port: string;
 }

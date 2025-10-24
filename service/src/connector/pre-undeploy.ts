@@ -1,12 +1,13 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { createApiRoot } from '../client/create.client';
+import { CommercetoolsClient } from 'tiktok-integration-shared';
 import { assertError } from '../utils/assert.utils';
 import { deleteCartUpdateExtension } from './actions';
+import { readConfiguration } from '../utils/config.utils';
 
 async function preUndeploy(): Promise<void> {
-  const apiRoot = createApiRoot();
+  const apiRoot = CommercetoolsClient.createApiRoot(readConfiguration());
   await deleteCartUpdateExtension(apiRoot);
 }
 

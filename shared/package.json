@@ -11,6 +11,8 @@
     "prettier": "prettier --write '**/*.{js,ts}'"
   },
   "dependencies": {
+    "@commercetools/platform-sdk": "^8.18.0",
+    "@commercetools/sdk-client-v2": "^3.0.0",
     "@google-cloud/firestore": "^7.11.6",
     "request": "2.88.2"
   },

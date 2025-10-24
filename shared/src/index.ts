@@ -7,3 +7,5 @@ export * as TiktokBrand from './tiktok/brand';
 export * from './tiktok/client';
 export * as FirestoreClient from './firestore/client';
 export * as FirestoreActions from './firestore/actions';
+export * as Types from './interfaces';
+export * as CommercetoolsClient from './commercetools/client/create.client';

@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { createApiRoot } from '../client/create.client';
 import CustomError from '../errors/custom.error';
 import { logger } from '../utils/logger.utils';
 
@@ -40,6 +39,17 @@ export const post = async (request: Request, response: Response) => {
     //CoCo sending message to indicate the resource was created, does not need processing
     console.log('Event message received');
     console.log(JSON.stringify(jsonData, null, 2));
+    switch (jsonData.notificationType) {
+      case 'ResourceCreated':
+        console.log('Resource created');
+        break;
+      case 'ResourceUpdated':
+        console.log('Resource updated');
+        break;
+      case 'ResourceDeleted':
+        console.log('Resource deleted');
+      console.log('Resource created');
+    }
   }
 
 
