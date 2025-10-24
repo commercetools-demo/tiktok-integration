@@ -8,6 +8,7 @@
     "build": "rimraf ./build && tsc",
     "watch": "rimraf ./build && tsc --watch",
     "lint": "eslint . --ext .ts",
+    "test": "echo 'No tests for now'",
     "prettier": "prettier --write '**/*.{js,ts}'"
   },
   "dependencies": {
