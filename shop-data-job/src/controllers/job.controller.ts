@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import CustomError from '../errors/custom.error';
 import { logger } from '../utils/logger.utils';
-import { CommercetoolsClient, Token, Utils, TiktokAuth } from 'tiktok-integration-shared';
+import { CommercetoolsClient, Utils, TiktokAuth, CommercetoolsStorage } from 'tiktok-integration-shared';
 
 /**
  * Exposed job endpoint.
@@ -14,7 +14,7 @@ import { CommercetoolsClient, Token, Utils, TiktokAuth } from 'tiktok-integratio
 export const post = async (_request: Request, response: Response) => {
   try {
     const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
-    const refreshToken = await Token.getTokensNeedingRefresh(apiRoot, process.env.TIKTOK_APP_KEY as string);
+    const refreshToken = await CommercetoolsStorage.TokenController.getTokensNeedingRefresh(apiRoot, process.env.TIKTOK_APP_KEY as string);
 
     logger.info('tokens needing refresh');
     if (!refreshToken) {
@@ -28,7 +28,7 @@ export const post = async (_request: Request, response: Response) => {
       process.env.TIKTOK_APP_SECRET as string,
     );
     if (data) {
-      await Token.updateRefreshedToken(apiRoot, process.env.TIKTOK_APP_KEY as string, data);
+      await CommercetoolsStorage.TokenController.updateRefreshedToken(apiRoot, process.env.TIKTOK_APP_KEY as string, data);
     }
 
     response.status(200).send();

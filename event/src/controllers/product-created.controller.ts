@@ -1,4 +1,4 @@
-import { CommercetoolsClient, Token, TiktokProduct, Utils, TiktokShop } from 'tiktok-integration-shared';
+import { CommercetoolsClient, TiktokProduct, Utils, TiktokShop, CommercetoolsStorage } from 'tiktok-integration-shared';
 import { logger } from '../utils/logger.utils';
 import { CATEGORY } from '../contants/categories';
 import { ATTRIBUTES } from '../contants/attributes';
@@ -22,11 +22,11 @@ export const productCreated = async (productId: string) => {
         return product;
     }
 
-    const access_token = await Token.getAccessToken(apiRoot, process.env.TIKTOK_APP_KEY as string);
+    const access_token = await CommercetoolsStorage.TokenController.getAccessToken(apiRoot, process.env.TIKTOK_APP_KEY as string);
     console.log('access_token', access_token);
-    const localeAndShopRegion = await Token.getLocaleAndShopRegion(apiRoot, process.env.TIKTOK_APP_KEY as string);
+    const localeAndShopRegion = await CommercetoolsStorage.ShopConfigController.getLocaleAndShopRegion(apiRoot, process.env.TIKTOK_APP_KEY as string);
     console.log('localeAndShopRegion', localeAndShopRegion);
-    if (!access_token || !localeAndShopRegion) {
+    if (!access_token || !localeAndShopRegion || !localeAndShopRegion.locale) {
         logger.error('No access token found');
         return product;
     }
@@ -55,7 +55,7 @@ export const productCreated = async (productId: string) => {
         return product;
     }
 
-    const shop = shops.data?.shops?.[0];
+    const shop = shops?.[0];
     console.log('shop', shop);
     if (!shop || !shop.cipher) {
         logger.error('No shop found');

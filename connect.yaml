@@ -40,6 +40,15 @@ inheritAs:
       - key: TIKTOK_APP_KEY
         description: TikTok app key
         required: true
+      - key: TIKTOK_SHOP_CODE
+        description: TikTok shop code
+        required: false
+      - key: TIKTOK_SHOP_ID
+        description: TikTok shop ID
+        required: true
+      - key: TIKTOK_SHOP_NAME
+        description: TikTok shop Name
+        required: true
     securedConfiguration:
       - key: CTP_CLIENT_SECRET
         description: commercetools Composable Commerce client secret

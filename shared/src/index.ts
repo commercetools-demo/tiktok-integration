@@ -1,11 +1,5 @@
-export * as TiktokAuth from './tiktok/auth';
-export * as TiktokShop from './tiktok/shop';
-export * as TiktokProduct from './tiktok/product';
-export * as TiktokWarehouse from './tiktok/warehouse';
-export * as TiktokCategory from './tiktok/category';
-export * as TiktokBrand from './tiktok/brand';
-export * from './tiktok/client';
+export * from './tiktok';
+export * from './commercetools';
+export * as CommercetoolsStorage from './commercetools-storage';
 export * as Types from './interfaces';
-export * as CommercetoolsClient from './commercetools/client/create.client';
-export * as Token from './commercetools/controllers/token.controller';
 export * as Utils from './utils';

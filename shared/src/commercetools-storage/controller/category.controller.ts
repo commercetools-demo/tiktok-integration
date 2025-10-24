@@ -1,0 +1,14 @@
+import { ByProjectKeyRequestBuilder } from "@commercetools/platform-sdk";
+import { Product202309GetCategoriesResponseDataCategories } from "../../tiktok-sdk";
+import { createOrUpdateCustomObject } from "../../commercetools/controllers/custom-object.controller";
+import { SHARED_SHOP_CONTAINER_KEY } from "../../constants";
+import { getCategoryVariableKey } from "../../utils";
+
+export const storeCategories = async (apiRoot: ByProjectKeyRequestBuilder, app_key: string, categories: Product202309GetCategoriesResponseDataCategories[]) => {
+    await createOrUpdateCustomObject(
+        apiRoot,
+        SHARED_SHOP_CONTAINER_KEY,
+        getCategoryVariableKey(app_key),
+        categories,
+    );
+};

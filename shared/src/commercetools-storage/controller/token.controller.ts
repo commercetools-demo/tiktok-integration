@@ -3,33 +3,11 @@ import { TokenResponse } from '../../tiktok-sdk/client/token';
 import {
   SHARED_SHOP_CONTAINER_KEY,
 } from '../../constants';
-import { createOrUpdateCustomObject, readCustomObject } from './custom-object.controller';
-import { getAccessTokenVariableKey, getConfigurationVariableKey } from '../../utils';
+import { createOrUpdateCustomObject, readCustomObject } from '../../commercetools/controllers/custom-object.controller';
+import { getAccessTokenVariableKey } from '../../utils';
+import { AccessTokenData } from '../../interfaces';
+import { storeShopConfiguration } from './shop-config.controller';
 
-/**
- * Interface for access token data stored in CommerceTools
- */
-interface AccessTokenData {
-  open_id?: string;
-  seller_name?: string;
-  seller_base_region?: string;
-  user_type?: number;
-  access_token: string;
-  access_token_expire_at?: number;
-  refresh_token: string;
-  refresh_token_expire_at?: number;
-  created_at: string;
-  updated_at: string;
-  last_refreshed_at: string;
-}
-
-/**
- * Interface for shop configuration data
- */
-interface ShopConfigurationData {
-  locale?: string;
-  shop_region?: string;
-}
 
 /**
  * Store access token and shop information in CommerceTools custom objects
@@ -43,8 +21,6 @@ export const storeAccessToken = async (
   apiRoot: ByProjectKeyRequestBuilder,
   app_key: string,
   data: TokenResponse,
-  locale?: string,
-  shop_region?: string,
 ): Promise<void> => {
   const now = new Date().toISOString();
 
@@ -58,21 +34,6 @@ export const storeAccessToken = async (
 
   // Store access token
   await createOrUpdateCustomObject(apiRoot, SHARED_SHOP_CONTAINER_KEY, getAccessTokenVariableKey(app_key), tokenData);
-
-  // Store shop configuration if locale or shop_region is provided
-  if (locale || shop_region) {
-    const configData: ShopConfigurationData = {
-      ...(locale && { locale }),
-      ...(shop_region && { shop_region }),
-    };
-
-    await createOrUpdateCustomObject(
-      apiRoot,
-      SHARED_SHOP_CONTAINER_KEY,
-      getConfigurationVariableKey(app_key),
-      configData,
-    );
-  }
 };
 
 /**
@@ -95,31 +56,7 @@ export const getAccessToken = async (apiRoot: ByProjectKeyRequestBuilder, app_ke
   return tokenData.access_token;
 };
 
-/**
- * Get locale and shop region from CommerceTools custom objects
- * @param apiRoot - The CommerceTools API root
- * @param app_key - The TikTok app key (used as document identifier)
- * @returns Object with locale and shop_region or null if not found
- */
-export const getLocaleAndShopRegion = async (
-  apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
-): Promise<{ locale: string; shop_region: string } | null> => {
-  const configData = await readCustomObject<ShopConfigurationData>(
-    apiRoot,
-    SHARED_SHOP_CONTAINER_KEY,
-    getConfigurationVariableKey(app_key),
-  );
 
-  if (!configData) {
-    return null;
-  }
-
-  return {
-    locale: configData.locale || '',
-    shop_region: configData.shop_region || '',
-  };
-};
 
 /**
  * Get refresh token if access token needs refresh (expires in 24 hours)

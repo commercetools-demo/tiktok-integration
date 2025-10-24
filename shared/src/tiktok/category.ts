@@ -21,7 +21,10 @@ export const getCategories = async (
     options?.includeProhibitedCategories,
     shop_cipher,
   );
-  return body;
+  if (!body?.data) {
+    return [];
+  }
+  return body.data.categories;
 };
 
 export const getCategoryRules = async (
