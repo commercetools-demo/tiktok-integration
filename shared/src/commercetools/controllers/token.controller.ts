@@ -2,8 +2,6 @@ import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/dec
 import { TokenResponse } from '../../tiktok-sdk/client/token';
 import {
   SHARED_SHOP_CONTAINER_KEY,
-  SHARED_SHOP_ACCESS_TOKEN_VARIABLE_KEY,
-  SHARED_SHOP_CONFIGURATION_VARIABLE_KEY,
 } from '../../constants';
 import { createOrUpdateCustomObject, readCustomObject } from './custom-object.controller';
 import { getAccessTokenVariableKey, getConfigurationVariableKey } from '../../utils';

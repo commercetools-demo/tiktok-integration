@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import CustomError from '../errors/custom.error';
 import { logger } from '../utils/logger.utils';
+import { resourceCreation } from './resource-creation.controller';
 
 /**
  * Exposed event POST endpoint.
@@ -34,23 +35,29 @@ export const post = async (request: Request, response: Response) => {
     ? Buffer.from(pubSubMessage.data, 'base64').toString().trim()
     : undefined;
 
-  if (decodedData) {
-    const jsonData = JSON.parse(decodedData);
-    //CoCo sending message to indicate the resource was created, does not need processing
-    console.log('Event message received');
-    console.log(JSON.stringify(jsonData, null, 2));
-    switch (jsonData.notificationType) {
-      case 'ResourceCreated':
-        console.log('Resource created');
-        break;
-      case 'ResourceUpdated':
-        console.log('Resource updated');
-        break;
-      case 'ResourceDeleted':
-        console.log('Resource deleted');
-      console.log('Resource created');
+  try {
+    if (decodedData) {
+      const jsonData = JSON.parse(decodedData);
+      //CoCo sending message to indicate the resource was created, does not need processing
+      console.log('Event message received');
+      console.log(JSON.stringify(jsonData, null, 2));
+      switch (jsonData.notificationType) {
+        case 'ResourceCreated':
+          await resourceCreation(jsonData);
+          break;
+        case 'ResourceUpdated':
+          console.log('Resource updated');
+          break;
+        case 'ResourceDeleted':
+          console.log('Resource deleted');
+          console.log('Resource created');
+      }
     }
+  } catch (error) {
+    logger.error('Error processing event', error);
+    throw error;
   }
+
 
 
   // Return the response for the client

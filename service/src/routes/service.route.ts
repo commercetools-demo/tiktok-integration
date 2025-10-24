@@ -23,7 +23,7 @@ serviceRouter.get('/authorize-app', async (req, res, next) => {
   });
 });
 
-serviceRouter.get('/get-shops', async (req, res, next) => {
+serviceRouter.get('/shops', async (req, res, next) => {
   await getShops(req, res).catch((error) => {
     logger.error('Error authorizing app', error);
     return res.status(500).send(error.message);
