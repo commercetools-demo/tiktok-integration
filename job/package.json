@@ -10,9 +10,7 @@
     "start:dev": "concurrently -k \"tsc --watch\" \"nodemon -q build/index.js\"",
     "build": "yarn --cwd ../shared install && yarn --cwd ../shared run build && rimraf ./build && tsc",
     "lint": "eslint . --ext .ts",
-    "prettier": "prettier --write '**/*.{js,ts}'",
-    "test": "jest --config jest.config.cjs",
-    "test:watch": "jest --watch"
+    "prettier": "prettier --write '**/*.{js,ts}'"
   },
   "author": "",
   "license": "MIT",

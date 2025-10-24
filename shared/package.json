@@ -8,9 +8,7 @@
     "build": "rimraf ./build && tsc",
     "watch": "rimraf ./build && tsc --watch",
     "lint": "eslint . --ext .ts",
-    "prettier": "prettier --write '**/*.{js,ts}'",
-    "test": "jest --config jest.config.cjs",
-    "test:watch": "jest --watch"
+    "prettier": "prettier --write '**/*.{js,ts}'"
   },
   "dependencies": {
     "@google-cloud/firestore": "^7.11.6",
