@@ -1,6 +1,6 @@
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk';
-import { ChannelController, CommercetoolsStorage, TiktokCategory, TiktokShop, TiktokWarehouse } from '../..';
-import { logger } from '../../utils/logger';
+import { ChannelController, CommercetoolsStorage, TiktokCategory, TiktokShop, TiktokWarehouse } from '../';
+import { logger } from '../utils/logger';
 
 export const initializeShop = async (
   apiRoot: ByProjectKeyRequestBuilder,

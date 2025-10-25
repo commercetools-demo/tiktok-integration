@@ -4,7 +4,6 @@ import { SHARED_SHOP_CONTAINER_KEY } from '../../constants';
 import { createOrUpdateCustomObject, readCustomObject } from '../../commercetools/controllers/custom-object.controller';
 import { getAccessTokenVariableKey } from '../../utils';
 import { AccessTokenData } from '../../interfaces';
-import { storeShopConfiguration } from './shop-config.controller';
 
 /**
  * Store access token and shop information in CommerceTools custom objects

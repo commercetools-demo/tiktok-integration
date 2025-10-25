@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { TiktokAuth, CommercetoolsClient, Utils, CommercetoolsStorage } from 'tiktok-integration-shared';
+import { TiktokAuth, CommercetoolsClient, Utils, CommercetoolsStorage, Services } from 'tiktok-integration-shared';
 import { logger } from '../utils/logger.utils';
 
 export const authorizeApp = async (req: Request, res: Response) => {
@@ -38,7 +38,7 @@ export const authorizeApp = async (req: Request, res: Response) => {
   );
   logger.info('Shop initialized: ${isInitialized}', { isInitialized });
   if (!isInitialized) {
-    await CommercetoolsStorage.InitializeShopController.initializeShop(
+    await Services.initializeShop(
       apiRoot,
       data.access_token,
       process.env.TIKTOK_APP_KEY as string,
