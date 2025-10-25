@@ -5,7 +5,7 @@ const CART_DISCOUNT_TYPE_KEY = 'myconnector-cartDiscountType';
 
 export async function createCartUpdateExtension(
   apiRoot: ByProjectKeyRequestBuilder,
-  applicationUrl: string
+  applicationUrl: string,
 ): Promise<void> {
   const {
     body: { results: extensions },
@@ -52,9 +52,7 @@ export async function createCartUpdateExtension(
     .execute();
 }
 
-export async function deleteCartUpdateExtension(
-  apiRoot: ByProjectKeyRequestBuilder
-): Promise<void> {
+export async function deleteCartUpdateExtension(apiRoot: ByProjectKeyRequestBuilder): Promise<void> {
   const {
     body: { results: extensions },
   } = await apiRoot
@@ -81,9 +79,7 @@ export async function deleteCartUpdateExtension(
   }
 }
 
-export async function createCustomCartDiscountType(
-  apiRoot: ByProjectKeyRequestBuilder
-): Promise<void> {
+export async function createCustomCartDiscountType(apiRoot: ByProjectKeyRequestBuilder): Promise<void> {
   const {
     body: { results: types },
   } = await apiRoot

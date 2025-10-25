@@ -3,10 +3,7 @@ dotenv.config();
 
 import { CommercetoolsClient } from 'tiktok-integration-shared';
 import { assertError, assertString } from '../utils/assert.utils';
-import {
-  createCustomCartDiscountType,
-  createCartUpdateExtension,
-} from './actions';
+import { createCustomCartDiscountType, createCartUpdateExtension } from './actions';
 import { Utils } from 'tiktok-integration-shared';
 
 const CONNECT_APPLICATION_URL_KEY = 'CONNECT_SERVICE_URL';

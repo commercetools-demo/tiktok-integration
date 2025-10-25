@@ -9,11 +9,7 @@ class CustomError extends Error {
   message: string;
   errors?: ErrorItem[];
 
-  constructor(
-    statusCode: number | string,
-    message: string,
-    errors?: ErrorItem[]
-  ) {
+  constructor(statusCode: number | string, message: string, errors?: ErrorItem[]) {
     super(message);
     this.statusCode = statusCode;
     this.message = message;

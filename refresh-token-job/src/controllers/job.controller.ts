@@ -14,7 +14,10 @@ import { CommercetoolsClient, Utils, TiktokAuth, CommercetoolsStorage } from 'ti
 export const post = async (_request: Request, response: Response) => {
   try {
     const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
-    const refreshToken = await CommercetoolsStorage.TokenController.getTokensNeedingRefresh(apiRoot, process.env.TIKTOK_APP_KEY as string);
+    const refreshToken = await CommercetoolsStorage.TokenController.getTokensNeedingRefresh(
+      apiRoot,
+      process.env.TIKTOK_APP_KEY as string,
+    );
 
     logger.info('tokens needing refresh');
     if (!refreshToken) {
@@ -28,7 +31,11 @@ export const post = async (_request: Request, response: Response) => {
       process.env.TIKTOK_APP_SECRET as string,
     );
     if (data) {
-      await CommercetoolsStorage.TokenController.updateRefreshedToken(apiRoot, process.env.TIKTOK_APP_KEY as string, data);
+      await CommercetoolsStorage.TokenController.updateRefreshedToken(
+        apiRoot,
+        process.env.TIKTOK_APP_KEY as string,
+        data,
+      );
     }
 
     response.status(200).send();

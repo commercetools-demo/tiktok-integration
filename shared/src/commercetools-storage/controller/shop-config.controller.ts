@@ -1,62 +1,63 @@
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
-import {
-    SHARED_SHOP_CONTAINER_KEY,
-} from '../../constants';
+import { SHARED_SHOP_CONTAINER_KEY } from '../../constants';
 import { ShopConfigurationData } from '../../interfaces';
 import { getConfigurationVariableKey } from '../../utils';
 import { createOrUpdateCustomObject, readCustomObject } from '../../commercetools/controllers/custom-object.controller';
 import { logger } from '../../utils/logger';
 
-
 export const storeShopConfiguration = async (
-    apiRoot: ByProjectKeyRequestBuilder,
-    app_key: string,
-    data: ShopConfigurationData,
+  apiRoot: ByProjectKeyRequestBuilder,
+  app_key: string,
+  data: ShopConfigurationData,
 ): Promise<void> => {
+  let configData: ShopConfigurationData =
+    (await readCustomObject<ShopConfigurationData>(
+      apiRoot,
+      SHARED_SHOP_CONTAINER_KEY,
+      getConfigurationVariableKey(app_key),
+    )) || ({} as ShopConfigurationData);
 
-    let configData: ShopConfigurationData = await readCustomObject<ShopConfigurationData>(
-        apiRoot,
-        SHARED_SHOP_CONTAINER_KEY,
-        getConfigurationVariableKey(app_key),
-    ) || {} as ShopConfigurationData;
+  logger.info('Config data: ${configData}', { configData });
 
-    logger.info('Config data: ${configData}', { configData });
+  if (Object.keys(data).length === 0) {
+    return;
+  }
+  configData = {
+    ...configData,
+    ...(typeof data.isAuthorized !== 'undefined' && { isAuthorized: data.isAuthorized }),
+    ...(typeof data.isInitialized !== 'undefined' && { isInitialized: data.isInitialized }),
+    ...(typeof data.locale !== 'undefined' && { locale: data.locale }),
+    ...(typeof data.shop_region !== 'undefined' && { shop_region: data.shop_region }),
+    ...(typeof data.ctSupplyChannelId !== 'undefined' && { ctSupplyChannelId: data.ctSupplyChannelId }),
+    ...(typeof data.ctDistributionChannelId !== 'undefined' && {
+      ctDistributionChannelId: data.ctDistributionChannelId,
+    }),
+    ...(typeof data.tiktokWarehouseId !== 'undefined' && { tiktokWarehouseId: data.tiktokWarehouseId }),
+    ...(typeof data.tiktokWarehouseEntityId !== 'undefined' && {
+      tiktokWarehouseEntityId: data.tiktokWarehouseEntityId,
+    }),
+    ...(typeof data.shopCipher !== 'undefined' && { shopCipher: data.shopCipher }),
+  };
 
-    if (Object.keys(data).length === 0) {
-        return;
-    }
-    configData = {
-        ...configData,
-        ...(typeof data.isAuthorized !== 'undefined' && { isAuthorized: data.isAuthorized }),
-        ...(typeof data.isInitialized !== 'undefined' && { isInitialized: data.isInitialized }),
-        ...(typeof data.locale !== 'undefined' && { locale: data.locale }),
-        ...(typeof data.shop_region !== 'undefined' && { shop_region: data.shop_region }),
-        ...(typeof data.ctSupplyChannelId !== 'undefined' && { ctSupplyChannelId: data.ctSupplyChannelId }),
-        ...(typeof data.ctDistributionChannelId !== 'undefined' && { ctDistributionChannelId: data.ctDistributionChannelId }),
-        ...(typeof data.tiktokWarehouseId !== 'undefined' && { tiktokWarehouseId: data.tiktokWarehouseId }),
-        ...(typeof data.tiktokWarehouseEntityId !== 'undefined' && { tiktokWarehouseEntityId: data.tiktokWarehouseEntityId }),
-        ...(typeof data.shopCipher !== 'undefined' && { shopCipher: data.shopCipher }),
-    };
+  logger.info('Config data to store: ${configData}', { configData });
 
-    logger.info('Config data to store: ${configData}', { configData });
-
-    await createOrUpdateCustomObject(
-        apiRoot,
-        SHARED_SHOP_CONTAINER_KEY,
-        getConfigurationVariableKey(app_key),
-        configData,
-    );
+  await createOrUpdateCustomObject(
+    apiRoot,
+    SHARED_SHOP_CONTAINER_KEY,
+    getConfigurationVariableKey(app_key),
+    configData,
+  );
 };
 
 export const getShopConfiguration = async (
-    apiRoot: ByProjectKeyRequestBuilder,
-    app_key: string,
+  apiRoot: ByProjectKeyRequestBuilder,
+  app_key: string,
 ): Promise<ShopConfigurationData | null> => {
-    return readCustomObject<ShopConfigurationData>(
-        apiRoot,
-        SHARED_SHOP_CONTAINER_KEY,
-        getConfigurationVariableKey(app_key),
-    );
+  return readCustomObject<ShopConfigurationData>(
+    apiRoot,
+    SHARED_SHOP_CONTAINER_KEY,
+    getConfigurationVariableKey(app_key),
+  );
 };
 /**
  * Get locale and shop region from shop configuration
@@ -65,18 +66,18 @@ export const getShopConfiguration = async (
  * @returns Object with locale and shop_region or null if not found
  */
 export const getLocaleAndShopRegion = async (
-    apiRoot: ByProjectKeyRequestBuilder,
-    app_key: string,
+  apiRoot: ByProjectKeyRequestBuilder,
+  app_key: string,
 ): Promise<{ locale?: string; shop_region?: string }> => {
-    const configData = await getShopConfiguration(apiRoot, app_key);
-    if (!configData) {
-        return { locale: undefined, shop_region: undefined };
-    }
+  const configData = await getShopConfiguration(apiRoot, app_key);
+  if (!configData) {
+    return { locale: undefined, shop_region: undefined };
+  }
 
-    return {
-        locale: configData?.locale,
-        shop_region: configData?.shop_region,
-    };
+  return {
+    locale: configData?.locale,
+    shop_region: configData?.shop_region,
+  };
 };
 
 /**
@@ -86,17 +87,17 @@ export const getLocaleAndShopRegion = async (
  * @returns Shop cipher or null if not found
  */
 export const getShopCipher = async (
-    apiRoot: ByProjectKeyRequestBuilder,
-    app_key: string,
+  apiRoot: ByProjectKeyRequestBuilder,
+  app_key: string,
 ): Promise<{ shopCipher?: string } | null> => {
-    const configData = await getShopConfiguration(apiRoot, app_key);
-    if (!configData) {
-        return null;
-    }
+  const configData = await getShopConfiguration(apiRoot, app_key);
+  if (!configData) {
+    return null;
+  }
 
-    return {
-        shopCipher: configData?.shopCipher,
-    };
+  return {
+    shopCipher: configData?.shopCipher,
+  };
 };
 
 /**
@@ -105,17 +106,14 @@ export const getShopCipher = async (
  * @param app_key - The TikTok app key (used as document identifier)
  * @returns True if shop is authorized, false otherwise
  */
-export const isAuthorized = async (
-    apiRoot: ByProjectKeyRequestBuilder,
-    app_key: string,
-): Promise<boolean> => {
-    const configData = await getShopConfiguration(apiRoot, app_key);
-    logger.info('Config data in isAuthorized: ${configData}', { configData });
-    if (!configData) {
-        return false;
-    }
+export const isAuthorized = async (apiRoot: ByProjectKeyRequestBuilder, app_key: string): Promise<boolean> => {
+  const configData = await getShopConfiguration(apiRoot, app_key);
+  logger.info('Config data in isAuthorized: ${configData}', { configData });
+  if (!configData) {
+    return false;
+  }
 
-    return configData?.isAuthorized || false;
+  return configData?.isAuthorized || false;
 };
 
 /**
@@ -124,14 +122,11 @@ export const isAuthorized = async (
  * @param app_key - The TikTok app key (used as document identifier)
  * @returns True if shop is initialized, false otherwise
  */
-export const isInitialized = async (
-    apiRoot: ByProjectKeyRequestBuilder,
-    app_key: string,
-): Promise<boolean> => {
-    const configData = await getShopConfiguration(apiRoot, app_key);
-    if (!configData) {
-        return false;
-    }
+export const isInitialized = async (apiRoot: ByProjectKeyRequestBuilder, app_key: string): Promise<boolean> => {
+  const configData = await getShopConfiguration(apiRoot, app_key);
+  if (!configData) {
+    return false;
+  }
 
-    return (configData?.isAuthorized && configData?.isInitialized) || false;
+  return (configData?.isAuthorized && configData?.isInitialized) || false;
 };

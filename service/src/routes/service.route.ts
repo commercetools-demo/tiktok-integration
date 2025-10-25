@@ -2,13 +2,13 @@ import { Router } from 'express';
 import { logger } from '../utils/logger.utils';
 import { authorizeApp } from '../controllers/tiktok.auth.controller';
 import { getShops } from '../controllers/tiktok.shop.controller';
-import { 
-  checkListingPrerequisites, 
+import {
+  checkListingPrerequisites,
   searchProducts,
   uploadProductImage,
   createProduct,
   updateProduct,
-  activateProduct
+  activateProduct,
 } from '../controllers/tiktok.product.controller';
 import { getWarehouseList } from '../controllers/tiktok.warehouse.controller';
 import { getCategories, getCategoryRules, getCategoryAttributes } from '../controllers/tiktok.category.controller';
@@ -106,6 +106,5 @@ serviceRouter.post('/products/:product_id/activate', async (req, res, next) => {
     return res.status(500).send(error.message);
   });
 });
-
 
 export default serviceRouter;

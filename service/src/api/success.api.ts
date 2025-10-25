@@ -10,11 +10,7 @@ import { ResponseInterfaceSuccess } from '../interfaces/response.interface';
  * @param {Array<UpdateAction>} updateActions The update actions that were made in the process
  * @returns Success response with 200 status code and the update actions array
  */
-export const apiSuccess = (
-  statusCode: number,
-  updateActions: Array<UpdateAction>,
-  response: Response
-) => {
+export const apiSuccess = (statusCode: number, updateActions: Array<UpdateAction>, response: Response) => {
   const responseBody = {} as ResponseInterfaceSuccess;
 
   if (updateActions) {

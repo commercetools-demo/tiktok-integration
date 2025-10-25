@@ -58,8 +58,6 @@ export const post = async (request: Request, response: Response) => {
     throw error;
   }
 
-
-
   // Return the response for the client
   response.status(204).send();
 };
