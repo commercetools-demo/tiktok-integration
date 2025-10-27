@@ -2,7 +2,10 @@ import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/dec
 import { SHARED_SHOP_CONTAINER_KEY } from '../../constants';
 import { ShopConfigurationData } from '../../interfaces';
 import { getConfigurationVariableKey } from '../../utils';
-import { createOrUpdateCustomObject, readCustomObject } from '../../commercetools/controllers/custom-object.controller';
+import {
+  createOrUpdateCustomObject,
+  readCustomObject,
+} from '../../commercetools/controllers/custom-object.controller';
 import { logger } from '../../utils/logger';
 
 export const storeShopConfiguration = async (
@@ -24,19 +27,31 @@ export const storeShopConfiguration = async (
   }
   configData = {
     ...configData,
-    ...(typeof data.isAuthorized !== 'undefined' && { isAuthorized: data.isAuthorized }),
-    ...(typeof data.isInitialized !== 'undefined' && { isInitialized: data.isInitialized }),
+    ...(typeof data.isAuthorized !== 'undefined' && {
+      isAuthorized: data.isAuthorized,
+    }),
+    ...(typeof data.isInitialized !== 'undefined' && {
+      isInitialized: data.isInitialized,
+    }),
     ...(typeof data.locale !== 'undefined' && { locale: data.locale }),
-    ...(typeof data.shop_region !== 'undefined' && { shop_region: data.shop_region }),
-    ...(typeof data.ctSupplyChannelId !== 'undefined' && { ctSupplyChannelId: data.ctSupplyChannelId }),
+    ...(typeof data.shop_region !== 'undefined' && {
+      shop_region: data.shop_region,
+    }),
+    ...(typeof data.ctSupplyChannelId !== 'undefined' && {
+      ctSupplyChannelId: data.ctSupplyChannelId,
+    }),
     ...(typeof data.ctDistributionChannelId !== 'undefined' && {
       ctDistributionChannelId: data.ctDistributionChannelId,
     }),
-    ...(typeof data.tiktokWarehouseId !== 'undefined' && { tiktokWarehouseId: data.tiktokWarehouseId }),
+    ...(typeof data.tiktokWarehouseId !== 'undefined' && {
+      tiktokWarehouseId: data.tiktokWarehouseId,
+    }),
     ...(typeof data.tiktokWarehouseEntityId !== 'undefined' && {
       tiktokWarehouseEntityId: data.tiktokWarehouseEntityId,
     }),
-    ...(typeof data.shopCipher !== 'undefined' && { shopCipher: data.shopCipher }),
+    ...(typeof data.shopCipher !== 'undefined' && {
+      shopCipher: data.shopCipher,
+    }),
   };
 
   logger.info('Config data to store: ${configData}', { configData });
@@ -106,7 +121,10 @@ export const getShopCipher = async (
  * @param app_key - The TikTok app key (used as document identifier)
  * @returns True if shop is authorized, false otherwise
  */
-export const isAuthorized = async (apiRoot: ByProjectKeyRequestBuilder, app_key: string): Promise<boolean> => {
+export const isAuthorized = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+  app_key: string,
+): Promise<boolean> => {
   const configData = await getShopConfiguration(apiRoot, app_key);
   logger.info('Config data in isAuthorized: ${configData}', { configData });
   if (!configData) {
@@ -122,7 +140,10 @@ export const isAuthorized = async (apiRoot: ByProjectKeyRequestBuilder, app_key:
  * @param app_key - The TikTok app key (used as document identifier)
  * @returns True if shop is initialized, false otherwise
  */
-export const isInitialized = async (apiRoot: ByProjectKeyRequestBuilder, app_key: string): Promise<boolean> => {
+export const isInitialized = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+  app_key: string,
+): Promise<boolean> => {
   const configData = await getShopConfiguration(apiRoot, app_key);
   if (!configData) {
     return false;

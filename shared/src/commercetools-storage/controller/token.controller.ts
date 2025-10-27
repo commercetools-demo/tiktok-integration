@@ -1,7 +1,10 @@
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import { TokenResponse } from '../../tiktok-sdk/client/token';
 import { SHARED_SHOP_CONTAINER_KEY } from '../../constants';
-import { createOrUpdateCustomObject, readCustomObject } from '../../commercetools/controllers/custom-object.controller';
+import {
+  createOrUpdateCustomObject,
+  readCustomObject,
+} from '../../commercetools/controllers/custom-object.controller';
 import { getAccessTokenVariableKey } from '../../utils';
 import { AccessTokenData } from '../../interfaces';
 
@@ -29,7 +32,12 @@ export const storeAccessToken = async (
   };
 
   // Store access token
-  await createOrUpdateCustomObject(apiRoot, SHARED_SHOP_CONTAINER_KEY, getAccessTokenVariableKey(app_key), tokenData);
+  await createOrUpdateCustomObject(
+    apiRoot,
+    SHARED_SHOP_CONTAINER_KEY,
+    getAccessTokenVariableKey(app_key),
+    tokenData,
+  );
 };
 
 /**
@@ -38,7 +46,10 @@ export const storeAccessToken = async (
  * @param app_key - The TikTok app key (used as document identifier)
  * @returns The access token or null if not found
  */
-export const getAccessToken = async (apiRoot: ByProjectKeyRequestBuilder, app_key: string): Promise<string | null> => {
+export const getAccessToken = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+  app_key: string,
+): Promise<string | null> => {
   const tokenData = await readCustomObject<AccessTokenData>(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
@@ -77,7 +88,10 @@ export const getTokensNeedingRefresh = async (
     }
 
     // Check if token is expired or expiring soon
-    if (tokenData.access_token_expire_at && tokenData.access_token_expire_at <= expiringIn24Hours) {
+    if (
+      tokenData.access_token_expire_at &&
+      tokenData.access_token_expire_at <= expiringIn24Hours
+    ) {
       return tokenData.refresh_token;
     }
 

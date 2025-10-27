@@ -21,7 +21,10 @@ export const createOrUpdateCustomObject = async <T = any>(
 
     return response.body;
   } catch (error) {
-    console.error(`Error creating/updating custom object [${container}/${key}]:`, error);
+    console.error(
+      `Error creating/updating custom object [${container}/${key}]:`,
+      error,
+    );
     throw error;
   }
 };
@@ -32,7 +35,11 @@ export const readCustomObject = async <T = any>(
   key: string,
 ): Promise<T | null> => {
   try {
-    const response = await apiRoot.customObjects().withContainerAndKey({ container, key }).get().execute();
+    const response = await apiRoot
+      .customObjects()
+      .withContainerAndKey({ container, key })
+      .get()
+      .execute();
 
     return response.body.value as T;
   } catch (error: any) {
@@ -51,7 +58,11 @@ export const deleteCustomObject = async (
 ): Promise<boolean> => {
   try {
     // First get the object to get its version
-    const response = await apiRoot.customObjects().withContainerAndKey({ container, key }).get().execute();
+    const response = await apiRoot
+      .customObjects()
+      .withContainerAndKey({ container, key })
+      .get()
+      .execute();
 
     // Then delete it with the version
     await apiRoot

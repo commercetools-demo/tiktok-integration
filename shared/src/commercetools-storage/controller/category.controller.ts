@@ -9,5 +9,10 @@ export const storeCategories = async (
   app_key: string,
   categories: Product202309GetCategoriesResponseDataCategories[],
 ) => {
-  await createOrUpdateCustomObject(apiRoot, SHARED_SHOP_CONTAINER_KEY, getCategoryVariableKey(app_key), categories);
+  await createOrUpdateCustomObject(
+    apiRoot,
+    SHARED_SHOP_CONTAINER_KEY,
+    getCategoryVariableKey(app_key),
+    categories,
+  );
 };

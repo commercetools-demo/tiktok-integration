@@ -1,4 +1,4 @@
-import { TikTokShopNodeApiClient } from '../tiktok-sdk';
+import { TikTokShopNodeApiClient } from '../../tiktok-sdk';
 
 const createTiktokClient = (app_key: string, app_secret: string) => {
   return new TikTokShopNodeApiClient({
@@ -9,6 +9,9 @@ const createTiktokClient = (app_key: string, app_secret: string) => {
   });
 };
 
-const client = createTiktokClient(process.env.TIKTOK_APP_KEY as string, process.env.TIKTOK_APP_SECRET as string);
+const client = createTiktokClient(
+  process.env.TIKTOK_APP_KEY as string,
+  process.env.TIKTOK_APP_SECRET as string,
+);
 
 export { client };

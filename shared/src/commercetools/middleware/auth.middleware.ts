@@ -4,7 +4,9 @@ import { Config } from '../../interfaces';
 /**
  * Configure Middleware. Example only. Adapt on your own
  */
-export const authMiddlewareOptions: (config: Config) => AuthMiddlewareOptions = (config: Config) => ({
+export const authMiddlewareOptions: (
+  config: Config,
+) => AuthMiddlewareOptions = (config: Config) => ({
   host: `https://auth.${config.region}.commercetools.com`,
   projectKey: config.projectKey,
   credentials: {

@@ -3,8 +3,8 @@ import {
   Product202309CreateProductRequestBody,
   Product202309EditProductRequestBody,
   Product202309ActivateProductRequestBody,
-} from '../tiktok-sdk';
-import { RequestFile } from '../tiktok-sdk/api/apis';
+} from '../../tiktok-sdk';
+import { RequestFile } from '../../tiktok-sdk/api/apis';
 import { client } from './client';
 import * as https from 'https';
 import * as http from 'http';
@@ -30,8 +30,15 @@ export const productSearch = async (
   return body;
 };
 
-export const checkListingPrerequisites = async (access_token: string, shop_cipher: string) => {
-  const { body } = await client.api.ProductV202309Api.PrerequisitesGet(access_token, 'application/json', shop_cipher);
+export const checkListingPrerequisites = async (
+  access_token: string,
+  shop_cipher: string,
+) => {
+  const { body } = await client.api.ProductV202309Api.PrerequisitesGet(
+    access_token,
+    'application/json',
+    shop_cipher,
+  );
   if (!body.data || !body.data.shop) {
     throw new Error('No data found in CheckListingPrerequisitesResponse');
   }
@@ -61,7 +68,11 @@ const fetchImageFromUrl = async (imageUrl: string): Promise<Buffer> => {
     protocol
       .get(imageUrl, (response) => {
         if (response.statusCode !== 200) {
-          reject(new Error(`Failed to fetch image: ${response.statusCode} ${response.statusMessage}`));
+          reject(
+            new Error(
+              `Failed to fetch image: ${response.statusCode} ${response.statusMessage}`,
+            ),
+          );
           return;
         }
 
@@ -111,7 +122,11 @@ const getContentTypeFromFilename = (filename: string): string => {
   return mimeTypes[ext || 'jpg'] || 'image/jpeg';
 };
 
-export const uploadProductImage = async (access_token: string, imageUrl: string, useCase?: string) => {
+export const uploadProductImage = async (
+  access_token: string,
+  imageUrl: string,
+  useCase?: string,
+) => {
   // Fetch the image from the URL
   const imageBuffer = await fetchImageFromUrl(imageUrl);
 

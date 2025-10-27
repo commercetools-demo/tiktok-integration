@@ -59,5 +59,5 @@ export const post = async (request: Request, response: Response) => {
   }
 
   // Return the response for the client
-  response.status(204).send();
+  response.status(202).send();
 };
