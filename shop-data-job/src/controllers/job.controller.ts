@@ -1,8 +1,11 @@
 import { Request, Response } from 'express';
-
+import {
+  CommercetoolsClient,
+  CommercetoolsStorage,
+  Services,
+  Utils
+} from 'tiktok-integration-shared';
 import CustomError from '../errors/custom.error';
-import { logger } from '../utils/logger.utils';
-import { CommercetoolsClient, Utils, TiktokAuth, CommercetoolsStorage } from 'tiktok-integration-shared';
 
 /**
  * Exposed job endpoint.
@@ -13,26 +16,26 @@ import { CommercetoolsClient, Utils, TiktokAuth, CommercetoolsStorage } from 'ti
  */
 export const post = async (_request: Request, response: Response) => {
   try {
-    const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
-    const refreshToken = await CommercetoolsStorage.TokenController.getTokensNeedingRefresh(apiRoot, process.env.TIKTOK_APP_KEY as string);
-
-    logger.info('tokens needing refresh');
-    if (!refreshToken) {
-      response.status(200).send();
-      return;
-    }
-
-    const { data } = await TiktokAuth.refreshAccessToken(
-      refreshToken,
-      process.env.TIKTOK_APP_KEY as string,
-      process.env.TIKTOK_APP_SECRET as string,
+    const apiRoot = CommercetoolsClient.createApiRoot(
+      Utils.readConfiguration(),
     );
-    if (data) {
-      await CommercetoolsStorage.TokenController.updateRefreshedToken(apiRoot, process.env.TIKTOK_APP_KEY as string, data);
-    }
+    const access_token =
+      await CommercetoolsStorage.TokenController.getAccessToken(
+        apiRoot,
+        process.env.TIKTOK_APP_KEY as string,
+      );
+    await Services.initializeShop(
+      apiRoot,
+      access_token,
+      process.env.TIKTOK_APP_KEY as string,
+      process.env.TIKTOK_SHOP_ID as string,
+    );
 
     response.status(200).send();
   } catch (error) {
-    throw new CustomError(500, `Internal Server Error - Error retrieving all orders from the commercetools SDK`);
+    throw new CustomError(
+      500,
+      `Internal Server Error - Error initializing shop`,
+    );
   }
 };
