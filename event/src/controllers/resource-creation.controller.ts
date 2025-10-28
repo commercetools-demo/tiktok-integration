@@ -1,5 +1,5 @@
 import { ResourceCreatedDeliveryPayload } from '@commercetools/platform-sdk';
-import { productCreated } from './product-created.controller';
+import { productCreated } from './product/product-created.controller';
 
 export const resourceCreation = async (
   resourceCreatedMessage: ResourceCreatedDeliveryPayload

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import CustomError from '../errors/custom.error';
 import { logger } from '../utils/logger.utils';
 import { resourceCreation } from './resource-creation.controller';
+import { resourceMessage } from './message.controller';
 
 /**
  * Exposed event POST endpoint.
@@ -45,8 +46,8 @@ export const post = async (request: Request, response: Response) => {
         case 'ResourceCreated':
           await resourceCreation(jsonData);
           break;
-        case 'ResourceUpdated':
-          console.log('Resource updated');
+        case 'Message':
+          await resourceMessage(jsonData);
           break;
         case 'ResourceDeleted':
           console.log('Resource deleted');

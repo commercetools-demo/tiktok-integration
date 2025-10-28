@@ -19,6 +19,10 @@ import {
 import { CommercetoolsStorage, Services, TiktokProduct } from '../../..';
 import { PRODUCT_TYPE_TO_TIKTOK_CATEGORY } from './product-type-to-category';
 import {
+  PRODUCT_TYPE_TO_TIKTOK_PRODUCT_ATTRIBUTE,
+  PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE,
+} from './product-type-to-attribute';
+import {
   ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_HEIGHT,
   ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_LENGTH,
   ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_UNIT,
@@ -31,12 +35,10 @@ import {
   FALLBACK_PACKAGE_DIMENSIONS_WIDTH,
   FALLBACK_PACKAGE_WEIGHT_UNIT,
   FALLBACK_PACKAGE_WEIGHT_VALUE,
-  PRODUCT_TYPE_TO_TIKTOK_PRODUCT_ATTRIBUTE,
-  PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE,
   USE_NO_CHANNEL_FOR_INVENTORY_FALLBACK,
   USE_NO_CHANNEL_FOR_LIST_PRICE,
   USE_NO_CHANNEL_FOR_MAIN_PRICE,
-} from './product-type-to-attribute';
+} from './product-contants';
 import { ShopConfigurationData } from '../../../interfaces';
 
 export const commercetoolsProductToTiktokProduct = async (

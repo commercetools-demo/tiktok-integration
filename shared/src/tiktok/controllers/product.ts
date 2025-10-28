@@ -8,6 +8,7 @@ import { RequestFile } from '../../tiktok-sdk/api/apis';
 import { client } from './client';
 import * as https from 'https';
 import * as http from 'http';
+import { Services } from '../..';
 
 export const productSearch = async (
   access_token: string,
@@ -153,14 +154,16 @@ export const uploadProductImage = async (
 };
 
 export const createProduct = async (
-  access_token: string,
-  shop_cipher: string,
   productData: Product202309CreateProductRequestBody,
 ) => {
+  const tiktokShop = await Services.getShopCipher();
+  if (!tiktokShop) {
+    throw new Error('No TikTok shop found');
+  }
   const { body } = await client.api.ProductV202309Api.ProductsPost(
-    access_token,
+    tiktokShop.access_token,
     'application/json',
-    shop_cipher,
+    tiktokShop.shopCipher,
     productData,
   );
   return body;
