@@ -1,31 +1,21 @@
-import { ProductPublishedMessage, ProductUnpublishedMessage, ProductSlugChangedMessage } from "@commercetools/platform-sdk";
+import { ProductPublishedMessage, ProductUnpublishedMessage, ProductSlugChangedMessage, ByProjectKeyRequestBuilder, ProductProjection } from "@commercetools/platform-sdk";
 import { CommercetoolsClient, CommercetoolsStorage, Utils } from "tiktok-integration-shared";
 import { logger } from "../../utils/logger.utils";
 
-export const productPublished = async (message: ProductPublishedMessage, productId: string): Promise<string> => {
-  const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
+export const productPublished = async (apiRoot: ByProjectKeyRequestBuilder, message: ProductPublishedMessage, product: ProductProjection): Promise<string> => {
+  const productId = product.id;
   const shopConfig = await CommercetoolsStorage.ShopConfigController.getShopConfiguration(apiRoot, process.env.TIKTOK_APP_KEY as string);
-  const { body: product } = await apiRoot
-    .products()
-    .withId({ ID: productId })
-    .get()
-    .execute();
   
-  logger.info(`Product ${productId} published with ${product.masterData.current.variants.length + 1} variants`);
+  logger.info(`Product ${productId} published`);
   
   // TODO: 1. fetch product by sku from tiktok
   // 2. update product status/availability in tiktok
   return productId;
 }
 
-export const productUnpublished = async (message: ProductUnpublishedMessage, productId: string): Promise<string> => {
-  const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
+export const productUnpublished = async (apiRoot: ByProjectKeyRequestBuilder, message: ProductUnpublishedMessage, product: ProductProjection): Promise<string> => {
+  const productId = product.id;
   const shopConfig = await CommercetoolsStorage.ShopConfigController.getShopConfiguration(apiRoot, process.env.TIKTOK_APP_KEY as string);
-  const { body: product } = await apiRoot
-    .products()
-    .withId({ ID: productId })
-    .get()
-    .execute();
   
   logger.info(`Product ${productId} unpublished`);
   
@@ -34,14 +24,9 @@ export const productUnpublished = async (message: ProductUnpublishedMessage, pro
   return productId;
 }
 
-export const productSlugChanged = async (message: ProductSlugChangedMessage, productId: string): Promise<string> => {
-  const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
+export const productSlugChanged = async (apiRoot: ByProjectKeyRequestBuilder, message: ProductSlugChangedMessage, product: ProductProjection): Promise<string> => {
+  const productId = product.id;
   const shopConfig = await CommercetoolsStorage.ShopConfigController.getShopConfiguration(apiRoot, process.env.TIKTOK_APP_KEY as string);
-  const { body: product } = await apiRoot
-    .products()
-    .withId({ ID: productId })
-    .get()
-    .execute();
   
   logger.info(`Product ${productId} slug changed from ${message.oldSlug} to ${message.slug}`);
   

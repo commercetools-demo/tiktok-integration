@@ -1,7 +1,7 @@
 import {
   Attribute,
   ByProjectKeyRequestBuilder,
-  Product,
+  ProductProjection,
   ProductVariant,
 } from '@commercetools/platform-sdk';
 import {
@@ -44,7 +44,7 @@ import { ShopConfigurationData } from '../../../interfaces';
 export const commercetoolsProductToTiktokProduct = async (
   apiRoot: ByProjectKeyRequestBuilder,
   app_key: string,
-  product: Product,
+  product: ProductProjection,
 ): Promise<Product202309CreateProductRequestBody> => {
   const locale = await Services.getCommercetoolsLocale(apiRoot, app_key);
   const shopConfig =
@@ -57,8 +57,8 @@ export const commercetoolsProductToTiktokProduct = async (
   }
 
   const allVariants = [
-    product.masterData.current.masterVariant,
-    ...product.masterData.current.variants,
+    product.masterVariant,
+    ...product.variants,
   ];
   const mainImages = await commercetoolsProductToTiktokMainImages(
     apiRoot,
@@ -71,8 +71,8 @@ export const commercetoolsProductToTiktokProduct = async (
 
   const productDraft: Product202309CreateProductRequestBody = {
     saveMode: commercetoolsProductStateToSaveMode(product),
-    title: product.masterData.current.name?.[locale],
-    description: product.masterData.current.description?.[locale],
+    title: product.name?.[locale],
+    description: product.description?.[locale],
     categoryVersion: 'v2',
     categoryId: commercetoolsProductTypeToTiktokCategory(
       product.productType.id,
@@ -90,21 +90,21 @@ export const commercetoolsProductToTiktokProduct = async (
       .filter((sku) => sku !== undefined),
     productAttributes: commercetoolsProductTypeToTiktokProductAttributeList(
       product.productType.id,
-      product.masterData.current.masterVariant.attributes,
+      product.masterVariant.attributes,
       locale,
     ),
     packageWeight: commercetoolsProductTypeToTiktokProductPackageWeight(
-      product.masterData.current.masterVariant.attributes,
+      product.masterVariant.attributes,
     ),
     packageDimensions: commercetoolsProductTypeToTiktokProductPackageDimensions(
-      product.masterData.current.masterVariant.attributes,
+      product.masterVariant.attributes,
     ),
   };
   return productDraft;
 };
 
-const commercetoolsProductStateToSaveMode = (product: Product): string => {
-  if (product.masterData?.published === false) {
+const commercetoolsProductStateToSaveMode = (product: ProductProjection): string => {
+  if (product.published === false) {
     return 'AS_DRAFT';
   }
   return 'LISTING';
@@ -174,7 +174,7 @@ const commercetoolsVariantToTiktokSKUInventory = (
 const commercetoolsProductToTiktokMainImages = async (
   apiRoot: ByProjectKeyRequestBuilder,
   app_key: string,
-  product: Product,
+  product: ProductProjection,
 ): Promise<Product202309CreateProductRequestBodyMainImages[] | undefined> => {
   const access_token =
     await CommercetoolsStorage.TokenController.getAccessToken(apiRoot, app_key);
@@ -182,7 +182,7 @@ const commercetoolsProductToTiktokMainImages = async (
     throw new Error('Access token not found');
   }
 
-  const images = product.masterData.current.masterVariant.images;
+  const images = product.masterVariant?.images ?? [];
   const mainImages = [];
   for await (const image of images ?? []) {
     const resultUploadImage = await TiktokProduct.uploadProductImage(

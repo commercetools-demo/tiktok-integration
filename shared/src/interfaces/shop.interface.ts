@@ -6,6 +6,8 @@ export interface ShopConfigurationData {
   isInitialized?: boolean;
   ctSupplyChannelId?: string;
   ctDistributionChannelId?: string;
+  ctStoreId?: string;
+  ctStoreKey?: string;
   tiktokWarehouseId?: string;
   tiktokWarehouseEntityId?: string;
   shopCipher?: string;

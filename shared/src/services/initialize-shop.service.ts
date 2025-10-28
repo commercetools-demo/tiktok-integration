@@ -2,6 +2,7 @@ import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk';
 import {
   ChannelController,
   CommercetoolsStorage,
+  StoreController,
   TiktokCategory,
   TiktokShop,
   TiktokWarehouse,
@@ -36,6 +37,13 @@ export const initializeShop = async (
     throw new Error('Shop not found');
   }
 
+  const stores = await StoreController.findStore(apiRoot, [
+    'custom(fields(isTikTokShop=true))',
+  ]);
+  if (!stores || stores.length === 0) {
+    logger.info('No store found');
+  }
+
   const warehouseChannels = await ChannelController.findChannel(apiRoot, [
     'custom(fields(isTikTokWarehouse=true))',
   ]);
@@ -53,6 +61,7 @@ export const initializeShop = async (
     logger.info('No price channel found');
   }
 
+  const ctStore = stores?.[0];
   const ctWarehouseChannel = warehouseChannels?.[0];
   const ctPriceChannel = priceChannels?.[0];
 
@@ -69,6 +78,8 @@ export const initializeShop = async (
       shopCipher: shop.cipher,
       ctSupplyChannelId: ctWarehouseChannel.id,
       ctDistributionChannelId: ctPriceChannel?.id,
+      ctStoreId: ctStore?.id,
+      ctStoreKey: ctStore?.key,
     },
   );
 

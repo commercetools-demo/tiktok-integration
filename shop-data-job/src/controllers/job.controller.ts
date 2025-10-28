@@ -3,7 +3,7 @@ import {
   CommercetoolsClient,
   CommercetoolsStorage,
   Services,
-  Utils
+  Utils,
 } from 'tiktok-integration-shared';
 import CustomError from '../errors/custom.error';
 
@@ -24,6 +24,9 @@ export const post = async (_request: Request, response: Response) => {
         apiRoot,
         process.env.TIKTOK_APP_KEY as string,
       );
+    if (!access_token) {
+      throw new Error('No access token found');
+    }
     await Services.initializeShop(
       apiRoot,
       access_token,

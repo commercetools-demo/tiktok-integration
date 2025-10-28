@@ -5,17 +5,15 @@ import {
   TiktokShop,
   CommercetoolsStorage,
   Mappers,
+  ProductController,
 } from 'tiktok-integration-shared';
 import { logger } from '../../utils/logger.utils';
 
 export const productCreated = async (productId: string) => {
   const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
+  const shopConfig = await CommercetoolsStorage.ShopConfigController.getShopConfiguration(apiRoot, process.env.TIKTOK_APP_KEY as string);
   // TODO: use PPR in store
-  const { body: product } = await apiRoot
-    .products()
-    .withId({ ID: productId })
-    .get()
-    .execute();
+  const product = await ProductController.getProduct(apiRoot, productId, shopConfig);
  
   const productDraft =
     await Mappers.Product.commercetoolsProductToTiktokProduct(

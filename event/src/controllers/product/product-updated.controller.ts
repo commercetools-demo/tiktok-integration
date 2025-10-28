@@ -1,28 +1,74 @@
-import { CommercetoolsClient, Utils } from "tiktok-integration-shared";
-import { Message, ProductPriceAddedMessage, ProductPriceChangedMessage, ProductPriceRemovedMessage, ProductPublishedMessage, ProductUnpublishedMessage, ProductSlugChangedMessage } from "@commercetools/platform-sdk";
-import { productPriceAdded, productPriceChanged, productPriceRemoved } from "./product-price.controller";
-import { productPublished, productUnpublished, productSlugChanged } from "./product-state.controller";
+import {
+  CommercetoolsClient,
+  ProductController,
+  CommercetoolsStorage,
+  Utils,
+} from 'tiktok-integration-shared';
+import {
+  Message,
+  ProductPriceAddedMessage,
+  ProductPriceChangedMessage,
+  ProductPriceRemovedMessage,
+  ProductPublishedMessage,
+  ProductUnpublishedMessage,
+  ProductSlugChangedMessage,
+} from '@commercetools/platform-sdk';
+import {
+  productPriceAdded,
+  productPriceChanged,
+  productPriceRemoved,
+} from './product-price.controller';
+import {
+  productPublished,
+  productUnpublished,
+  productSlugChanged,
+} from './product-state.controller';
+import { logger } from '../../utils/logger.utils';
 
-export type ProductMessageType = ProductPriceChangedMessage | ProductPriceAddedMessage | ProductPriceRemovedMessage | ProductPublishedMessage | ProductUnpublishedMessage | ProductSlugChangedMessage
+export type ProductMessageType =
+  | ProductPriceChangedMessage
+  | ProductPriceAddedMessage
+  | ProductPriceRemovedMessage
+  | ProductPublishedMessage
+  | ProductUnpublishedMessage
+  | ProductSlugChangedMessage;
 
+export const productUpdated = async (
+  message: ProductMessageType,
+  productId: string
+): Promise<string> => {
+  const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
+  const shopConfiguration =
+    await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
+      apiRoot,
+      process.env.TIKTOK_APP_KEY as string
+    );
 
-export const productUpdated = async (message: ProductMessageType, productId: string): Promise<string> => {
+  const product = await ProductController.getProduct(
+    apiRoot,
+    productId,
+    shopConfiguration
+  );
 
   switch (message.type) {
     case 'ProductPriceChanged':
-      return productPriceChanged(message, productId);
+      return productPriceChanged(apiRoot, message, product);
     case 'ProductPriceAdded':
-      return await productPriceAdded(message, productId);
+      return await productPriceAdded(apiRoot, message, product);
     case 'ProductPriceRemoved':
-      return await productPriceRemoved(message, productId);
+      return await productPriceRemoved(apiRoot, message, product);
     case 'ProductPublished':
-      return await productPublished(message, productId);
+      return await productPublished(apiRoot, message, product);
     case 'ProductUnpublished':
-      return await productUnpublished(message, productId);
+      return await productUnpublished(apiRoot, message, product);
     case 'ProductSlugChanged':
-      return await productSlugChanged(message, productId);
+      return await productSlugChanged(apiRoot, message, product);
+      // TODO: ProductImageAdded
+      // TODO: ProductTailoringCreated, ProductTailoringPublished,
+      // TODO: ProductTailoringNameSet, ProductTailoringDescriptionSet
+      // TODO: ProductVariantTailoringAdded, ProductTailoringImageAdded
+      // TODO: InventoryEntryQuantitySet
     default:
       return productId;
   }
-
-}
+};

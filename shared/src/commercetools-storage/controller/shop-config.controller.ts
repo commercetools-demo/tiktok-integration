@@ -27,31 +27,15 @@ export const storeShopConfiguration = async (
   }
   configData = {
     ...configData,
-    ...(typeof data.isAuthorized !== 'undefined' && {
-      isAuthorized: data.isAuthorized,
-    }),
-    ...(typeof data.isInitialized !== 'undefined' && {
-      isInitialized: data.isInitialized,
-    }),
-    ...(typeof data.locale !== 'undefined' && { locale: data.locale }),
-    ...(typeof data.shop_region !== 'undefined' && {
-      shop_region: data.shop_region,
-    }),
-    ...(typeof data.ctSupplyChannelId !== 'undefined' && {
-      ctSupplyChannelId: data.ctSupplyChannelId,
-    }),
-    ...(typeof data.ctDistributionChannelId !== 'undefined' && {
-      ctDistributionChannelId: data.ctDistributionChannelId,
-    }),
-    ...(typeof data.tiktokWarehouseId !== 'undefined' && {
-      tiktokWarehouseId: data.tiktokWarehouseId,
-    }),
-    ...(typeof data.tiktokWarehouseEntityId !== 'undefined' && {
-      tiktokWarehouseEntityId: data.tiktokWarehouseEntityId,
-    }),
-    ...(typeof data.shopCipher !== 'undefined' && {
-      shopCipher: data.shopCipher,
-    }),
+    ...Object.entries(data).reduce(
+      (acc, [key, value]) => {
+        if (typeof value !== 'undefined') {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {} as Record<string, any>,
+    ),
   };
 
   logger.info('Config data to store: ${configData}', { configData });
