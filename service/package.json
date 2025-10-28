@@ -12,8 +12,7 @@
     "lint": "eslint . --ext .ts",
     "test": "echo 'No tests for now'",
     "prettier": "prettier --write '**/*.{js,ts}'",
-    "connector:post-deploy": "node build/connector/post-deploy.js",
-    "connector:pre-undeploy": "node build/connector/pre-undeploy.js"
+    "connector:post-deploy": "node build/connector/post-deploy.js"
   },
   "author": "",
   "license": "MIT",

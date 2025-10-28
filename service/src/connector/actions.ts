@@ -52,33 +52,6 @@ export async function createCartUpdateExtension(
     .execute();
 }
 
-export async function deleteCartUpdateExtension(apiRoot: ByProjectKeyRequestBuilder): Promise<void> {
-  const {
-    body: { results: extensions },
-  } = await apiRoot
-    .extensions()
-    .get({
-      queryArgs: {
-        where: `key = "${CART_UPDATE_EXTENSION_KEY}"`,
-      },
-    })
-    .execute();
-
-  if (extensions.length > 0) {
-    const extension = extensions[0];
-
-    await apiRoot
-      .extensions()
-      .withKey({ key: CART_UPDATE_EXTENSION_KEY })
-      .delete({
-        queryArgs: {
-          version: extension.version,
-        },
-      })
-      .execute();
-  }
-}
-
 export async function createCustomCartDiscountType(apiRoot: ByProjectKeyRequestBuilder): Promise<void> {
   const {
     body: { results: types },
