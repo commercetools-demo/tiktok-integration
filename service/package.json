@@ -11,8 +11,7 @@
     "build": "yarn --cwd ../shared install && yarn --cwd ../shared run build && rimraf ./build && tsc",
     "lint": "eslint . --ext .ts",
     "test": "echo 'No tests for now'",
-    "prettier": "prettier --write '**/*.{js,ts}'",
-    "connector:post-deploy": "node build/connector/post-deploy.js"
+    "prettier": "prettier --write '**/*.{js,ts}'"
   },
   "author": "",
   "license": "MIT",
