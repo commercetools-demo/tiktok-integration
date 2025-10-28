@@ -100,6 +100,9 @@ export const commercetoolsProductToTiktokProduct = async (
       product.masterVariant.attributes,
     ),
   };
+  if (!productDraft.categoryId || !productDraft.skus?.length) {
+    throw new Error(`Product draft is invalid for product ${product.id}`);
+  }
   return productDraft;
 };
 
