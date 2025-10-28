@@ -53,25 +53,12 @@ export const uploadProductImage = async (req: Request, res: Response) => {
 };
 
 export const createProduct = async (req: Request, res: Response) => {
-  const { shop_cipher } = req.query;
-
-  if (!shop_cipher) {
-    logger.error('No shop cipher found');
-    return res.status(400).send('No shop cipher found');
-  }
-
   if (!req.body) {
     logger.error('No product data provided');
     return res.status(400).send('No product data provided');
   }
 
-  const access_token = await getAccessToken();
-  if (!access_token) {
-    logger.error('No access token found creating product');
-    return res.status(401).send('No access token found');
-  }
-
-  const product = await TiktokProduct.createProduct(access_token, shop_cipher as string, req.body);
+  const product = await TiktokProduct.createProduct(req.body);
   return res.status(200).send(product);
 };
 

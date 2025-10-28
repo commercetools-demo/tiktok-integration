@@ -3,14 +3,19 @@ deployAs:
     applicationType: service
     endpoint: /service
     scripts:
-      postDeploy: npm install && npm run build && npm run connector:post-deploy
-      preUndeploy: npm install && npm run build && npm run connector:pre-undeploy
+      postDeploy: yarn install && yarn run build && yarn run connector:post-deploy
+    configuration:
+      standardConfiguration:
+        - key: FEATURE_FLAG_ENABLE_TEST_TIKTOK_ROUTES
+          description: Enable test routes
+          required: false
+          default: "false"
   - name: event
     applicationType: event
     endpoint: /event
     scripts:
-      postDeploy: npm install && npm run build && npm run connector:post-deploy
-      preUndeploy: npm install && npm run build && npm run connector:pre-undeploy
+      postDeploy: yarn install && yarn run build && yarn run connector:post-deploy
+      preUndeploy: yarn install && yarn run build && yarn run connector:pre-undeploy
   - name: refresh-token-job
     applicationType: job
     endpoint: /refresh-token-job
