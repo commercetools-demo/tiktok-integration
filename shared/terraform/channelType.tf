@@ -1,3 +1,14 @@
+resource "commercetools_channel" "tiktok-channel" {
+  key   = "tiktok-channel"
+  roles = ["ProductDistribution","InventorySupply"]
+  name = {
+    "en-US" = "TikTok Channel"
+  }
+  description = {
+    "en-US" = "TikTok Channel"
+  }
+}
+
 resource "commercetools_type" "tiktok-channel-type" {
   description = {
     "en-US" = "Channel type for commercetools to TikTok warehouse and price."
