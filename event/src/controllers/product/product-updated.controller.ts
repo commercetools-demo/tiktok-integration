@@ -61,9 +61,7 @@ export const productUpdated = async (
     case 'ProductPriceChanged':
       return productPriceChanged(apiRoot, shopConfiguration, message, product);
     case 'ProductPriceAdded':
-      return await productPriceAdded(apiRoot, message, product);
-    case 'ProductPriceRemoved':
-      return await productPriceRemoved(apiRoot, message, product);
+      return await productPriceAdded(apiRoot, shopConfiguration, message, product);
     case 'ProductPublished':
       return await productPublished(apiRoot, message, product);
     case 'ProductUnpublished':
