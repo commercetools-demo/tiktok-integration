@@ -65,6 +65,15 @@ Triggers a full product synchronization between commercetools and TikTok.
 - 200: Sync completed successfully
 - 500: Sync failed with error message
 
+#### GET /full-product-check
+Checks all products to determine which can be imported to TikTok and which cannot.
+
+**Response:**
+- 200: Returns an object with two arrays:
+  - `importableProducts`: Array of product IDs that can be imported
+  - `unimportableProducts`: Array of objects containing product IDs and error messages
+- 500: Check failed with error message
+
 #### GET /shop-config-sync
 Synchronizes shop configuration data between TikTok and commercetools.
 

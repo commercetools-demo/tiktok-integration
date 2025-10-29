@@ -106,6 +106,69 @@ export const commercetoolsProductToTiktokProduct = async (
   return productDraft;
 };
 
+/**
+ * This function is used to check if a product is ready to be imported into TikTok.
+ * No image upload is performed, only the product data is checked.
+ */
+export const commercetoolsProductToTiktokProductCheck = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+  app_key: string,
+  product: ProductProjection,
+): Promise<Product202309CreateProductRequestBody> => {
+  const locale = await Services.getCommercetoolsLocale(apiRoot, app_key);
+  const shopConfig =
+    await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
+      apiRoot,
+      app_key,
+    );
+  if (!shopConfig) {
+    throw new Error('Shop configuration not found');
+  }
+
+  const allVariants = [
+    product.masterVariant,
+    ...product.variants,
+  ];
+
+  const productDraft: Product202309CreateProductRequestBody = {
+    saveMode: commercetoolsProductStateToSaveMode(product),
+    title: product.name?.[locale],
+    description: product.description?.[locale],
+    categoryVersion: 'v2',
+    categoryId: commercetoolsProductTypeToTiktokCategory(
+      product.productType.id,
+    ),
+    skus: allVariants
+      .map((variant) =>
+        commercetoolsVariantToTiktokSKU(
+          product.productType.id,
+          variant,
+          shopConfig,
+          locale,
+        ),
+      )
+      .filter((sku) => sku !== undefined),
+    productAttributes: commercetoolsProductTypeToTiktokProductAttributeList(
+      product.productType.id,
+      product.masterVariant.attributes,
+      locale,
+    ),
+    packageWeight: commercetoolsProductTypeToTiktokProductPackageWeight(
+      product.masterVariant.attributes,
+    ),
+    packageDimensions: commercetoolsProductTypeToTiktokProductPackageDimensions(
+      product.masterVariant.attributes,
+    ),
+  };
+  if (!productDraft.categoryId) {
+    throw new Error(`Product draft is invalid for product ${product.id}. Category ID is required.`);
+  }
+  if (!productDraft.skus?.length) {
+    throw new Error(`Product draft is invalid for product ${product.id}. SKUs are required.`);
+  }
+  return productDraft;
+};
+
 const commercetoolsProductStateToSaveMode = (product: ProductProjection): string => {
   if (product.published === false) {
     return 'AS_DRAFT';

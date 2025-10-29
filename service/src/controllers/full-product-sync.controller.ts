@@ -38,5 +38,35 @@ export const fullProductSync = async (req: Request, res: Response) => {
     }
     logger.info(`Full-Sync: Successfully created product ${product.id}`);
   }
+};
 
+export const fullProductCheck = async (req: Request, res: Response) => {
+  const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
+
+  const shopConfig =
+    await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
+      apiRoot,
+      process.env.TIKTOK_APP_KEY as string,
+    );
+
+  const products = await ProductController.getAllProducts(apiRoot, shopConfig);
+
+  const importableProducts = [];
+  const unimportableProducts = [];
+
+  for await (const product of products.results) {
+    try {
+      await Mappers.Product.commercetoolsProductToTiktokProductCheck(
+        apiRoot,
+        process.env.TIKTOK_APP_KEY as string,
+        product,
+      );
+      importableProducts.push(product.id);
+    } catch (error: any) {
+      unimportableProducts.push({ id: product.id, error: error.message });
+      continue;
+    }
+  }
+
+  res.status(200).send({ importableProducts, unimportableProducts });
 };
