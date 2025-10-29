@@ -44,6 +44,13 @@ export const productUpdated = async (
       process.env.TIKTOK_APP_KEY as string
     );
 
+  if (!shopConfiguration || !shopConfiguration.shopCipher) {
+    logger.error(
+      `Shop configuration not found for product ${productId}. Skipping product update.`
+    );
+    return productId;
+  }
+
   const product = await ProductController.getProduct(
     apiRoot,
     productId,
@@ -52,7 +59,7 @@ export const productUpdated = async (
 
   switch (message.type) {
     case 'ProductPriceChanged':
-      return productPriceChanged(apiRoot, message, product);
+      return productPriceChanged(apiRoot, shopConfiguration, message, product);
     case 'ProductPriceAdded':
       return await productPriceAdded(apiRoot, message, product);
     case 'ProductPriceRemoved':
@@ -63,11 +70,11 @@ export const productUpdated = async (
       return await productUnpublished(apiRoot, message, product);
     case 'ProductSlugChanged':
       return await productSlugChanged(apiRoot, message, product);
-      // TODO: ProductImageAdded
-      // TODO: ProductTailoringCreated, ProductTailoringPublished,
-      // TODO: ProductTailoringNameSet, ProductTailoringDescriptionSet
-      // TODO: ProductVariantTailoringAdded, ProductTailoringImageAdded
-      // TODO: InventoryEntryQuantitySet
+    // TODO: ProductImageAdded
+    // TODO: ProductTailoringCreated, ProductTailoringPublished,
+    // TODO: ProductTailoringNameSet, ProductTailoringDescriptionSet
+    // TODO: ProductVariantTailoringAdded, ProductTailoringImageAdded
+    // TODO: InventoryEntryQuantitySet
     default:
       return productId;
   }

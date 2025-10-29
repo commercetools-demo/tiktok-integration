@@ -1,6 +1,7 @@
 import {
   Attribute,
   ByProjectKeyRequestBuilder,
+  Price,
   ProductProjection,
   ProductVariant,
 } from '@commercetools/platform-sdk';
@@ -15,6 +16,8 @@ import {
   Product202309CreateProductRequestBodySkusListPrice,
   Product202309CreateProductRequestBodySkusPrice,
   Product202309CreateProductRequestBodySkusSalesAttributes,
+  Product202309EditProductRequestBody,
+  Product202309GetProductResponseData,
 } from '../../../tiktok-sdk';
 import { CommercetoolsStorage, Services, TiktokProduct } from '../../..';
 import { PRODUCT_TYPE_TO_TIKTOK_CATEGORY } from './product-type-to-category';
@@ -56,10 +59,7 @@ export const commercetoolsProductToTiktokProduct = async (
     throw new Error('Shop configuration not found');
   }
 
-  const allVariants = [
-    product.masterVariant,
-    ...product.variants,
-  ];
+  const allVariants = [product.masterVariant, ...product.variants];
   const mainImages = await commercetoolsProductToTiktokMainImages(
     apiRoot,
     app_key,
@@ -125,10 +125,7 @@ export const commercetoolsProductToTiktokProductCheck = async (
     throw new Error('Shop configuration not found');
   }
 
-  const allVariants = [
-    product.masterVariant,
-    ...product.variants,
-  ];
+  const allVariants = [product.masterVariant, ...product.variants];
 
   const productDraft: Product202309CreateProductRequestBody = {
     saveMode: commercetoolsProductStateToSaveMode(product),
@@ -161,15 +158,21 @@ export const commercetoolsProductToTiktokProductCheck = async (
     ),
   };
   if (!productDraft.categoryId) {
-    throw new Error(`Product draft is invalid for product ${product.id}. Category ID is required.`);
+    throw new Error(
+      `Product draft is invalid for product ${product.id}. Category ID is required.`,
+    );
   }
   if (!productDraft.skus?.length) {
-    throw new Error(`Product draft is invalid for product ${product.id}. SKUs are required.`);
+    throw new Error(
+      `Product draft is invalid for product ${product.id}. SKUs are required.`,
+    );
   }
   return productDraft;
 };
 
-const commercetoolsProductStateToSaveMode = (product: ProductProjection): string => {
+const commercetoolsProductStateToSaveMode = (
+  product: ProductProjection,
+): string => {
   if (product.published === false) {
     return 'AS_DRAFT';
   }
@@ -269,7 +272,32 @@ const commercetoolsProductToTiktokMainImages = async (
     }));
 };
 
-const commercetoolsVariantToPrice = (
+export const commercetoolsPriceToTiktokPrice = (
+  price: Price,
+): Product202309CreateProductRequestBodySkusPrice | undefined => {
+  if (!price) {
+    return undefined;
+  }
+  let discounted = price.discounted?.value;
+  return {
+    amount: priceCentAmountToAmount(
+      price.value.centAmount,
+      price.value.fractionDigits,
+    ),
+    currency: price.value.currencyCode,
+    salePrice: discounted
+      ? priceCentAmountToAmount(
+          discounted.centAmount,
+          discounted.fractionDigits,
+        )
+      : priceCentAmountToAmount(
+          price.value.centAmount,
+          price.value.fractionDigits,
+        ),
+  };
+};
+
+export const commercetoolsVariantToPrice = (
   variant: ProductVariant,
   shopConfig: ShopConfigurationData,
 ): Product202309CreateProductRequestBodySkusPrice | undefined => {
@@ -283,23 +311,7 @@ const commercetoolsVariantToPrice = (
       price.channel?.id === shopConfig.ctDistributionChannelId,
   );
   if (price) {
-    let discounted = price.discounted?.value;
-    return {
-      amount: priceCentAmountToAmount(
-        price.value.centAmount,
-        price.value.fractionDigits,
-      ),
-      currency: price.value.currencyCode,
-      salePrice: discounted
-        ? priceCentAmountToAmount(
-            discounted.centAmount,
-            discounted.fractionDigits,
-          )
-        : priceCentAmountToAmount(
-            price.value.centAmount,
-            price.value.fractionDigits,
-          ),
-    };
+    return commercetoolsPriceToTiktokPrice(price);
   } else if (USE_NO_CHANNEL_FOR_MAIN_PRICE) {
     price = variant.prices?.find(
       (price) =>
@@ -308,29 +320,13 @@ const commercetoolsVariantToPrice = (
     );
 
     if (price) {
-      let discounted = price.discounted?.value;
-      return {
-        amount: priceCentAmountToAmount(
-          price.value.centAmount,
-          price.value.fractionDigits,
-        ),
-        currency: price.value.currencyCode,
-        salePrice: discounted
-          ? priceCentAmountToAmount(
-              discounted.centAmount,
-              discounted.fractionDigits,
-            )
-          : priceCentAmountToAmount(
-              price.value.centAmount,
-              price.value.fractionDigits,
-            ),
-      };
+      return commercetoolsPriceToTiktokPrice(price);
     }
   }
   return undefined;
 };
 
-const commercetoolsVariantToListPrice = (
+export const commercetoolsVariantToListPrice = (
   variant: ProductVariant,
   shopRegion?: string,
 ): Product202309CreateProductRequestBodySkusListPrice | undefined => {
@@ -490,4 +486,27 @@ const priceCentAmountToAmount = (
     return '0';
   }
   return (price / Math.pow(10, fractionDigits)).toFixed(fractionDigits);
+};
+
+export const tiktokProductToTiktokProductEdit = (
+  product: Product202309GetProductResponseData,
+): Product202309EditProductRequestBody => {
+  const categoryId = product.categoryChains?.find( cat => cat.isLeaf)?.id;
+
+  const editProductData: Product202309EditProductRequestBody = {
+    title: product.title,
+    description: product.description,
+    categoryId: categoryId,
+    categoryVersion: 'v2',
+    mainImages: product.mainImages?.map((image) => ({
+      uri: image.uri,
+    })),
+    packageWeight: product.packageWeight,
+    skus: product.skus?.map((sku) => ({
+      id: sku.id,
+      price: sku.price,
+      listPrice: sku.listPrice,
+    })),
+  };
+  return editProductData;
 };

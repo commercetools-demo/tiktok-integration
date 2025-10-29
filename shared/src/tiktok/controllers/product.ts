@@ -3,42 +3,72 @@ import {
   Product202309CreateProductRequestBody,
   Product202309EditProductRequestBody,
   Product202309ActivateProductRequestBody,
+  Product202309SearchProductsResponseData,
+  Product202309UpdatePriceRequestBody,
+  Product202309SearchProductsResponseDataProducts,
+  Product202309GetProductResponseData,
 } from '../../tiktok-sdk';
 import { RequestFile } from '../../tiktok-sdk/api/apis';
 import { client } from './client';
 import * as https from 'https';
 import * as http from 'http';
-import { Services } from '../..';
+import { Mappers, Services } from '../..';
 
 export const productSearch = async (
-  access_token: string,
-  shop_cipher: string,
   page?: {
     pageSize: number;
     pageToken?: string;
   },
   query?: Product202309SearchProductsRequestBody,
-) => {
+): Promise<Product202309SearchProductsResponseData | undefined> => {
+  const tiktokShop = await Services.getShopCipher();
+  if (!tiktokShop) {
+    throw new Error('No TikTok shop found');
+  }
   const { body } = await client.api.ProductV202309Api.ProductsSearchPost(
     page?.pageSize ?? 10,
-    access_token,
+    tiktokShop.access_token,
     'application/json',
     page?.pageToken ?? undefined,
     undefined,
-    shop_cipher,
+    tiktokShop.shopCipher,
     query ?? undefined,
   );
-  return body;
+  return body.data;
 };
 
-export const checkListingPrerequisites = async (
-  access_token: string,
-  shop_cipher: string,
-) => {
-  const { body } = await client.api.ProductV202309Api.PrerequisitesGet(
-    access_token,
+export const getProduct = async (
+  product_id: string,
+  options?: {
+    locale?: string;
+    draft?: boolean;
+  },
+): Promise<Product202309GetProductResponseData | undefined> => {
+  const tiktokShop = await Services.getShopCipher();
+  if (!tiktokShop) {
+    throw new Error('No TikTok shop found');
+  }
+  const { body } = await client.api.ProductV202309Api.ProductsProductIdGet(
+    product_id,
+    tiktokShop.access_token,
     'application/json',
-    shop_cipher,
+    false,
+    !!options?.draft,
+    options?.locale,
+    tiktokShop.shopCipher,
+  );
+  return body.data;
+};
+
+export const checkListingPrerequisites = async () => {
+  const tiktokShop = await Services.getShopCipher();
+  if (!tiktokShop) {
+    throw new Error('No TikTok shop found');
+  }
+  const { body } = await client.api.ProductV202309Api.PrerequisitesGet(
+    tiktokShop.access_token,
+    'application/json',
+    tiktokShop.shopCipher,
   );
   if (!body.data || !body.data.shop) {
     throw new Error('No data found in CheckListingPrerequisitesResponse');
@@ -170,37 +200,75 @@ export const createProduct = async (
 };
 
 export const updateProduct = async (
-  access_token: string,
   product_id: string,
-  shop_cipher: string,
   productData: Product202309EditProductRequestBody,
 ) => {
-  const { body } = await client.api.ProductV202309Api.ProductsProductIdPut(
+  const tiktokShop = await Services.getShopCipher();
+  if (!tiktokShop) {
+    throw new Error('No TikTok shop found');
+  }
+  const { body } = await client.api.ProductV202509Api.ProductsProductIdPut(
     product_id,
-    shop_cipher,
-    access_token,
+    tiktokShop.access_token,
     'application/json',
+    tiktokShop.shopCipher,
     productData,
   );
   return body;
 };
 
 export const activateProduct = async (
-  access_token: string,
   product_id: string,
-  shop_cipher: string,
   listing_platforms?: string[],
 ) => {
+  const tiktokShop = await Services.getShopCipher();
+  if (!tiktokShop) {
+    throw new Error('No TikTok shop found');
+  }
   const requestBody: Product202309ActivateProductRequestBody = {
     productIds: [product_id],
     listingPlatforms: listing_platforms,
   };
 
   const { body } = await client.api.ProductV202309Api.ProductsActivatePost(
-    access_token,
+    tiktokShop.access_token,
     'application/json',
-    shop_cipher,
+    tiktokShop.shopCipher,
     requestBody,
   );
   return body;
+};
+
+export const updatePriceInDraftMode = async (
+  product?: Product202309GetProductResponseData,
+  priceData?: Product202309UpdatePriceRequestBody,
+) => {
+  if (!product || !product.id) {
+    throw new Error('Product with ID is required');
+  }
+  if (!priceData || !priceData.skus) {
+    throw new Error('Price data with SKUs is required');
+  }
+
+  const categoryId = product.categoryChains?.find((cat) => cat.isLeaf)?.id;
+  if (!categoryId) {
+    throw new Error('No leaf category found');
+  }
+
+  const editProductData =
+    Mappers.Product.tiktokProductToTiktokProductEdit(product);
+
+  const result = await updateProduct(product.id, {
+    ...editProductData,
+    saveMode: 'AS_DRAFT',
+    skus: priceData.skus.map((sku) => ({
+      id: sku.id,
+      price: sku.price,
+      listPrice: sku.listPrice,
+    })),
+  });
+  if (!result) {
+    throw new Error('Failed to update product');
+  }
+  return result;
 };

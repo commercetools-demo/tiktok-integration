@@ -56,24 +56,14 @@ export const getProduct = async (
       .inStoreKeyWithStoreKeyValue({ storeKey: shopConfiguration.ctStoreKey })
       .productProjections()
       .withId({ ID: productId })
-      .get({
-        queryArgs: {
-          priceCountry: shopConfiguration.shop_region,
-          priceChannel: shopConfiguration.ctDistributionChannelId,
-        },
-      })
+      .get()
       .execute()
       .then((response) => response.body);
   }
   return apiRoot
     .productProjections()
     .withId({ ID: productId })
-    .get({
-      queryArgs: {
-        priceCountry: shopConfiguration.shop_region,
-        priceChannel: shopConfiguration.ctDistributionChannelId,
-      },
-    })
+    .get()
     .execute()
     .then((response) => response.body);
 };

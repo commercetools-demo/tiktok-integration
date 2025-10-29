@@ -41,7 +41,6 @@ export const post = async (request: Request, response: Response) => {
       const jsonData = JSON.parse(decodedData);
       //CoCo sending message to indicate the resource was created, does not need processing
       console.log('Event message received');
-      console.log(JSON.stringify(jsonData, null, 2));
       switch (jsonData.notificationType) {
         case 'ResourceCreated':
           await resourceCreation(jsonData);
@@ -55,8 +54,11 @@ export const post = async (request: Request, response: Response) => {
       }
     }
   } catch (error) {
-    logger.error('Error processing event', error);
-    throw error;
+    if (error instanceof CustomError && error.retryable) {
+      response.status(500).send();
+    } else {
+      response.status(202).send();
+    }
   }
 
   // Return the response for the client
