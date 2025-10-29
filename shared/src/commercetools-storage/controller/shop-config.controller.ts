@@ -88,15 +88,13 @@ export const getLocaleAndShopRegion = async (
 export const getShopCipher = async (
   apiRoot: ByProjectKeyRequestBuilder,
   app_key: string,
-): Promise<{ shopCipher?: string } | null> => {
+): Promise<string | undefined> => {
   const configData = await getShopConfiguration(apiRoot, app_key);
   if (!configData) {
-    return null;
+    return undefined;
   }
+ return configData?.shopCipher;
 
-  return {
-    shopCipher: configData?.shopCipher,
-  };
 };
 
 /**

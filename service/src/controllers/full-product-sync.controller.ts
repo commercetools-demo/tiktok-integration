@@ -9,7 +9,7 @@ import {
 } from 'tiktok-integration-shared';
 import { logger } from '../utils/logger.utils';
 
-export const fullSync = async (req: Request, res: Response) => {
+export const fullProductSync = async (req: Request, res: Response) => {
   const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
 
   const shopConfig =

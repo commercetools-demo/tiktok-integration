@@ -7,14 +7,7 @@ import {
 } from 'tiktok-integration-shared';
 import CustomError from '../errors/custom.error';
 
-/**
- * Exposed job endpoint.
- *
- * @param {Request} _request The express request
- * @param {Response} response The express response
- * @returns
- */
-export const post = async (_request: Request, response: Response) => {
+export const shopConfigSync = async (req: Request, res: Response) => {
   try {
     const apiRoot = CommercetoolsClient.createApiRoot(
       Utils.readConfiguration(),
@@ -34,7 +27,7 @@ export const post = async (_request: Request, response: Response) => {
       process.env.TIKTOK_SHOP_ID as string,
     );
 
-    response.status(200).send();
+    res.status(200).send();
   } catch (error) {
     throw new CustomError(
       500,

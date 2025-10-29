@@ -19,11 +19,6 @@ deployAs:
     endpoint: /refresh-token-job
     properties:
       schedule: "0 */12 * * *"
-  - name: shop-data-job
-    applicationType: job
-    endpoint: /shop-data-job
-    properties:
-      schedule: "*/30 * * * *"
 inheritAs:
   configuration:
     standardConfiguration:
