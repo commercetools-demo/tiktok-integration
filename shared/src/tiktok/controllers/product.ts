@@ -1,6 +1,8 @@
+import { ByProjectKeyRequestBuilder, ProductProjection } from '@commercetools/platform-sdk';
 import * as http from 'http';
 import * as https from 'https';
-import { Services } from '../..';
+import { Mappers, Services, TiktokProduct } from '../..';
+import { ShopConfigurationData } from '../../interfaces';
 import {
   Product202309ActivateProductRequestBody,
   Product202309CreateProductRequestBody,
@@ -8,10 +10,8 @@ import {
   Product202309DeleteProductsRequestBody,
   Product202309EditProductRequestBody,
   Product202309GetProductResponseData,
-  Product202309UpdatePriceRequestBody,
   Product202502SearchProductsRequestBody,
-  Product202502SearchProductsResponseData,
-  Product202509PartialEditProductRequestBody
+  Product202502SearchProductsResponseData
 } from '../../tiktok-sdk';
 import { RequestFile } from '../../tiktok-sdk/api/apis';
 import { logger } from '../../utils/logger';
@@ -222,7 +222,6 @@ export const updateProduct = async (
   return body;
 };
 
-
 export const activateProduct = async (
   product_id: string,
   listing_platforms?: string[],
@@ -245,9 +244,7 @@ export const activateProduct = async (
   return body;
 };
 
-export const deactivateProduct = async (
-  product_id: string,
-) => {
+export const deactivateProduct = async (product_id: string) => {
   const tiktokShop = await Services.getShopCipher();
   if (!tiktokShop) {
     throw new Error('No TikTok shop found');
@@ -269,9 +266,7 @@ export const deactivateProduct = async (
   return body;
 };
 
-export const deactivateProducts = async (
-  product_ids: string[],
-) => {
+export const deactivateProducts = async (product_ids: string[]) => {
   if (!product_ids || product_ids.length === 0) {
     throw new Error('At least one product ID is required');
   }
@@ -349,4 +344,46 @@ export const publishProduct = async (
     throw new Error('Failed to update product');
   }
   return result;
+};
+
+export const mergeAndUpdateProductsFromCommercetoolsProduct = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+  shopConfiguration: ShopConfigurationData,
+  app_key: string,
+  tiktokProducts: Product202502SearchProductsResponseData,
+  commercetoolsProduct: ProductProjection,
+) => {
+  const tiktokProductIds = [];
+  tiktokProductIds.push(
+    ...tiktokProducts.products!.map((tiktokProduct) => tiktokProduct.id!),
+  );
+  logger.info(
+    `Found ${tiktokProductIds} tiktok products for product ${commercetoolsProduct.id}`,
+  );
+  const tiktokProductsData = await Promise.all(
+    tiktokProductIds.map(
+      async (id) =>
+        await TiktokProduct.getProduct(id, {
+          draft: false,
+          locale: shopConfiguration.locale,
+        }),
+    ),
+  );
+  if (!tiktokProductsData || !tiktokProductsData.length) {
+    throw new Error(`No tiktok product found for product ${commercetoolsProduct.id}`);
+  }
+  await Promise.all(
+    tiktokProductsData
+      .filter((tiktokProductData) => typeof tiktokProductData !== 'undefined')
+      .map(async (tiktokProductData) => {
+        const merged =
+          await Mappers.Product.mergeTiktokProductAndCommercetoolsProductToTiktokProductEdit(
+            apiRoot,
+            app_key,
+            tiktokProductData,
+            commercetoolsProduct,
+          );
+        return TiktokProduct.publishProduct(tiktokProductData.id, merged);
+      }),
+  );
 };

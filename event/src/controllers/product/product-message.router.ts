@@ -52,7 +52,6 @@ export const productMessageHandler = async (
       return productUnpublished(apiRoot, shopConfiguration, message, productId);
     case 'ProductDeleted':
       return productDeleted(apiRoot, shopConfiguration, message, productId);
-      // deleted, variant deleted
     // TODO: ProductTailoringCreated, ProductTailoringPublished,
     // TODO: ProductTailoringNameSet, ProductTailoringDescriptionSet
     // TODO: ProductVariantTailoringAdded, ProductTailoringImageAdded

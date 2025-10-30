@@ -1,25 +1,20 @@
 import {
-  ProductPublishedMessage,
-  ProductUnpublishedMessage,
-  ProductSlugChangedMessage,
   ByProjectKeyRequestBuilder,
-  ProductProjection,
   ProductDeletedMessage,
+  ProductPublishedMessage,
+  ProductUnpublishedMessage
 } from '@commercetools/platform-sdk';
+import type { Types } from 'tiktok-integration-shared';
 import {
-  CommercetoolsClient,
-  CommercetoolsStorage,
   Mappers,
   ProductController,
-  TiktokProduct,
-  Utils,
+  TiktokProduct
 } from 'tiktok-integration-shared';
 import { logger } from '../../utils/logger.utils';
-import { ShopConfigurationData } from 'tiktok-integration-shared/build/interfaces';
 
 export const productPublished = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  shopConfiguration: ShopConfigurationData,
+  shopConfiguration: Types.ShopConfigurationData,
   message: ProductPublishedMessage,
   productId: string
 ): Promise<string> => {
@@ -33,7 +28,6 @@ export const productPublished = async (
     if (!variantSKUs || !variantSKUs.length) {
       throw new Error(`No variants found for product ${productId}`);
     }
-    const tiktokProductIds = [];
     const tiktokProducts = await TiktokProduct.productSearch(
       { pageSize: variantSKUs.length },
       {
@@ -59,38 +53,8 @@ export const productPublished = async (
       }
       return productId;
     } else {
-      tiktokProductIds.push(
-        ...tiktokProducts.products.map((tiktokProduct) => tiktokProduct.id!)
-      );
-      logger.info(`Found ${tiktokProductIds} tiktok products for product ${productId}`);
-      const tiktokProductsData = await Promise.all(
-        tiktokProductIds.map(
-          async (id) =>
-            await TiktokProduct.getProduct(id, {
-              draft: false,
-              locale: shopConfiguration.locale,
-            })
-        )
-      );
-      if (!tiktokProductsData || !tiktokProductsData.length) {
-        throw new Error(`No tiktok product found for product ${productId}`);
-      }
-      await Promise.all(
-        tiktokProductsData
-          .filter(
-            (tiktokProductData) => typeof tiktokProductData !== 'undefined'
-          )
-          .map(async (tiktokProductData) => {
-            const merged =
-              await Mappers.Product.mergeTiktokProductAndCommercetoolsProductToTiktokProductEdit(
-                apiRoot,
-                process.env.TIKTOK_APP_KEY as string,
-                tiktokProductData,
-                product
-              );
-            return TiktokProduct.publishProduct(tiktokProductData.id, merged);
-          })
-      );
+      await TiktokProduct.mergeAndUpdateProductsFromCommercetoolsProduct(apiRoot, shopConfiguration, process.env.TIKTOK_APP_KEY as string, tiktokProducts, product);
+      logger.info(`Merged and updated ${tiktokProducts.products?.length} tiktok products for product ${product.id}`);
       return productId;
     }
   } catch (error: any) {
@@ -101,7 +65,7 @@ export const productPublished = async (
 
 export const productUnpublished = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  shopConfiguration: ShopConfigurationData,
+  shopConfiguration: Types.ShopConfigurationData,
   message: ProductUnpublishedMessage,
   productId: string,
 ): Promise<string> => {
@@ -136,6 +100,7 @@ export const productUnpublished = async (
       logger.info(`Found ${tiktokProductIds} tiktok products for product ${productId}`);
       
       await TiktokProduct.deactivateProducts(tiktokProductIds);
+      logger.info(`Deactivated ${tiktokProductIds} tiktok products for product ${productId}`);
       return productId;
     }
   } catch (error) {
@@ -146,7 +111,7 @@ export const productUnpublished = async (
 
 export const productDeleted = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  shopConfiguration: ShopConfigurationData,
+  shopConfiguration: Types.ShopConfigurationData,
   message: ProductDeletedMessage,
   productId: string,
 ): Promise<string> => {
@@ -181,6 +146,7 @@ export const productDeleted = async (
       logger.info(`Found ${tiktokProductIds} tiktok products for product ${productId}`);
       
       await TiktokProduct.deleteProducts(tiktokProductIds);
+      logger.info(`Deleted ${tiktokProductIds} tiktok products for product ${productId}`);
       return productId;
     }
   } catch (error) {

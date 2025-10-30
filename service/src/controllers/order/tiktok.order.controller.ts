@@ -8,13 +8,11 @@ import {
   Utils,
 } from 'tiktok-integration-shared';
 import { logger } from '../../utils/logger.utils';
-import {
-  Order202406AddExternalOrderReferencesRequestBodyOrders,
-  Order202507GetOrderDetailResponse,
-  Order202507GetOrderDetailResponseDataOrders,
-} from 'tiktok-integration-shared/build/tiktok-sdk';
+import type {
+  TiktokSDK
+} from 'tiktok-integration-shared';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk';
-import { ShopConfigurationData } from 'tiktok-integration-shared/build/interfaces';
+import type { Types } from 'tiktok-integration-shared';
 
 export const orderStatusChange = async (webhookBody: any) => {
   const orderId = webhookBody.data.order_id;
@@ -100,12 +98,12 @@ export const reverseStatusUpdate = async (webhookBody: any) => {
 
 const handleUnpaidOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Order202507GetOrderDetailResponseDataOrders[],
+  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
   accessToken: string,
-  config: ShopConfigurationData,
+  config: Types.ShopConfigurationData,
   commercetoolsLocale: string,
 ) => {
-  const externalOrderReferences: Order202406AddExternalOrderReferencesRequestBodyOrders[] =
+  const externalOrderReferences: TiktokSDK.Order202406AddExternalOrderReferencesRequestBodyOrders[] =
     [];
   for await (const order of orders) {
     const orderDraft =
@@ -138,9 +136,9 @@ const handleUnpaidOrder = async (
 
 const handleOnHoldOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Order202507GetOrderDetailResponseDataOrders[],
+  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
   accessToken: string,
-  config: ShopConfigurationData,
+  config: Types.ShopConfigurationData,
   commercetoolsLocale: string,
 ) => {
   for await (const order of orders) {
@@ -179,7 +177,7 @@ const handleOnHoldOrder = async (
 
 const handleAwaitingShipmentOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Order202507GetOrderDetailResponseDataOrders[],
+  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
 ) => {
   for await (const order of orders) {
     logger.info(`AWAITING_SHIPMENT order ${orders.length} received`);
@@ -199,7 +197,7 @@ const handleAwaitingShipmentOrder = async (
 
 const handleAwaitingCollectionOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Order202507GetOrderDetailResponseDataOrders[],
+  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
 ) => {
   for await (const order of orders) {
     logger.info(`AWAITING_COLLECTION order ${orders.length} received`);
@@ -219,7 +217,7 @@ const handleAwaitingCollectionOrder = async (
 
 const handleInTransitOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Order202507GetOrderDetailResponseDataOrders[],
+  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
 ) => {
   for await (const order of orders) {
     logger.info(`IN_TRANSIT order ${orders.length} received`);
@@ -239,7 +237,7 @@ const handleInTransitOrder = async (
 
 const handleDeliveredOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Order202507GetOrderDetailResponseDataOrders[],
+  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
 ) => {
   for await (const order of orders) {
     logger.info(`DELIVERED order ${orders.length} received`);
@@ -259,7 +257,7 @@ const handleDeliveredOrder = async (
 
 const handleCompletedOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Order202507GetOrderDetailResponseDataOrders[],
+  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
 ) => {
   for await (const order of orders) {
     logger.info(`COMPLETED order ${orders.length} received`);
@@ -279,7 +277,7 @@ const handleCompletedOrder = async (
 
 const handleCancelledOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Order202507GetOrderDetailResponseDataOrders[],
+  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
 ) => {
   for await (const order of orders) {
     logger.info(`CANCELLED order ${orders.length} received`);

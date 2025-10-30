@@ -2,12 +2,12 @@ import {
   ByProjectKeyRequestBuilder,
   ProductCreatedMessage
 } from '@commercetools/platform-sdk';
-import { ShopConfigurationData } from 'tiktok-integration-shared/build/interfaces';
+import type { Types } from 'tiktok-integration-shared';
 import { logger } from '../../utils/logger.utils';
 
 export const productCreated = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  shopConfig: ShopConfigurationData,
+  shopConfig: Types.ShopConfigurationData,
   message: ProductCreatedMessage,
   productId: string
 ): Promise<string> => {

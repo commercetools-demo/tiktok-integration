@@ -35,6 +35,8 @@ export const post = async (request: Request, response: Response) => {
     ? Buffer.from(pubSubMessage.data, 'base64').toString().trim()
     : undefined;
 
+  // console.log('decodedData', decodedData);
+
   try {
     if (decodedData) {
       const jsonData = JSON.parse(decodedData);

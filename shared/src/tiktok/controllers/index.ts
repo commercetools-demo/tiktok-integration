@@ -1,6 +1,7 @@
 export * as TiktokAuth from './auth';
 export * as TiktokShop from './shop';
 export * as TiktokProduct from './product';
+export * as TiktokInventory from './inventory';
 export * as TiktokWarehouse from './warehouse';
 export * as TiktokCategory from './category';
 export * as TiktokBrand from './brand';

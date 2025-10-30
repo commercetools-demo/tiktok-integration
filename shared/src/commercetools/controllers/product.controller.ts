@@ -4,9 +4,9 @@ import {
   ProductProjection,
   ProductProjectionPagedQueryResponse,
 } from '@commercetools/platform-sdk';
-import { ShopConfigurationData } from '../../interfaces';
+import { ProductQuery, ShopConfigurationData } from '../../interfaces';
 import { fetchAllEntitiesRecusively } from '../../utils/fetch-all';
-
+import { logger } from '../../utils/logger';
 
 const getProducts = async (
   apiRoot: ByProjectKeyRequestBuilder,
@@ -15,18 +15,19 @@ const getProducts = async (
   offset: number = 0,
 ): Promise<ProductProjectionPagedQueryResponse> => {
   return apiRoot
-  .productProjections()
-  .get({
-    queryArgs: {
-      ...(shopConfiguration.ctStoreKey && {storeProjection: shopConfiguration.ctStoreKey}),
-      limit: limit,
-      offset: offset,
-    },
-  })
-  .execute()
-  .then((response) => response.body);
+    .productProjections()
+    .get({
+      queryArgs: {
+        ...(shopConfiguration.ctStoreKey && {
+          storeProjection: shopConfiguration.ctStoreKey,
+        }),
+        limit: limit,
+        offset: offset,
+      },
+    })
+    .execute()
+    .then((response) => response.body);
 };
-
 
 export const getAllProducts = async (
   apiRoot: ByProjectKeyRequestBuilder,
@@ -35,8 +36,12 @@ export const getAllProducts = async (
   if (!shopConfiguration) {
     throw new Error('Shop configuration is required to fetch all products');
   }
-  
-  return fetchAllEntitiesRecusively<ProductProjection>(apiRoot, shopConfiguration, getProducts);
+
+  return fetchAllEntitiesRecusively<ProductProjection>(
+    apiRoot,
+    shopConfiguration,
+    getProducts,
+  );
 };
 
 export const getUnpublishedProduct = async (
@@ -91,5 +96,37 @@ export const getProduct = async (
     .then((response) => response.body)
     .catch(() => {
       return null;
+    });
+};
+
+export const queryProduct = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+  query: ProductQuery,
+): Promise<ProductProjection[] | null> => {
+  const where = [];
+  if (query.skus) {
+    where.push(
+      `masterVariant(sku in (${query.skus.map((sku) => `"${sku}"`).join(',')})) OR variants(sku in (${query.skus.map((sku) => `"${sku}"`).join(',')}))`,
+    );
+  }
+  if (where.length === 0) {
+    return [];
+  }
+
+  logger.info(`Querying product with where: ${where.join(' AND ')}`);
+  return apiRoot
+    .productProjections()
+    .get({
+      queryArgs: {
+        where: where.join(' AND '),
+        ...(query.limit && { limit: query.limit }),
+        ...(query.offset && { offset: query.offset }),
+      },
+    })
+    .execute()
+    .then((response) => response.body?.results)
+    .catch((e) => {
+      logger.error(`Error querying product`, e);
+      return [];
     });
 };
