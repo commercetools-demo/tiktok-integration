@@ -5,7 +5,7 @@ import { ShopConfigurationData } from '../../../interfaces';
 export const mapCommercetoolsInventoryToTiktokInventory = (
   shopConfig: ShopConfigurationData,
   tiktokProduct?: Product202502SearchProductsResponseDataProducts | null,
-  inventoryEntry?: InventoryEntry,
+  inventoryEntry?: Pick<InventoryEntry, 'sku' | 'availableQuantity'>,
 ): Product202309UpdateInventoryRequestBody | undefined => {
   if (!tiktokProduct || !inventoryEntry) {
     return undefined
