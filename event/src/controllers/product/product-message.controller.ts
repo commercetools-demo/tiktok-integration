@@ -1,5 +1,6 @@
 import {
   ProductCreatedMessage,
+  ProductDeletedMessage,
   ProductPublishedMessage,
   ProductUnpublishedMessage
 } from '@commercetools/platform-sdk';
@@ -12,6 +13,7 @@ import {
 import { logger } from '../../utils/logger.utils';
 import { productCreated } from './product-created.controller';
 import {
+  productDeleted,
   productPublished,
   productUnpublished
 } from './product-state.controller';
@@ -19,7 +21,8 @@ import {
 export type ProductMessageType =
   | ProductPublishedMessage
   | ProductUnpublishedMessage
-  | ProductCreatedMessage;
+  | ProductCreatedMessage
+  | ProductDeletedMessage;
 
 export const productMessageHandler = async (
   message: ProductMessageType,
@@ -40,25 +43,16 @@ export const productMessageHandler = async (
   }
   logger.info(`Getting product ${productId} from commercetools`);
 
-  const product = await ProductController.getProduct(
-    apiRoot,
-    productId,
-    shopConfiguration
-  );
-
-  if (!product) {
-    logger.error(`Product ${productId} not found in commercetools.`);
-    return productId;
-  }
-
   switch (message.type) {
     case 'ProductCreated':
       return productCreated(apiRoot, shopConfiguration, message, productId);
     case 'ProductPublished':
       return productPublished(apiRoot, shopConfiguration, message, productId);
     case 'ProductUnpublished':
-      return productUnpublished(apiRoot, message, product);
-    // TODO: ProductImageAdded
+      return productUnpublished(apiRoot, shopConfiguration, message, productId);
+    case 'ProductDeleted':
+      return productDeleted(apiRoot, shopConfiguration, message, productId);
+      // deleted, variant deleted
     // TODO: ProductTailoringCreated, ProductTailoringPublished,
     // TODO: ProductTailoringNameSet, ProductTailoringDescriptionSet
     // TODO: ProductVariantTailoringAdded, ProductTailoringImageAdded

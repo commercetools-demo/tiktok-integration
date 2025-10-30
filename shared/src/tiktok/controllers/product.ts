@@ -1,38 +1,38 @@
+import * as http from 'http';
+import * as https from 'https';
+import { Services } from '../..';
 import {
-  Product202309SearchProductsRequestBody,
-  Product202309CreateProductRequestBody,
-  Product202309EditProductRequestBody,
   Product202309ActivateProductRequestBody,
-  Product202309SearchProductsResponseData,
-  Product202309UpdatePriceRequestBody,
-  Product202309SearchProductsResponseDataProducts,
+  Product202309CreateProductRequestBody,
+  Product202309DeactivateProductsRequestBody,
+  Product202309DeleteProductsRequestBody,
+  Product202309EditProductRequestBody,
   Product202309GetProductResponseData,
-  Product202509PartialEditProductRequestBody,
+  Product202309UpdatePriceRequestBody,
+  Product202502SearchProductsRequestBody,
+  Product202502SearchProductsResponseData,
+  Product202509PartialEditProductRequestBody
 } from '../../tiktok-sdk';
 import { RequestFile } from '../../tiktok-sdk/api/apis';
-import { client } from './client';
-import * as https from 'https';
-import * as http from 'http';
-import { Mappers, Services } from '../..';
 import { logger } from '../../utils/logger';
+import { client } from './client';
 
 export const productSearch = async (
   page?: {
     pageSize: number;
     pageToken?: string;
   },
-  query?: Product202309SearchProductsRequestBody,
-): Promise<Product202309SearchProductsResponseData | undefined> => {
+  query?: Product202502SearchProductsRequestBody,
+): Promise<Product202502SearchProductsResponseData | undefined> => {
   const tiktokShop = await Services.getShopCipher();
   if (!tiktokShop) {
     throw new Error('No TikTok shop found');
   }
-  const { body } = await client.api.ProductV202309Api.ProductsSearchPost(
+  const { body } = await client.api.ProductV202502Api.ProductsSearchPost(
     page?.pageSize ?? 10,
     tiktokShop.access_token,
     'application/json',
     page?.pageToken ?? undefined,
-    undefined,
     tiktokShop.shopCipher,
     query ?? undefined,
   );
@@ -260,6 +260,92 @@ export const activateProduct = async (
     tiktokShop.shopCipher,
     requestBody,
   );
+  return body;
+};
+
+export const deactivateProduct = async (
+  product_id: string,
+) => {
+  const tiktokShop = await Services.getShopCipher();
+  if (!tiktokShop) {
+    throw new Error('No TikTok shop found');
+  }
+
+  logger.info(`Deactivating product ${product_id} in TikTok`);
+
+  const requestBody: Product202309DeactivateProductsRequestBody = {
+    productIds: [product_id],
+  };
+
+  const { body } = await client.api.ProductV202309Api.ProductsDeactivatePost(
+    tiktokShop.access_token,
+    'application/json',
+    tiktokShop.shopCipher,
+    requestBody,
+  );
+
+  return body;
+};
+
+export const deactivateProducts = async (
+  product_ids: string[],
+) => {
+  if (!product_ids || product_ids.length === 0) {
+    throw new Error('At least one product ID is required');
+  }
+
+  if (product_ids.length > 20) {
+    throw new Error('Maximum 20 product IDs allowed per request');
+  }
+
+  const tiktokShop = await Services.getShopCipher();
+  if (!tiktokShop) {
+    throw new Error('No TikTok shop found');
+  }
+
+  logger.info(`Deactivating ${product_ids.length} products in TikTok`);
+
+  const requestBody: Product202309DeactivateProductsRequestBody = {
+    productIds: product_ids,
+  };
+
+  const { body } = await client.api.ProductV202309Api.ProductsDeactivatePost(
+    tiktokShop.access_token,
+    'application/json',
+    tiktokShop.shopCipher,
+    requestBody,
+  );
+
+  return body;
+};
+
+export const deleteProducts = async (product_ids: string[]) => {
+  if (!product_ids || product_ids.length === 0) {
+    throw new Error('At least one product ID is required');
+  }
+
+  if (product_ids.length > 20) {
+    throw new Error('Maximum 20 product IDs allowed per request');
+  }
+
+  const tiktokShop = await Services.getShopCipher();
+  if (!tiktokShop) {
+    throw new Error('No TikTok shop found');
+  }
+
+  logger.info(`Deleting ${product_ids.length} products in TikTok`);
+
+  const requestBody: Product202309DeleteProductsRequestBody = {
+    productIds: product_ids,
+  };
+
+  const { body } = await client.api.ProductV202309Api.ProductsDelete(
+    tiktokShop.access_token,
+    'application/json',
+    tiktokShop.shopCipher,
+    requestBody,
+  );
+
   return body;
 };
 

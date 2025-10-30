@@ -4,11 +4,13 @@ import {
   ProductSlugChangedMessage,
   ByProjectKeyRequestBuilder,
   ProductProjection,
+  ProductDeletedMessage,
 } from '@commercetools/platform-sdk';
 import {
   CommercetoolsClient,
   CommercetoolsStorage,
   Mappers,
+  ProductController,
   TiktokProduct,
   Utils,
 } from 'tiktok-integration-shared';
@@ -24,7 +26,6 @@ export const productPublished = async (
   try {
     const product = message.productProjection;
     logger.info(`Product ${product.id} published`);
-    const productId = product.id;
 
     const variantSKUs = [product.masterVariant, ...product.variants]
       .map((variant) => variant.sku)
@@ -100,40 +101,90 @@ export const productPublished = async (
 
 export const productUnpublished = async (
   apiRoot: ByProjectKeyRequestBuilder,
+  shopConfiguration: ShopConfigurationData,
   message: ProductUnpublishedMessage,
-  product: ProductProjection
+  productId: string,
 ): Promise<string> => {
-  const productId = product.id;
-  const shopConfig =
-    await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
-      apiRoot,
-      process.env.TIKTOK_APP_KEY as string
+  try {
+    logger.info(`Product ${productId} unpublished`);
+  
+    const product = await ProductController.getUnpublishedProduct(apiRoot, productId);
+    if (!product) {
+      throw new Error(`Product ${productId} not found in commercetools`);
+    }
+    const variantSKUs = [product.masterData.current.masterVariant, ...product.masterData.current.variants]
+      .map((variant) => variant.sku)
+      .filter((sku) => typeof sku !== 'undefined');
+    if (!variantSKUs || !variantSKUs.length) {
+      throw new Error(`No variants found for product ${productId}`);
+    }
+    const tiktokProductIds = [];
+    const tiktokProducts = await TiktokProduct.productSearch(
+      { pageSize: variantSKUs.length },
+      {
+        sellerSkus: variantSKUs,
+      }
     );
 
-  logger.info(`Product ${productId} unpublished`);
-
-  // TODO: 1. fetch product by sku from tiktok
-  // 2. update product status/availability in tiktok (set to inactive)
-  return productId;
+    if (!tiktokProducts || !tiktokProducts.products?.length) {
+        logger.info(`No tiktok products found for product ${productId}. Nothing to do.`);
+        return productId;
+    } else {
+      tiktokProductIds.push(
+        ...tiktokProducts.products.map((tiktokProduct) => tiktokProduct.id!)
+      );
+      logger.info(`Found ${tiktokProductIds} tiktok products for product ${productId}`);
+      
+      await TiktokProduct.deactivateProducts(tiktokProductIds);
+      return productId;
+    }
+  } catch (error) {
+    logger.error(`Error unpublishing product ${productId}`, error);
+    return productId;
+  }
 };
 
-export const productSlugChanged = async (
+export const productDeleted = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  message: ProductSlugChangedMessage,
-  product: ProductProjection
+  shopConfiguration: ShopConfigurationData,
+  message: ProductDeletedMessage,
+  productId: string,
 ): Promise<string> => {
-  const productId = product.id;
-  const shopConfig =
-    await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
-      apiRoot,
-      process.env.TIKTOK_APP_KEY as string
+  try {
+    logger.info(`Product ${productId} unpublished`);
+  
+    const product = message.currentProjection;
+    if (!product) {
+      throw new Error(`Product ${productId} not found in commercetools`);
+    }
+    const variantSKUs = [product.masterVariant, ...product.variants]
+      .map((variant) => variant.sku)
+      .filter((sku) => typeof sku !== 'undefined');
+    if (!variantSKUs || !variantSKUs.length) {
+      throw new Error(`No variants found for product ${productId}`);
+    }
+    const tiktokProductIds = [];
+    const tiktokProducts = await TiktokProduct.productSearch(
+      { pageSize: variantSKUs.length },
+      {
+        sellerSkus: variantSKUs,
+      }
     );
 
-  logger.info(
-    `Product ${productId} slug changed from ${message.oldSlug} to ${message.slug}`
-  );
-
-  // TODO: 1. fetch product by sku from tiktok
-  // 2. update product slug/URL in tiktok if applicable
-  return productId;
+    if (!tiktokProducts || !tiktokProducts.products?.length) {
+        logger.info(`No tiktok products found for product ${productId}. Nothing to do.`);
+        return productId;
+    } else {
+      tiktokProductIds.push(
+        ...tiktokProducts.products.map((tiktokProduct) => tiktokProduct.id!)
+      );
+      logger.info(`Found ${tiktokProductIds} tiktok products for product ${productId}`);
+      
+      await TiktokProduct.deleteProducts(tiktokProductIds);
+      return productId;
+    }
+  } catch (error) {
+    logger.error(`Error unpublishing product ${productId}`, error);
+    return productId;
+  }
 };

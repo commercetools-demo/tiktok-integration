@@ -1,5 +1,6 @@
 import {
   ByProjectKeyRequestBuilder,
+  Product,
   ProductProjection,
   ProductProjectionPagedQueryResponse,
 } from '@commercetools/platform-sdk';
@@ -36,6 +37,22 @@ export const getAllProducts = async (
   }
   
   return fetchAllEntitiesRecusively<ProductProjection>(apiRoot, shopConfiguration, getProducts);
+};
+
+export const getUnpublishedProduct = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+  productId: string,
+): Promise<Product | null> => {
+  console.log('getUnpublishedProduct', productId);
+  return apiRoot
+    .products()
+    .withId({ ID: productId })
+    .get()
+    .execute()
+    .then((response) => response.body)
+    .catch(() => {
+      return null;
+    });
 };
 
 export const getProduct = async (
