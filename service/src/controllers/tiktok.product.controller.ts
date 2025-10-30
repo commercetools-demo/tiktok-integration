@@ -14,7 +14,7 @@ export const searchProducts = async (req: Request, res: Response) => {
     logger.error('No access token found getting shops');
     return res.status(401).send('No access token found');
   }
-  const products = await TiktokProduct.productSearch(access_token, shop_cipher as string);
+  const products = await TiktokProduct.productSearch();
   return res.status(200).send(products);
 };
 
@@ -29,7 +29,7 @@ export const checkListingPrerequisites = async (req: Request, res: Response) => 
     logger.error('No access token found getting shops');
     return res.status(401).send('No access token found');
   }
-  const prerequisites = await TiktokProduct.checkListingPrerequisites(access_token, shop_cipher as string);
+  const prerequisites = await TiktokProduct.checkListingPrerequisites();
   return res.status(200).send(prerequisites);
 };
 
@@ -87,7 +87,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     return res.status(401).send('No access token found');
   }
 
-  const result = await TiktokProduct.updateProduct(access_token, product_id, shop_cipher as string, req.body);
+  const result = await TiktokProduct.updateProduct(product_id, req.body);
   return res.status(200).send(result);
 };
 
@@ -113,6 +113,6 @@ export const activateProduct = async (req: Request, res: Response) => {
 
   const platforms = listing_platforms ? (listing_platforms as string).split(',') : undefined;
 
-  const result = await TiktokProduct.activateProduct(access_token, product_id, shop_cipher as string, platforms);
+  const result = await TiktokProduct.activateProduct(product_id, platforms);
   return res.status(200).send(result);
 };
