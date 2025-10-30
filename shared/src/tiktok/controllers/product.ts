@@ -7,12 +7,14 @@ import {
   Product202309UpdatePriceRequestBody,
   Product202309SearchProductsResponseDataProducts,
   Product202309GetProductResponseData,
+  Product202509PartialEditProductRequestBody,
 } from '../../tiktok-sdk';
 import { RequestFile } from '../../tiktok-sdk/api/apis';
 import { client } from './client';
 import * as https from 'https';
 import * as http from 'http';
 import { Mappers, Services } from '../..';
+import { logger } from '../../utils/logger';
 
 export const productSearch = async (
   page?: {
@@ -195,7 +197,10 @@ export const createProduct = async (
     'application/json',
     tiktokShop.shopCipher,
     productData,
-  );
+  ).catch((error) => {
+    logger.error('Error creating product in Tiktok', error);
+    throw error;
+  });
   return body;
 };
 
@@ -214,6 +219,25 @@ export const updateProduct = async (
     tiktokShop.shopCipher,
     productData,
   );
+  return body;
+};
+
+export const partialUpdateProduct = async (
+  product_id: string,
+  productData: Product202509PartialEditProductRequestBody,
+) => {
+  const tiktokShop = await Services.getShopCipher();
+  if (!tiktokShop) {
+    throw new Error('No TikTok shop found');
+  }
+  const { body } =
+    await client.api.ProductV202509Api.ProductsProductIdPartialEditPost(
+      product_id,
+      tiktokShop.access_token,
+      'application/json',
+      tiktokShop.shopCipher,
+      productData,
+    );
   return body;
 };
 
@@ -250,16 +274,7 @@ export const updatePriceInDraftMode = async (
     throw new Error('Price data with SKUs is required');
   }
 
-  const categoryId = product.categoryChains?.find((cat) => cat.isLeaf)?.id;
-  if (!categoryId) {
-    throw new Error('No leaf category found');
-  }
-
-  const editProductData =
-    Mappers.Product.tiktokProductToTiktokProductEdit(product);
-
-  const result = await updateProduct(product.id, {
-    ...editProductData,
+  const result = await partialUpdateProduct(product.id, {
     saveMode: 'AS_DRAFT',
     skus: priceData.skus.map((sku) => ({
       id: sku.id,
@@ -267,6 +282,26 @@ export const updatePriceInDraftMode = async (
       listPrice: sku.listPrice,
     })),
   });
+  if (!result) {
+    throw new Error('Failed to update product');
+  }
+  return result;
+};
+
+export const publishProduct = async (
+  productId?: string,
+  product?: Product202309EditProductRequestBody,
+) => {
+  if (!productId) {
+    throw new Error('Product with ID is required');
+  }
+  if (!product) {
+    throw new Error('Product data is required');
+  }
+
+  logger.info(`Publishing product ${productId} in Tiktok`);
+
+  const result = await updateProduct(productId, product);
   if (!result) {
     throw new Error('Failed to update product');
   }

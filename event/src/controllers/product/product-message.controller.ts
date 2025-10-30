@@ -1,39 +1,27 @@
 import {
-  CommercetoolsClient,
-  ProductController,
-  CommercetoolsStorage,
-  Utils,
-} from 'tiktok-integration-shared';
-import {
-  Message,
-  ProductPriceAddedMessage,
-  ProductPriceChangedMessage,
-  ProductPriceRemovedMessage,
+  ProductCreatedMessage,
   ProductPublishedMessage,
-  ProductUnpublishedMessage,
-  ProductSlugChangedMessage,
+  ProductUnpublishedMessage
 } from '@commercetools/platform-sdk';
 import {
-  productPriceAdded,
-  productPriceChanged,
-  productPriceRemoved,
-} from './product-price.controller';
+  CommercetoolsClient,
+  CommercetoolsStorage,
+  ProductController,
+  Utils,
+} from 'tiktok-integration-shared';
+import { logger } from '../../utils/logger.utils';
+import { productCreated } from './product-created.controller';
 import {
   productPublished,
-  productUnpublished,
-  productSlugChanged,
+  productUnpublished
 } from './product-state.controller';
-import { logger } from '../../utils/logger.utils';
 
 export type ProductMessageType =
-  | ProductPriceChangedMessage
-  | ProductPriceAddedMessage
-  | ProductPriceRemovedMessage
   | ProductPublishedMessage
   | ProductUnpublishedMessage
-  | ProductSlugChangedMessage;
+  | ProductCreatedMessage;
 
-export const productUpdated = async (
+export const productMessageHandler = async (
   message: ProductMessageType,
   productId: string
 ): Promise<string> => {
@@ -50,6 +38,7 @@ export const productUpdated = async (
     );
     return productId;
   }
+  logger.info(`Getting product ${productId} from commercetools`);
 
   const product = await ProductController.getProduct(
     apiRoot,
@@ -57,22 +46,24 @@ export const productUpdated = async (
     shopConfiguration
   );
 
+  if (!product) {
+    logger.error(`Product ${productId} not found in commercetools.`);
+    return productId;
+  }
+
   switch (message.type) {
-    case 'ProductPriceChanged':
-      return productPriceChanged(apiRoot, shopConfiguration, message, product);
-    case 'ProductPriceAdded':
-      return await productPriceAdded(apiRoot, shopConfiguration, message, product);
+    case 'ProductCreated':
+      return productCreated(apiRoot, shopConfiguration, message, productId);
     case 'ProductPublished':
-      return await productPublished(apiRoot, message, product);
+      return productPublished(apiRoot, shopConfiguration, message, productId);
     case 'ProductUnpublished':
-      return await productUnpublished(apiRoot, message, product);
-    case 'ProductSlugChanged':
-      return await productSlugChanged(apiRoot, message, product);
+      return productUnpublished(apiRoot, message, product);
     // TODO: ProductImageAdded
     // TODO: ProductTailoringCreated, ProductTailoringPublished,
     // TODO: ProductTailoringNameSet, ProductTailoringDescriptionSet
     // TODO: ProductVariantTailoringAdded, ProductTailoringImageAdded
     // TODO: InventoryEntryQuantitySet
+    // ADD variant
     default:
       return productId;
   }

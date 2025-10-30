@@ -43,6 +43,7 @@ import {
   USE_NO_CHANNEL_FOR_MAIN_PRICE,
 } from './product-contants';
 import { ShopConfigurationData } from '../../../interfaces';
+import { logger } from '../../../utils/logger';
 
 export const commercetoolsProductToTiktokProduct = async (
   apiRoot: ByProjectKeyRequestBuilder,
@@ -71,6 +72,7 @@ export const commercetoolsProductToTiktokProduct = async (
 
   const productDraft: Product202309CreateProductRequestBody = {
     saveMode: commercetoolsProductStateToSaveMode(product),
+    externalProductId: product.id,
     title: product.name?.[locale],
     description: product.description?.[locale],
     categoryVersion: 'v2',
@@ -507,6 +509,36 @@ export const tiktokProductToTiktokProductEdit = (
       price: sku.price,
       listPrice: sku.listPrice,
     })),
+  };
+  return editProductData;
+};
+
+export const mergeTiktokProductAndCommercetoolsProductToTiktokProductEdit = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+  app_key: string,
+  product: Product202309GetProductResponseData,
+  commercetoolsProduct?: ProductProjection,
+): Promise<Product202309EditProductRequestBody> => {
+
+  if (!commercetoolsProduct) {
+    throw new Error('Commercetools product is required');
+  }
+  const originalProductData = await commercetoolsProductToTiktokProduct(apiRoot, app_key, commercetoolsProduct);
+
+  const editProductData: Product202309EditProductRequestBody = {
+    title: product.title,
+    description: product.description,
+    categoryVersion: 'v2',
+    mainImages: product.mainImages?.map((image) => ({
+      uri: image.uri,
+    })),
+    packageWeight: product.packageWeight,
+    skus: product.skus?.map((sku) => ({
+      id: sku.id,
+      price: sku.price,
+      listPrice: sku.listPrice,
+    })),
+    ...originalProductData,
   };
   return editProductData;
 };

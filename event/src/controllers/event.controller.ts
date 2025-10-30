@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import CustomError from '../errors/custom.error';
 import { logger } from '../utils/logger.utils';
-import { resourceCreation } from './resource-creation.controller';
 import { resourceMessage } from './message.controller';
 
 /**
@@ -40,11 +39,8 @@ export const post = async (request: Request, response: Response) => {
     if (decodedData) {
       const jsonData = JSON.parse(decodedData);
       //CoCo sending message to indicate the resource was created, does not need processing
-      console.log('Event message received');
+      console.log('Event message received ' + jsonData.notificationType + ' for resource ' + jsonData.resource.typeId + ' with type ' + jsonData.type);
       switch (jsonData.notificationType) {
-        case 'ResourceCreated':
-          await resourceCreation(jsonData);
-          break;
         case 'Message':
           await resourceMessage(jsonData);
           break;

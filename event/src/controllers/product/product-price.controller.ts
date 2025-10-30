@@ -50,17 +50,21 @@ export const productPriceChanged = async (
 
     return productId;
   }
-  const tiktokProduct = await TiktokProduct.getProduct(
-    tiktokProducts.products[0].id!,
-    { draft: true, locale: shopConfig.locale }
-  );
+  const tiktokProduct = tiktokProducts.products[0];
+
+  console.log('tiktokProduct', JSON.stringify(tiktokProduct, null, 2));
 
   const tiktokSku = tiktokProduct?.skus?.find(
     (sku) => sku.sellerSku === variant.sku
   );
 
+  if (!tiktokSku) {
+    logger.error(
+      `No tiktok sku found for product ${productId} and variant ${variant.sku}`
+    );
+    return productId;
+  }
   if (
-    !tiktokSku ||
     tiktokSku.price?.currency !== message.newPrice?.value?.currencyCode ||
     shopConfig.shop_region !== message.newPrice?.country
   ) {

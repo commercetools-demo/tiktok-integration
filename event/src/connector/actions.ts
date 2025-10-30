@@ -47,12 +47,8 @@ async function createSubscription(
           {
             resourceTypeId: 'product',
             types: [
-              'ProductPriceChanged',
-              'ProductPriceAdded',
-              'ProductPriceRemoved',
               'ProductPublished',
               'ProductUnpublished',
-              'ProductSlugChanged',
             ],
           },
         ],

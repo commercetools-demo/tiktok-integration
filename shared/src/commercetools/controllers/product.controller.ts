@@ -42,14 +42,17 @@ export const getProduct = async (
   apiRoot: ByProjectKeyRequestBuilder,
   productId: string,
   shopConfiguration?: ShopConfigurationData | null,
-): Promise<ProductProjection> => {
+): Promise<ProductProjection | null> => {
   if (!shopConfiguration) {
     return apiRoot
       .productProjections()
       .withId({ ID: productId })
       .get()
       .execute()
-      .then((response) => response.body);
+      .then((response) => response.body)
+      .catch(() => {
+        return null;
+      });
   }
   if (shopConfiguration?.ctStoreKey) {
     return apiRoot
@@ -58,12 +61,18 @@ export const getProduct = async (
       .withId({ ID: productId })
       .get()
       .execute()
-      .then((response) => response.body);
+      .then((response) => response.body)
+      .catch(() => {
+        return null;
+      });
   }
   return apiRoot
     .productProjections()
     .withId({ ID: productId })
     .get()
     .execute()
-    .then((response) => response.body);
+    .then((response) => response.body)
+    .catch(() => {
+      return null;
+    });
 };
