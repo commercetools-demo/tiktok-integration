@@ -6,6 +6,7 @@ import {
 import {
   Mappers,
   ProductController,
+  TiktokInventory,
   TiktokProduct,
   Types,
 } from 'tiktok-integration-shared';
@@ -24,8 +25,13 @@ export const inventoryEntryCreated = async (
       throw new Error(`No sku found for inventory entry ${inventoryEntityid}`);
     }
 
-    if (message.inventoryEntry.supplyChannel?.id !== shopConfiguration.ctSupplyChannelId) {
-      logger.info(`Inventory entry ${inventoryEntityid} is not for the supply channel ${shopConfiguration.ctSupplyChannelId}`);
+    if (
+      message.inventoryEntry.supplyChannel?.id !==
+      shopConfiguration.ctSupplyChannelId
+    ) {
+      logger.info(
+        `Inventory entry ${inventoryEntityid} is not for the supply channel ${shopConfiguration.ctSupplyChannelId}`
+      );
       return inventoryEntityid;
     }
 
@@ -59,16 +65,19 @@ export const inventoryEntryCreated = async (
       }
       return inventoryEntityid;
     } else {
-      await TiktokProduct.mergeAndUpdateProductsFromCommercetoolsProduct(
-        apiRoot,
-        shopConfiguration,
-        process.env.TIKTOK_APP_KEY as string,
-        tiktokProducts,
-        product
-      );
-      logger.info(
-        `Merged and updated ${tiktokProducts.products?.length} tiktok products for product ${product.id}`
-      );
+      for await (const tiktokProduct of tiktokProducts.products) {
+        if (!tiktokProduct) {
+          continue;
+        }
+        const inventoryData = Mappers.Inventory.mapCommercetoolsInventoryToTiktokInventory(
+          shopConfiguration,
+          tiktokProduct,
+          message.inventoryEntry
+        );
+        if (inventoryData) {
+          await TiktokInventory.updateInventory(tiktokProduct?.id ?? '', inventoryData);
+        }
+      }
       return inventoryEntityid;
     }
   } catch (error: any) {
