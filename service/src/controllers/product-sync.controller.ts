@@ -40,6 +40,48 @@ export const fullProductSync = async (req: Request, res: Response) => {
   }
 };
 
+export const selectiveProductSync = async (req: Request, res: Response) => {
+  const { productIds }: { productIds: string[] } = req.body;
+  if (!productIds || !Array.isArray(productIds) || productIds.length === 0) {
+    return res.status(400).send('Product IDs are required: "productIds"');
+  }
+
+  const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
+
+  const shopConfig =
+    await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
+      apiRoot,
+      process.env.TIKTOK_APP_KEY as string,
+    );
+
+  const products = await ProductController.queryProduct(apiRoot, {
+    limit: productIds.length,
+    productIds: productIds,
+  });
+  if (!products || products.length === 0) {
+    return res.status(400).send('No products found');
+  }
+  res.status(200).send('Selective sync started...');
+
+  for await (const product of products) {
+    try {
+      const productDraft =
+        await Mappers.Product.commercetoolsProductToTiktokProduct(
+          apiRoot,
+          process.env.TIKTOK_APP_KEY as string,
+          product,
+        );
+      await TiktokProduct.createProduct(productDraft);
+    } catch (error) {
+      logger.error(
+        `Full-Sync: Error creating product draft for product ${product.id}`,
+      );
+      continue;
+    }
+    logger.info(`Full-Sync: Successfully created product ${product.id}`);
+  }
+};
+
 export const fullProductCheck = async (req: Request, res: Response) => {
   const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
 

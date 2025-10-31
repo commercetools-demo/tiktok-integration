@@ -1,3 +1,4 @@
+import { logger } from '../../utils/logger';
 import { client } from './client';
 
 export const getWarehouseList = async (
@@ -8,8 +9,11 @@ export const getWarehouseList = async (
     access_token,
     'application/json',
     shop_cipher,
-  );
-  if (!body.data) {
+  ).catch((error) => {
+    logger.error('Error getting warehouse list', error);
+    throw error;
+  });
+  if (!body?.data) {
     throw new Error('No warehouses found');
   }
   return body.data.warehouses;

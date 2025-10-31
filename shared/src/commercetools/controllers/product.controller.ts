@@ -109,6 +109,11 @@ export const queryProduct = async (
       `masterVariant(sku in (${query.skus.map((sku) => `"${sku}"`).join(',')})) OR variants(sku in (${query.skus.map((sku) => `"${sku}"`).join(',')}))`,
     );
   }
+  if (query.productIds) {
+    where.push(
+      `id in (${query.productIds.map((id) => `"${id}"`).join(',')})`,
+    );
+  }
   if (where.length === 0) {
     return [];
   }
