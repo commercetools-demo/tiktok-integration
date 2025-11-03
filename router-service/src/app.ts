@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 
 // Import routes
 import RouterServiceRoutes from './routes';
-import WebhookRoutes from './routes/router-webhook.route';
+import WebhookRoutes from './routes/webhook.route';
 import { Utils } from 'tiktok-integration-shared';
 import { errorMiddleware } from './middleware/error.middleware';
 import CustomError from './errors/custom.error';
