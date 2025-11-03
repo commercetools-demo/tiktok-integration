@@ -5,7 +5,7 @@ import express, { Express } from 'express';
 import bodyParser from 'body-parser';
 
 // Import routes
-import RouterServiceRoutes from './routes/router-service.route';
+import RouterServiceRoutes from './routes';
 import WebhookRoutes from './routes/router-webhook.route';
 import { Utils } from 'tiktok-integration-shared';
 import { errorMiddleware } from './middleware/error.middleware';
