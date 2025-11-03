@@ -19,12 +19,6 @@ import { getBrands } from '../controllers/tiktok.brand.controller';
 
 const tiktokRouter = Router();
 
-tiktokRouter.get('/shops', async (req, res, next) => {
-  await getShops(req, res).catch((error) => {
-    logger.error('Error authorizing app', error);
-    return res.status(500).send(error.message);
-  });
-});
 
 tiktokRouter.post('/products/search', async (req, res, next) => {
   await searchProducts(req, res).catch((error) => {
