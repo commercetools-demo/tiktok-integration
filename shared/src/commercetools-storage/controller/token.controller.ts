@@ -11,14 +11,12 @@ import { AccessTokenData } from '../../interfaces';
 /**
  * Store access token and shop information in CommerceTools custom objects
  * @param apiRoot - The CommerceTools API root
- * @param app_key - The TikTok app key (used as document identifier)
  * @param data - Token response data from TikTok
  * @param locale - Optional locale information
  * @param shop_region - Optional shop region information
  */
 export const storeAccessToken = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
   data: TokenResponse,
 ): Promise<void> => {
   const now = new Date().toISOString();
@@ -35,7 +33,7 @@ export const storeAccessToken = async (
   await createOrUpdateCustomObject(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
-    getAccessTokenVariableKey(app_key),
+    getAccessTokenVariableKey(),
     tokenData,
   );
 };
@@ -43,17 +41,15 @@ export const storeAccessToken = async (
 /**
  * Get access token from CommerceTools custom objects
  * @param apiRoot - The CommerceTools API root
- * @param app_key - The TikTok app key (used as document identifier)
  * @returns The access token or null if not found
  */
 export const getAccessToken = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
 ): Promise<string | null> => {
   const tokenData = await readCustomObject<AccessTokenData>(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
-    getAccessTokenVariableKey(app_key),
+    getAccessTokenVariableKey(),
   );
 
   if (!tokenData) {
@@ -66,12 +62,10 @@ export const getAccessToken = async (
 /**
  * Get refresh token if access token needs refresh (expires in 24 hours)
  * @param apiRoot - The CommerceTools API root
- * @param app_key - The TikTok app key (used as document identifier)
  * @returns The refresh token if token needs refresh, null otherwise
  */
 export const getTokensNeedingRefresh = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
 ): Promise<string | null> => {
   try {
     const now = Math.floor(Date.now() / 1000);
@@ -80,7 +74,7 @@ export const getTokensNeedingRefresh = async (
     const tokenData = await readCustomObject<AccessTokenData>(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
-      getAccessTokenVariableKey(app_key),
+      getAccessTokenVariableKey(),
     );
 
     if (!tokenData) {
@@ -105,19 +99,17 @@ export const getTokensNeedingRefresh = async (
 /**
  * Update the refresh token timestamp after successful refresh
  * @param apiRoot - The CommerceTools API root
- * @param app_key - The TikTok app key (used as document identifier)
  * @param newTokenData - New token data from refresh
  */
 export const updateRefreshedToken = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
   newTokenData: TokenResponse,
 ): Promise<void> => {
   // Get existing token data to preserve metadata
   const existingData = await readCustomObject<AccessTokenData>(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
-    getAccessTokenVariableKey(app_key),
+    getAccessTokenVariableKey(),
   );
 
   const now = new Date().toISOString();
@@ -133,7 +125,7 @@ export const updateRefreshedToken = async (
   await createOrUpdateCustomObject(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
-    getAccessTokenVariableKey(app_key),
+    getAccessTokenVariableKey(),
     updatedTokenData,
   );
 };

@@ -1,12 +1,12 @@
 import {
   InventoryEntryCreatedMessage,
   InventoryEntryDeletedMessage,
-  InventoryEntryQuantitySetMessage
+  InventoryEntryQuantitySetMessage,
 } from '@commercetools/platform-sdk';
 import {
   CommercetoolsClient,
   CommercetoolsStorage,
-  Utils
+  Utils,
 } from 'tiktok-integration-shared';
 import { logger } from '../../utils/logger.utils';
 import {
@@ -27,8 +27,7 @@ export const inventoryEntryMessageHandler = async (
   const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
   const shopConfiguration =
     await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
-      apiRoot,
-      process.env.TIKTOK_APP_KEY as string
+      apiRoot
     );
 
   if (!shopConfiguration || !shopConfiguration.shopCipher) {
@@ -60,7 +59,7 @@ export const inventoryEntryMessageHandler = async (
         message,
         inventoryEntityid
       );
-   
+
     default:
       return inventoryEntityid;
   }

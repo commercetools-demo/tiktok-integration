@@ -41,7 +41,6 @@ export const productPublished = async (
         const productDraft =
           await Mappers.Product.commercetoolsProductToTiktokProduct(
             apiRoot,
-            process.env.TIKTOK_APP_KEY as string,
             product,
           );
         await TiktokProduct.createProduct(productDraft);
@@ -53,7 +52,7 @@ export const productPublished = async (
       }
       return productId;
     } else {
-      await TiktokProduct.mergeAndUpdateProductsFromCommercetoolsProduct(apiRoot, shopConfiguration, process.env.TIKTOK_APP_KEY as string, tiktokProducts, product);
+      await TiktokProduct.mergeAndUpdateProductsFromCommercetoolsProduct(apiRoot, shopConfiguration,  tiktokProducts, product);
       logger.info(`Merged and updated ${tiktokProducts.products?.length} tiktok products for product ${product.id}`);
       return productId;
     }

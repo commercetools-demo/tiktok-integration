@@ -31,8 +31,7 @@ export const productMessageHandler = async (
   const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
   const shopConfiguration =
     await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
-      apiRoot,
-      process.env.TIKTOK_APP_KEY as string
+      apiRoot
     );
 
   if (!shopConfiguration || !shopConfiguration.shopCipher) {

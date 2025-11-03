@@ -1,6 +1,7 @@
 import { Application, Request } from 'express';
 import { Firestore } from '@google-cloud/firestore';
 import { Firestore as FirestoreModule } from 'tiktok-integration-shared';
+import { logger } from './logger.utils';
 
 /**
  * Initialize Firestore client from environment variables
@@ -8,22 +9,22 @@ import { Firestore as FirestoreModule } from 'tiktok-integration-shared';
  */
 export const initializeFirestoreClient = (app: Application): Firestore | null => {
   if (
-    !process.env.FIRESTORE_PROJECT_ID ||
-    !process.env.FIRESTORE_DATABASE_ID ||
-    !process.env.FIRESTORE_CLIENT_EMAIL ||
-    !process.env.FIRESTORE_PRIVATE_KEY
+    !process.env.GCP_PROJECT_ID ||
+    !process.env.GCP_FIRESTORE_DATABASE_ID ||
+    !process.env.GCP_SERVICE_ACCOUNT_CLIENT_EMAIL ||
+    !process.env.GCP_SERVICE_ACCOUNT_PRIVATE_KEY
   ) {
-    console.log('Firestore environment variables not configured, skipping initialization');
+    logger.error('Firestore environment variables not configured, skipping initialization');
     return null;
   }
 
   try {
     const firestoreClient = FirestoreModule.FirestoreClient.createFirestoreClient({
-      projectId: process.env.FIRESTORE_PROJECT_ID,
-      databaseId: process.env.FIRESTORE_DATABASE_ID,
+      projectId: process.env.GCP_PROJECT_ID,
+      databaseId: process.env.GCP_FIRESTORE_DATABASE_ID,
       credentials: {
-        client_email: process.env.FIRESTORE_CLIENT_EMAIL,
-        private_key: process.env.FIRESTORE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        client_email: process.env.GCP_SERVICE_ACCOUNT_CLIENT_EMAIL,
+        private_key: process.env.GCP_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, '\n'),
       },
     });
     

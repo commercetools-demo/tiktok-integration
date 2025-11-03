@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import { getFirestoreClient } from '../utils/firestore.utils';
-import { Firestore } from 'tiktok-integration-shared';
+import {
+  Firestore,
+  TiktokAuth,
+  TiktokShop,
+  TiktokWarehouse,
+} from 'tiktok-integration-shared';
 import { logger } from '../utils/logger.utils';
 
 /**
@@ -11,6 +16,10 @@ import { logger } from '../utils/logger.utils';
  */
 export const authorizeApp = async (req: Request, res: Response) => {
   const { app_key, code, locale, shop_region } = req.query;
+
+  if (app_key !== process.env.TIKTOK_APP_KEY) {
+    throw new Error('Invalid app key');
+  }
 
   const firestore = getFirestoreClient(req);
   const docId = await Firestore.FirestoreController.MapController.storeMapping(
@@ -36,9 +45,9 @@ export const authorizeApp = async (req: Request, res: Response) => {
  */
 export const authorizeProject = async (req: Request, res: Response) => {
   try {
-    const { project_key, service_url, docId } = req.body;
+    const { project_key, service_url, shop_doc_id, shop_id } = req.body;
 
-    if (!project_key || !service_url || !docId) {
+    if (!project_key || !service_url || !shop_doc_id) {
       throw new Error('Project key, service url and docId are required');
     }
 
@@ -47,10 +56,11 @@ export const authorizeProject = async (req: Request, res: Response) => {
     const updateResult =
       await Firestore.FirestoreController.MapController.updateDataByDocId(
         firestore,
-        docId,
+        shop_doc_id,
         {
           service_url: service_url,
           project_key: project_key,
+          shop_id: shop_id,
         },
       );
     if (!updateResult) {
@@ -59,19 +69,73 @@ export const authorizeProject = async (req: Request, res: Response) => {
     const appMapData =
       await Firestore.FirestoreController.MapController.getMappingById(
         firestore,
-        docId,
+        shop_doc_id,
       );
     if (!appMapData) {
       throw new Error('Failed to get mapping by docId');
     }
-    //TODO: initialize shop
-    // call service url to initialize shop
-    const response = await fetch(service_url + '/initialize-shop', {
-      method: 'POST',
-      body: JSON.stringify(appMapData),
+
+    if (appMapData?.options?.code_consumed) {
+      throw new Error('Code already consumed');
+    }
+
+    const { data } = await TiktokAuth.getAccessToken(
+      appMapData?.options?.code as string,
+      process.env.TIKTOK_APP_KEY as string,
+      process.env.TIKTOK_APP_SECRET as string,
+    ).catch((error) => {
+      throw new Error('Cannot authenticate with tiktok: ' + error.message);
     });
 
-    return res.status(200).send(updateResult);
+    if (!data) {
+      throw new Error('Cannot authenticate with tiktok');
+    }
+
+    const shops = await TiktokShop.getAuthorizedShops(data.access_token);
+    if (!shops) {
+      throw new Error('No shops found');
+    }
+    const shop = shops.find((shop) => shop.id === shop_id);
+    if (!shop) {
+      throw new Error('Shop not found');
+    }
+
+    const warehouses = await TiktokWarehouse.getWarehouseList(
+      data.access_token,
+      shop.cipher,
+    );
+    if (!warehouses || warehouses.length === 0) {
+      throw new Error('No warehouses found in TikTok');
+    }
+
+    await Firestore.FirestoreController.MapController.updateOptionsByDocId(
+      firestore,
+      shop_doc_id,
+      {
+        code_consumed: true,
+        shop_cipher: shop.cipher,
+        warehouses: warehouses
+          .map((warehouse) => ({
+            id: warehouse.id,
+            entityId: warehouse.entityId,
+          }))
+          .filter((warehouse) => warehouse.id && warehouse.entityId) as {
+          id: string;
+          entityId: string;
+        }[],
+      },
+    );
+
+    const updatedAppMapData =
+      await Firestore.FirestoreController.MapController.getMappingById(
+        firestore,
+        shop_doc_id,
+      );
+
+    return res.status(200).send({
+      access_token_data: data,
+      app_map_data: updatedAppMapData,
+    });
   } catch (error) {
     logger.error('Error authorizing project', error);
     return res.status(500).send((error as Error).message);

@@ -349,7 +349,6 @@ export const publishProduct = async (
 export const mergeAndUpdateProductsFromCommercetoolsProduct = async (
   apiRoot: ByProjectKeyRequestBuilder,
   shopConfiguration: ShopConfigurationData,
-  app_key: string,
   tiktokProducts: Product202502SearchProductsResponseData,
   commercetoolsProduct: ProductProjection,
 ) => {
@@ -379,7 +378,6 @@ export const mergeAndUpdateProductsFromCommercetoolsProduct = async (
         const merged =
           await Mappers.Product.mergeTiktokProductAndCommercetoolsProductToTiktokProductEdit(
             apiRoot,
-            app_key,
             tiktokProductData,
             commercetoolsProduct,
           );

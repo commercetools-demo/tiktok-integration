@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node build/index.js",
     "gcp-build": "tsc",
-    "start:dev": "concurrently -k \"tsc --watch\" \"nodemon -q build/index.js\"",
+    "start:dev": "NODE_ENV=development concurrently -k \"tsc --watch\" \"nodemon -q build/index.js\"",
     "build": "yarn --cwd ../shared install && yarn --cwd ../shared run build && rimraf ./build && tsc",
     "lint": "eslint . --ext .ts",
     "test": "echo 'No tests for now'",

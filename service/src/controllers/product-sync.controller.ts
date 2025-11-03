@@ -15,7 +15,6 @@ export const fullProductSync = async (req: Request, res: Response) => {
   const shopConfig =
     await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
       apiRoot,
-      process.env.TIKTOK_APP_KEY as string,
     );
 
   const products = await ProductController.getAllProducts(apiRoot, shopConfig);
@@ -26,7 +25,6 @@ export const fullProductSync = async (req: Request, res: Response) => {
       const productDraft =
         await Mappers.Product.commercetoolsProductToTiktokProduct(
           apiRoot,
-          process.env.TIKTOK_APP_KEY as string,
           product,
         );
       await TiktokProduct.createProduct(productDraft);
@@ -51,7 +49,6 @@ export const selectiveProductSync = async (req: Request, res: Response) => {
   const shopConfig =
     await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
       apiRoot,
-      process.env.TIKTOK_APP_KEY as string,
     );
 
   const products = await ProductController.queryProduct(apiRoot, {
@@ -68,7 +65,6 @@ export const selectiveProductSync = async (req: Request, res: Response) => {
       const productDraft =
         await Mappers.Product.commercetoolsProductToTiktokProduct(
           apiRoot,
-          process.env.TIKTOK_APP_KEY as string,
           product,
         );
       await TiktokProduct.createProduct(productDraft);
@@ -88,7 +84,6 @@ export const fullProductCheck = async (req: Request, res: Response) => {
   const shopConfig =
     await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
       apiRoot,
-      process.env.TIKTOK_APP_KEY as string,
     );
 
   const products = await ProductController.getAllProducts(apiRoot, shopConfig);
@@ -100,7 +95,6 @@ export const fullProductCheck = async (req: Request, res: Response) => {
     try {
       await Mappers.Product.commercetoolsProductToTiktokProductCheck(
         apiRoot,
-        process.env.TIKTOK_APP_KEY as string,
         product,
       );
       importableProducts.push(product.id);

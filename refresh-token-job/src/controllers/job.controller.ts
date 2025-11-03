@@ -16,7 +16,6 @@ export const post = async (_request: Request, response: Response) => {
     const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
     const refreshToken = await CommercetoolsStorage.TokenController.getTokensNeedingRefresh(
       apiRoot,
-      process.env.TIKTOK_APP_KEY as string,
     );
 
     logger.info('tokens needing refresh');
@@ -33,7 +32,6 @@ export const post = async (_request: Request, response: Response) => {
     if (data) {
       await CommercetoolsStorage.TokenController.updateRefreshedToken(
         apiRoot,
-        process.env.TIKTOK_APP_KEY as string,
         data,
       );
     }

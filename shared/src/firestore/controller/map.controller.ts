@@ -11,6 +11,13 @@ export interface AppProjectMappingOptions {
   locale?: string;
   seller_name?: string;
   seller_id?: string;
+  code_consumed?: boolean;
+  shop_id?: string;
+  shop_cipher?: string;
+  warehouses?: {
+    id: string;
+    entityId: string;
+  }[];
 }
 
 /**
@@ -20,6 +27,7 @@ export interface AppProjectMapping {
   app_key?: string;
   project_key?: string;
   service_url?: string;
+  shop_id?: string;
   options?: AppProjectMappingOptions;
   createdAt?: string;
   updatedAt?: string;
