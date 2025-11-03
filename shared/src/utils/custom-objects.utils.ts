@@ -17,19 +17,19 @@ export const getCategoryVariableKey = (app_key: string) => {
 };
 
 
-export const getVerifiedShopKey = (ct_project_key: string, app_key: string) => {
-  return `verified_${ct_project_key}_${app_key}`;
+export const getVerifiedShopKey = (app_key: string, seller_name?: string) => {
+  return `verified_${app_key}${seller_name ? `_${seller_name}` : ''}`;
 };
 
-export const getAccessTokenDocumentId = (ct_project_key: string, app_key: string) => {
-  return `${ct_project_key}_${app_key}_access_token`;
+export const getAccessTokenDocumentId = (app_key: string, seller_name?: string) => {
+  return `${app_key}${seller_name ? `_${seller_name}` : ''}_access_token`;
 };
 
-export const getConfigurationDocumentId = (ct_project_key: string, app_key: string) => {
-  return `${ct_project_key}_${app_key}_configuration`;
+export const getConfigurationDocumentId = (app_key: string, seller_name?: string) => {
+  return `${app_key}${seller_name ? `_${seller_name}` : ''}_configuration`;
 };
 
-export const getCategoryDocumentId = (ct_project_key: string, app_key: string) => {
-  return `${ct_project_key}_${app_key}_categories`;
+export const getCategoryDocumentId = (app_key: string, seller_name?: string) => {
+  return `${app_key}${seller_name ? `_${seller_name}` : ''}_categories`;
 };
 

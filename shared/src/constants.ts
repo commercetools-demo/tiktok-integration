@@ -8,3 +8,5 @@ export const FIRESTORE_SHARED_ACCESS_TOKEN_COLLECTION_NAME = 'access_tokens';
 export const FIRESTORE_CONFIGURATION_COLLECTION_NAME = 'configurations';
 export const FIRESTORE_SHARED_CATEGORY_COLLECTION_NAME = 'categories';
 export const FIRESTORE_SHARED_VERIFIED_SHOPS_COLLECTION_NAME = 'verified_shops';
+export const FIRESTORE_CT_CONFIG_COLLECTION_NAME = 'commercetools_configs';
+export const FIRESTORE_APP_PROJECT_MAP_COLLECTION_NAME = 'app_project_mappings';
