@@ -8,6 +8,7 @@ import bodyParser from 'body-parser';
 import RouterServiceRoutes from './routes';
 import WebhookRoutes from './routes/webhook.route';
 import tiktokProductRouter from './routes/tiktok.product.route';
+import { tiktokOrderRouter } from './routes/tiktok.order.route';
 import { Utils } from 'tiktok-integration-shared';
 import { errorMiddleware } from './middleware/error.middleware';
 import CustomError from './errors/custom.error';
@@ -32,6 +33,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/router-service', RouterServiceRoutes);
 app.use('/router-service/webhook', WebhookRoutes);
 app.use('/router-service/tiktok/products', tiktokProductRouter);
+app.use('/router-service/tiktok/orders', tiktokOrderRouter);
 app.use('*', () => {
   throw new CustomError(404, 'Path not found.');
 });
