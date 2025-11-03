@@ -8,9 +8,6 @@ deployAs:
           description: Enable test routes
           required: false
           default: "false"
-        - key: ROUTER_SERVICE_URL_ENDPOINT
-          description: Router service URL endpoint
-          required: true
   - name: router-service
     applicationType: service
     endpoint: /router-service
@@ -70,6 +67,9 @@ inheritAs:
         required: true
       - key: TIKTOK_SHOP_NAME
         description: TikTok shop Name
+        required: true
+      - key: ROUTER_SERVICE_URL_ENDPOINT
+        description: Router service URL endpoint
         required: true
     securedConfiguration:
       - key: CTP_CLIENT_SECRET

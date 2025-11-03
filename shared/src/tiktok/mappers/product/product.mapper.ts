@@ -59,13 +59,7 @@ export const commercetoolsProductToTiktokProduct = async (
   }
 
   const allVariants = [product.masterVariant, ...product.variants];
-  const mainImages = await commercetoolsProductToTiktokMainImages(
-    apiRoot,
-    product,
-  );
-  if (!mainImages) {
-    throw new Error('No main images found');
-  }
+  
 
   const productDraft: Product202309CreateProductRequestBody = {
     saveMode: commercetoolsProductStateToSaveMode(product),
@@ -76,7 +70,6 @@ export const commercetoolsProductToTiktokProduct = async (
     categoryId: commercetoolsProductTypeToTiktokCategory(
       product.productType.id,
     ),
-    mainImages,
     skus: allVariants
       .map((variant) =>
         commercetoolsVariantToTiktokSKU(
@@ -237,36 +230,6 @@ const commercetoolsVariantToTiktokSKUInventory = (
   ];
 };
 
-const commercetoolsProductToTiktokMainImages = async (
-  apiRoot: ByProjectKeyRequestBuilder,
-  product: ProductProjection,
-): Promise<Product202309CreateProductRequestBodyMainImages[] | undefined> => {
-  const access_token =
-    await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
-  if (!access_token) {
-    throw new Error('Access token not found');
-  }
-
-  const images = product.masterVariant?.images ?? [];
-  const mainImages = [];
-  for await (const image of images ?? []) {
-    const resultUploadImage = await TiktokProduct.uploadProductImage(
-      access_token,
-      image.url,
-      'MAIN_IMAGE',
-    );
-    if (!resultUploadImage) {
-      throw new Error('Failed to upload product image');
-    }
-
-    mainImages.push(resultUploadImage.data?.uri);
-  }
-  return mainImages
-    .filter((image) => image !== undefined)
-    .map((image) => ({
-      uri: image,
-    }));
-};
 
 export const commercetoolsPriceToTiktokPrice = (
   price: Price,

@@ -7,9 +7,8 @@ import {
   StoreController,
   Utils,
 } from 'tiktok-integration-shared';
-import { AppProjectMapping } from 'tiktok-integration-shared/build/firestore/controller/map.controller';
-import { TokenResponse } from 'tiktok-integration-shared/build/tiktok-sdk/client/token';
 import { logger } from '../utils/logger.utils';
+import * as ServiceRouterController from './service-router.controller';
 
 export const connectProject = async (req: Request, res: Response) => {
   const { shop_doc_id } = req.query;
@@ -24,34 +23,18 @@ export const connectProject = async (req: Request, res: Response) => {
       apiRoot,
     );
 
-  const response = await fetch(
-    `${process.env.ROUTER_SERVICE_URL_ENDPOINT}/authorize-project`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        shop_doc_id,
-        project_key: process.env.CTP_PROJECT_KEY as string,
-        service_url: serviceUrl,
-        shop_id: process.env.TIKTOK_SHOP_ID as string,
-      }),
-    },
-  );
-  if (!response.ok) {
-    const error = await response.text();
-    return res.status(400).send(error);
+  let data;
+  try {
+    data = await ServiceRouterController.authorizeProject(
+      shop_doc_id as string,
+      serviceUrl || '',
+    );
+  } catch (error) {
+    logger.error('Failed to authorize project', error);
+    return res.status(400).send((error as Error).message);
   }
-  const data: {
-    access_token_data: TokenResponse;
-    app_map_data: AppProjectMapping;
-  } = await response.json();
-  res.status(200).send('success');
 
-  if (!data || !data.access_token_data || !data.app_map_data) {
-    return res.status(400).send('Failed to get access token data');
-  }
+  res.status(200).send('success');
 
   await CommercetoolsStorage.TokenController.storeAccessToken(
     apiRoot,
@@ -103,7 +86,7 @@ export const connectProject = async (req: Request, res: Response) => {
       throw new Error('No warehouses found');
     }
 
-    const tiktokWarehouse = warehouses.find((warehouse) => warehouseChannels.find((channel) => channel.custom?.fields.warehouseId === warehouse.id));
+    const tiktokWarehouse = warehouses.find((warehouse: any) => warehouseChannels.find((channel) => channel.custom?.fields.warehouseId === warehouse.id));
 
     if (!tiktokWarehouse) {
       throw new Error('No warehouse found');

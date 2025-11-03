@@ -4,10 +4,10 @@ import {
   CommercetoolsStorage,
   Mappers,
   ProductController,
-  TiktokProduct,
   Utils,
 } from 'tiktok-integration-shared';
 import { logger } from '../utils/logger.utils';
+import * as ServiceRouterController from './service-router.controller';
 
 export const fullProductSync = async (req: Request, res: Response) => {
   const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
@@ -17,17 +17,44 @@ export const fullProductSync = async (req: Request, res: Response) => {
       apiRoot,
     );
 
+  if (!shopConfig?.shopCipher) {
+    return res.status(400).send('Shop cipher not configured');
+  }
+
+  const accessToken =
+    await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
+
+  if (!accessToken) {
+    return res.status(400).send('Access token not found');
+  }
+
+  console.log('accessToken', accessToken);
+  console.log('shopConfig', shopConfig);
+
   const products = await ProductController.getAllProducts(apiRoot, shopConfig);
+
+  console.log('products', products);
   res.status(200).send('Full sync started...');
 
   for await (const product of products.results) {
     try {
+      const allVariants = [product.masterVariant, ...product.variants];
+      const productImages = allVariants
+        .map((variant) => variant.images?.map((image) => image.url) ?? [])
+        .flat();
       const productDraft =
         await Mappers.Product.commercetoolsProductToTiktokProduct(
           apiRoot,
           product,
         );
-      await TiktokProduct.createProduct(productDraft);
+
+      console.log('productDraft', productDraft);
+      await ServiceRouterController.createProduct(
+        accessToken,
+        shopConfig.shopCipher,
+        productDraft,
+        productImages,
+      );
     } catch (error) {
       logger.error(
         `Full-Sync: Error creating product draft for product ${product.id}`,
@@ -51,6 +78,17 @@ export const selectiveProductSync = async (req: Request, res: Response) => {
       apiRoot,
     );
 
+  if (!shopConfig?.shopCipher) {
+    return res.status(400).send('Shop cipher not configured');
+  }
+
+  const accessToken =
+    await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
+
+  if (!accessToken) {
+    return res.status(400).send('Access token not found');
+  }
+
   const products = await ProductController.queryProduct(apiRoot, {
     limit: productIds.length,
     productIds: productIds,
@@ -60,14 +98,26 @@ export const selectiveProductSync = async (req: Request, res: Response) => {
   }
   res.status(200).send('Selective sync started...');
 
+  console.log('products', products.length);
   for await (const product of products) {
     try {
+      const allVariants = [product.masterVariant, ...product.variants];
+      const productImages = allVariants
+        .map((variant) => variant.images?.map((image) => image.url) ?? [])
+        .flat();
+      // TODO: error here
       const productDraft =
         await Mappers.Product.commercetoolsProductToTiktokProduct(
           apiRoot,
           product,
         );
-      await TiktokProduct.createProduct(productDraft);
+
+      await ServiceRouterController.createProduct(
+        accessToken,
+        shopConfig.shopCipher,
+        productDraft,
+        productImages,
+      );
     } catch (error) {
       logger.error(
         `Full-Sync: Error creating product draft for product ${product.id}`,
@@ -97,6 +147,7 @@ export const fullProductCheck = async (req: Request, res: Response) => {
         apiRoot,
         product,
       );
+      console.log('product', product);
       importableProducts.push(product.id);
     } catch (error: any) {
       unimportableProducts.push({ id: product.id, error: error.message });
