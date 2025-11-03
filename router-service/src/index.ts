@@ -6,7 +6,8 @@ import { logger } from './utils/logger.utils';
 
 import app from './app';
 
-const PORT = 8080;
+const isDevelopment = process.env.NODE_ENV === 'development';
+const PORT = isDevelopment ? 8090 : 8080;
 
 // Listen the application
 const server = app.listen(PORT, () => {
