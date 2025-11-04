@@ -8,30 +8,6 @@ deployAs:
           description: Enable test routes
           required: false
           default: "false"
-  - name: router-service
-    applicationType: service
-    endpoint: /router-service
-    configuration:
-      standardConfiguration:
-        - key: GCP_FIRESTORE_DATABASE_ID
-          description: commercetools Composable Commerce client scope
-          required: true
-        - key: GCP_SERVICE_ACCOUNT_CLIENT_EMAIL
-          description: GCP service account email
-          required: true
-        - key: TIKTOK_APP_KEY
-          description: TikTok app key
-          required: true
-      securedConfiguration:
-        - key: GCP_PROJECT_ID
-          description: commercetools Composable Commerce client secret
-          required: true
-        - key: GCP_SERVICE_ACCOUNT_PRIVATE_KEY
-          description: GCP private key
-          required: true
-        - key: TIKTOK_APP_SECRET
-          description: TikTok app secret
-          required: true
   - name: event
     applicationType: event
     endpoint: /event
@@ -74,11 +50,4 @@ inheritAs:
     securedConfiguration:
       - key: CTP_CLIENT_SECRET
         description: commercetools Composable Commerce client secret
-        required: true
-      
-      - key: GCP_PROJECT_ID
-        description: commercetools Composable Commerce client secret
-        required: true
-      - key: GCP_SERVICE_ACCOUNT_PRIVATE_KEY
-        description: GCP private key
         required: true
