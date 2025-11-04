@@ -256,3 +256,181 @@ export const addExternalOrderReference = async (
 
   return data;
 };
+
+/**
+ * Get categories via router service
+ * @param access_token - The TikTok access token
+ * @param shop_cipher - The TikTok shop cipher
+ * @param options - Optional query parameters
+ * @returns The categories response
+ */
+export const getCategories = async (
+  access_token: string,
+  shop_cipher: string,
+  options?: {
+    locale?: string;
+    keyword?: string;
+    listing_platform?: string;
+    include_prohibited_categories?: boolean;
+  },
+): Promise<any> => {
+  const routerServiceUrl = process.env.ROUTER_SERVICE_URL_ENDPOINT;
+
+  if (!routerServiceUrl) {
+    throw new Error(
+      'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
+    );
+  }
+
+  logger.info('Getting categories via router service');
+
+  const url = new URL(`${routerServiceUrl}/tiktok/categories`);
+  url.searchParams.append('access_token', access_token);
+  url.searchParams.append('shop_cipher', shop_cipher);
+  
+  if (options?.locale) {
+    url.searchParams.append('locale', options.locale);
+  }
+  if (options?.keyword) {
+    url.searchParams.append('keyword', options.keyword);
+  }
+
+  if (options?.listing_platform) {
+    url.searchParams.append('listing_platform', options.listing_platform);
+  }
+  if (options?.include_prohibited_categories !== undefined) {
+    url.searchParams.append('include_prohibited_categories', options.include_prohibited_categories.toString());
+  }
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to get categories via router service', { error });
+    throw new Error(`Get categories failed: ${error}`);
+  }
+
+  const data = await response.json();
+  logger.info('Categories retrieved successfully via router service');
+
+  return data;
+};
+
+/**
+ * Get category rules via router service
+ * @param access_token - The TikTok access token
+ * @param shop_cipher - The TikTok shop cipher
+ * @param category_id - The category ID
+ * @param options - Optional query parameters
+ * @returns The category rules response
+ */
+export const getCategoryRules = async (
+  access_token: string,
+  shop_cipher: string,
+  category_id: string,
+  options?: {
+    category_version?: string;
+    locale?: string;
+  },
+): Promise<any> => {
+  const routerServiceUrl = process.env.ROUTER_SERVICE_URL_ENDPOINT;
+
+  if (!routerServiceUrl) {
+    throw new Error(
+      'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
+    );
+  }
+
+  logger.info('Getting category rules via router service', {
+    category_id,
+  });
+
+  const url = new URL(`${routerServiceUrl}/tiktok/categories/${category_id}/rules`);
+  url.searchParams.append('access_token', access_token);
+  url.searchParams.append('shop_cipher', shop_cipher);
+  
+  if (options?.category_version) {
+    url.searchParams.append('category_version', options.category_version);
+  }
+  if (options?.locale) {
+    url.searchParams.append('locale', options.locale);
+  }
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to get category rules via router service', { error });
+    throw new Error(`Get category rules failed: ${error}`);
+  }
+
+  const data = await response.json();
+  logger.info('Category rules retrieved successfully via router service');
+
+  return data;
+};
+
+/**
+ * Get category attributes via router service
+ * @param access_token - The TikTok access token
+ * @param shop_cipher - The TikTok shop cipher
+ * @param category_id - The category ID
+ * @param options - Optional query parameters
+ * @returns The category attributes response
+ */
+export const getCategoryAttributes = async (
+  access_token: string,
+  shop_cipher: string,
+  category_id: string,
+  options?: {
+    locale?: string;
+  },
+): Promise<any> => {
+  const routerServiceUrl = process.env.ROUTER_SERVICE_URL_ENDPOINT;
+
+  if (!routerServiceUrl) {
+    throw new Error(
+      'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
+    );
+  }
+
+  logger.info('Getting category attributes via router service', {
+    category_id,
+  });
+
+  const url = new URL(`${routerServiceUrl}/tiktok/categories/${category_id}/attributes`);
+  url.searchParams.append('access_token', access_token);
+  url.searchParams.append('shop_cipher', shop_cipher);
+  
+  if (options?.locale) {
+    url.searchParams.append('locale', options.locale);
+  }
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to get category attributes via router service', { error });
+    throw new Error(`Get category attributes failed: ${error}`);
+  }
+
+  const data = await response.json();
+  logger.info('Category attributes retrieved successfully via router service');
+
+  return data;
+};

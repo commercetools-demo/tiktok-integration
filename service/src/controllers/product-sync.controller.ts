@@ -28,12 +28,9 @@ export const fullProductSync = async (req: Request, res: Response) => {
     return res.status(400).send('Access token not found');
   }
 
-  console.log('accessToken', accessToken);
-  console.log('shopConfig', shopConfig);
 
   const products = await ProductController.getAllProducts(apiRoot, shopConfig);
 
-  console.log('products', products);
   res.status(200).send('Full sync started...');
 
   for await (const product of products.results) {
@@ -48,7 +45,6 @@ export const fullProductSync = async (req: Request, res: Response) => {
           product,
         );
 
-      console.log('productDraft', productDraft);
       await ServiceRouterController.createProduct(
         accessToken,
         shopConfig.shopCipher,
@@ -105,7 +101,6 @@ export const selectiveProductSync = async (req: Request, res: Response) => {
       const productImages = allVariants
         .map((variant) => variant.images?.map((image) => image.url) ?? [])
         .flat();
-      // TODO: error here
       const productDraft =
         await Mappers.Product.commercetoolsProductToTiktokProduct(
           apiRoot,
@@ -147,7 +142,6 @@ export const fullProductCheck = async (req: Request, res: Response) => {
         apiRoot,
         product,
       );
-      console.log('product', product);
       importableProducts.push(product.id);
     } catch (error: any) {
       unimportableProducts.push({ id: product.id, error: error.message });
