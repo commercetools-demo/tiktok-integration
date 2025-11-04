@@ -1,5 +1,5 @@
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk';
-import { CommercetoolsStorage, TiktokShop } from '..';
+import { CommercetoolsStorage } from '..';
 
 const SUPPORTED_LOCALES_MAP = {
   en: 'en-US',

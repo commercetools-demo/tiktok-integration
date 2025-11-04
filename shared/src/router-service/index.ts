@@ -1,5 +1,5 @@
 import { AppProjectMapping } from '../firestore/controller/map.controller';
-import { TokenResponse } from '../tiktok-sdk/client/token';
+import { TokenResponse } from '../interfaces';
 import { logger } from '../utils/logger';
 
 /**

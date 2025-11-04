@@ -1,5 +1,4 @@
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
-import { TokenResponse } from '../../tiktok-sdk/client/token';
 import { SHARED_SHOP_CONTAINER_KEY } from '../../constants';
 import {
   createOrUpdateCustomObject,
@@ -7,7 +6,7 @@ import {
 } from '../../commercetools/controllers/custom-object.controller';
 import { getAccessTokenVariableKey } from '../../utils';
 import { AccessTokenData } from '../../interfaces';
-
+import { TokenResponse } from '../../interfaces';
 /**
  * Store access token and shop information in CommerceTools custom objects
  * @param apiRoot - The CommerceTools API root

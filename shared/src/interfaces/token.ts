@@ -14,3 +14,15 @@ export interface AccessTokenData {
   updated_at: string;
   last_refreshed_at: string;
 }
+
+
+export type TokenResponse = {
+  access_token: string;
+  access_token_expire_in?: number;
+  refresh_token: string;
+  refresh_token_expire_in?: number;
+  open_id?: string;
+  seller_name?: string;
+  seller_base_region?: string;
+  request_id?: string;
+};
