@@ -47,28 +47,19 @@ import { logger } from '../../../utils/logger';
 
 export const commercetoolsProductToTiktokProduct = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
   product: ProductProjection,
 ): Promise<Product202309CreateProductRequestBody> => {
-  const locale = await Services.getCommercetoolsLocale(apiRoot, app_key);
+  const locale = await Services.getCommercetoolsLocale(apiRoot);
   const shopConfig =
     await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
       apiRoot,
-      app_key,
     );
   if (!shopConfig) {
     throw new Error('Shop configuration not found');
   }
 
   const allVariants = [product.masterVariant, ...product.variants];
-  const mainImages = await commercetoolsProductToTiktokMainImages(
-    apiRoot,
-    app_key,
-    product,
-  );
-  if (!mainImages) {
-    throw new Error('No main images found');
-  }
+  
 
   const productDraft: Product202309CreateProductRequestBody = {
     saveMode: commercetoolsProductStateToSaveMode(product),
@@ -79,7 +70,6 @@ export const commercetoolsProductToTiktokProduct = async (
     categoryId: commercetoolsProductTypeToTiktokCategory(
       product.productType.id,
     ),
-    mainImages,
     skus: allVariants
       .map((variant) =>
         commercetoolsVariantToTiktokSKU(
@@ -114,14 +104,12 @@ export const commercetoolsProductToTiktokProduct = async (
  */
 export const commercetoolsProductToTiktokProductCheck = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
   product: ProductProjection,
 ): Promise<Product202309CreateProductRequestBody> => {
-  const locale = await Services.getCommercetoolsLocale(apiRoot, app_key);
+  const locale = await Services.getCommercetoolsLocale(apiRoot);
   const shopConfig =
     await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
       apiRoot,
-      app_key,
     );
   if (!shopConfig) {
     throw new Error('Shop configuration not found');
@@ -242,37 +230,6 @@ const commercetoolsVariantToTiktokSKUInventory = (
   ];
 };
 
-const commercetoolsProductToTiktokMainImages = async (
-  apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
-  product: ProductProjection,
-): Promise<Product202309CreateProductRequestBodyMainImages[] | undefined> => {
-  const access_token =
-    await CommercetoolsStorage.TokenController.getAccessToken(apiRoot, app_key);
-  if (!access_token) {
-    throw new Error('Access token not found');
-  }
-
-  const images = product.masterVariant?.images ?? [];
-  const mainImages = [];
-  for await (const image of images ?? []) {
-    const resultUploadImage = await TiktokProduct.uploadProductImage(
-      access_token,
-      image.url,
-      'MAIN_IMAGE',
-    );
-    if (!resultUploadImage) {
-      throw new Error('Failed to upload product image');
-    }
-
-    mainImages.push(resultUploadImage.data?.uri);
-  }
-  return mainImages
-    .filter((image) => image !== undefined)
-    .map((image) => ({
-      uri: image,
-    }));
-};
 
 export const commercetoolsPriceToTiktokPrice = (
   price: Price,
@@ -515,7 +472,6 @@ export const tiktokProductToTiktokProductEdit = (
 
 export const mergeTiktokProductAndCommercetoolsProductToTiktokProductEdit = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
   product: Product202309GetProductResponseData,
   commercetoolsProduct?: ProductProjection,
 ): Promise<Product202309EditProductRequestBody> => {
@@ -523,7 +479,7 @@ export const mergeTiktokProductAndCommercetoolsProductToTiktokProductEdit = asyn
   if (!commercetoolsProduct) {
     throw new Error('Commercetools product is required');
   }
-  const originalProductData = await commercetoolsProductToTiktokProduct(apiRoot, app_key, commercetoolsProduct);
+  const originalProductData = await commercetoolsProductToTiktokProduct(apiRoot, commercetoolsProduct);
 
   const editProductData: Product202309EditProductRequestBody = {
     title: product.title,

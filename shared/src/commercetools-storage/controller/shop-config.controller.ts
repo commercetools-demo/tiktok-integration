@@ -10,14 +10,13 @@ import { logger } from '../../utils/logger';
 
 export const storeShopConfiguration = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
   data: ShopConfigurationData,
 ): Promise<void> => {
   let configData: ShopConfigurationData =
     (await readCustomObject<ShopConfigurationData>(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
-      getConfigurationVariableKey(app_key),
+      getConfigurationVariableKey(),
     )) || ({} as ShopConfigurationData);
 
   logger.info('Config data: ${configData}', { configData });
@@ -43,32 +42,29 @@ export const storeShopConfiguration = async (
   await createOrUpdateCustomObject(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
-    getConfigurationVariableKey(app_key),
+    getConfigurationVariableKey(),
     configData,
   );
 };
 
 export const getShopConfiguration = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
 ): Promise<ShopConfigurationData | null> => {
   return readCustomObject<ShopConfigurationData>(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
-    getConfigurationVariableKey(app_key),
+    getConfigurationVariableKey(),
   );
 };
 /**
  * Get locale and shop region from shop configuration
  * @param apiRoot - The CommerceTools API root
- * @param app_key - The TikTok app key (used as document identifier)
  * @returns Object with locale and shop_region or null if not found
  */
 export const getLocaleAndShopRegion = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
 ): Promise<{ locale?: string; shop_region?: string }> => {
-  const configData = await getShopConfiguration(apiRoot, app_key);
+  const configData = await getShopConfiguration(apiRoot);
   if (!configData) {
     return { locale: undefined, shop_region: undefined };
   }
@@ -82,14 +78,12 @@ export const getLocaleAndShopRegion = async (
 /**
  * Get shop cipher from CommerceTools custom objects
  * @param apiRoot - The CommerceTools API root
- * @param app_key - The TikTok app key (used as document identifier)
  * @returns Shop cipher or null if not found
  */
 export const getShopCipher = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
 ): Promise<string | undefined> => {
-  const configData = await getShopConfiguration(apiRoot, app_key);
+  const configData = await getShopConfiguration(apiRoot);
   if (!configData) {
     return undefined;
   }
@@ -100,14 +94,12 @@ export const getShopCipher = async (
 /**
  * Check if shop is authorized
  * @param apiRoot - The CommerceTools API root
- * @param app_key - The TikTok app key (used as document identifier)
  * @returns True if shop is authorized, false otherwise
  */
 export const isAuthorized = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
 ): Promise<boolean> => {
-  const configData = await getShopConfiguration(apiRoot, app_key);
+  const configData = await getShopConfiguration(apiRoot);
   logger.info('Config data in isAuthorized: ${configData}', { configData });
   if (!configData) {
     return false;
@@ -119,14 +111,12 @@ export const isAuthorized = async (
 /**
  * Check if shop is initialized
  * @param apiRoot - The CommerceTools API root
- * @param app_key - The TikTok app key (used as document identifier)
  * @returns True if shop is initialized, false otherwise
  */
 export const isInitialized = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
 ): Promise<boolean> => {
-  const configData = await getShopConfiguration(apiRoot, app_key);
+  const configData = await getShopConfiguration(apiRoot);
   if (!configData) {
     return false;
   }

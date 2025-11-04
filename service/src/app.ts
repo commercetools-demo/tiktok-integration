@@ -11,6 +11,7 @@ import WebhookRoutes from './routes/webhook.route';
 import { Utils } from 'tiktok-integration-shared';
 import { errorMiddleware } from './middleware/error.middleware';
 import CustomError from './errors/custom.error';
+import { logger } from './utils/logger.utils';
 
 // Read env variables
 Utils.readConfiguration();
@@ -20,6 +21,7 @@ const featureFlagEnableTiktokRoutes = process.env.FEATURE_FLAG_ENABLE_TEST_TIKTO
 // Create the express app
 const app: Express = express();
 app.disable('x-powered-by');
+
 
 // Define configurations
 app.use(bodyParser.json());

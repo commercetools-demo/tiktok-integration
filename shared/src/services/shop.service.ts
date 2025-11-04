@@ -6,7 +6,6 @@ export const getShopCipher = async (): Promise<{ shopCipher: string, access_toke
   const access_token =
     await CommercetoolsStorage.TokenController.getAccessToken(
       apiRoot,
-      process.env.TIKTOK_APP_KEY as string
     );
 
   if (!access_token) {

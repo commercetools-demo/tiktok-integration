@@ -6,13 +6,12 @@ import { getCategoryVariableKey } from '../../utils';
 
 export const storeCategories = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  app_key: string,
   categories: Product202309GetCategoriesResponseDataCategories[],
 ) => {
   await createOrUpdateCustomObject(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
-    getCategoryVariableKey(app_key),
+    getCategoryVariableKey(),
     categories,
   );
 };

@@ -1,50 +1,147 @@
 import { Request, Response } from 'express';
-import { TiktokAuth, CommercetoolsClient, Utils, CommercetoolsStorage, Services } from 'tiktok-integration-shared';
+import {
+  ChannelController,
+  CommercetoolsClient,
+  CommercetoolsStorage,
+  Services,
+  StoreController,
+  Utils,
+} from 'tiktok-integration-shared';
 import { logger } from '../utils/logger.utils';
+import * as ServiceRouterController from './service-router.controller';
 
-export const authorizeApp = async (req: Request, res: Response) => {
-  const { app_key, code, locale, shop_region } = req.query;
+export const connectProject = async (req: Request, res: Response) => {
+  const { shop_doc_id } = req.query;
 
-  if (app_key !== process.env.TIKTOK_APP_KEY || !code) {
+  if (!shop_doc_id) {
     return res.status(401).send('Unauthorized');
-  }
-  const { data } = await TiktokAuth.getAccessToken(
-    code as string,
-    app_key as string,
-    process.env.TIKTOK_APP_SECRET as string,
-  );
-  res.status(200).send('success');
-
-  if (!data) {
-    return res.status(400).send('Failed to get access token data');
   }
   const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
 
-  await CommercetoolsStorage.TokenController.storeAccessToken(apiRoot, process.env.TIKTOK_APP_KEY as string, data);
+  const serviceUrl =
+    await CommercetoolsStorage.ServiceURLController.getServiceURLStorageLink(
+      apiRoot,
+    );
+
+  let data;
+  try {
+    data = await ServiceRouterController.authorizeProject(
+      shop_doc_id as string,
+      serviceUrl || '',
+    );
+  } catch (error) {
+    logger.error('Failed to authorize project', error);
+    return res.status(400).send((error as Error).message);
+  }
+
+  res.status(200).send('success');
+
+  await CommercetoolsStorage.TokenController.storeAccessToken(
+    apiRoot,
+    data.access_token_data,
+  );
   logger.info('Token stored successfully for seller');
   await CommercetoolsStorage.ShopConfigController.storeShopConfiguration(
     apiRoot,
-    process.env.TIKTOK_APP_KEY as string,
     {
       isAuthorized: true,
-      locale: locale as string,
-      shop_region: shop_region as string,
+      locale: data.app_map_data.options?.locale as string,
+      shop_region: data.app_map_data.options?.shop_region as string,
     },
   );
   logger.info('Shop configuration stored successfully');
-  const isInitialized = await CommercetoolsStorage.ShopConfigController.isInitialized(
-    apiRoot,
-    process.env.TIKTOK_APP_KEY as string,
-  );
+  const isInitialized =
+    await CommercetoolsStorage.ShopConfigController.isInitialized(apiRoot);
   logger.info('Shop initialized: ${isInitialized}', { isInitialized });
   if (!isInitialized) {
-    await Services.initializeShop(
+    const isAuthorized =
+      await CommercetoolsStorage.ShopConfigController.isAuthorized(apiRoot);
+    if (!isAuthorized) {
+      throw new Error('App is not authorized to access the shop');
+    }
+    const { locale } =
+      await CommercetoolsStorage.ShopConfigController.getLocaleAndShopRegion(
+        apiRoot,
+      );
+
+    const stores = await StoreController.findStore(apiRoot, [
+      'custom(fields(isTikTokShop=true))',
+    ]);
+    if (!stores || stores.length === 0) {
+      logger.info('No store found');
+    }
+
+    const warehouseChannels = await ChannelController.findChannel(apiRoot, [
+      'custom(fields(isTikTokWarehouse=true))',
+    ]);
+    if (!warehouseChannels || warehouseChannels.length === 0) {
+      throw new Error('No warehouse channel found');
+    }
+    if (warehouseChannels.length > 1) {
+      throw new Error('Multiple warehouse channels found');
+    }
+
+    const warehouses = data.app_map_data.options?.warehouses;
+    if (!warehouses || warehouses.length === 0) {
+      throw new Error('No warehouses found');
+    }
+
+    const tiktokWarehouse = warehouses.find((warehouse: any) => warehouseChannels.find((channel) => channel.custom?.fields.warehouseId === warehouse.id));
+
+    if (!tiktokWarehouse) {
+      throw new Error('No warehouse found');
+    }
+
+    const priceChannels = await ChannelController.findChannel(apiRoot, [
+      'custom(fields(isTikTokPrice=true))',
+    ]);
+    if (!priceChannels || priceChannels.length === 0) {
+      logger.info('No price channel found');
+    }
+
+    const ctStore = stores?.[0];
+    const ctWarehouseChannel = warehouseChannels?.[0];
+    const ctPriceChannel = priceChannels?.[0];
+
+    if (!ctWarehouseChannel?.custom?.fields.warehouseId) {
+      throw new Error('No warehouse ID found in warehouse channel');
+    }
+    if (!data.app_map_data.options?.shop_cipher) {
+      throw new Error('No shop cipher found');
+    }
+    await CommercetoolsStorage.ShopConfigController.storeShopConfiguration(
       apiRoot,
-      data.access_token,
-      process.env.TIKTOK_APP_KEY as string,
-      process.env.TIKTOK_SHOP_ID as string,
+      {
+        shopCipher: data.app_map_data.options?.shop_cipher,
+        ctSupplyChannelId: ctWarehouseChannel.id,
+        ctDistributionChannelId: ctPriceChannel?.id,
+        ctStoreId: ctStore?.id,
+        ctStoreKey: ctStore?.key,
+      },
     );
+
+    await CommercetoolsStorage.ShopConfigController.storeShopConfiguration(
+      apiRoot,
+      {
+        tiktokWarehouseId: tiktokWarehouse.id,
+        tiktokWarehouseEntityId: tiktokWarehouse.entityId,
+      },
+    );
+
+    await CommercetoolsStorage.ShopConfigController.storeShopConfiguration(
+      apiRoot,
+      {
+        isInitialized: true,
+      },
+    );
+
+    return {
+      success: true,
+      message: 'Shop initialized successfully',
+    };
   }
 
-  console.log(`Token stored successfully for seller: ${data.seller_name}`);
+  console.log(
+    `Token stored successfully for seller: ${data.app_map_data.options?.seller_name}`,
+  );
 };

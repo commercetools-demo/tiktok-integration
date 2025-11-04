@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { logger } from '../utils/logger.utils';
-import { authorizeApp } from '../controllers/tiktok.auth.controller';
+import { connectProject } from '../controllers/tiktok.auth.controller';
 import { fullProductCheck, fullProductSync, selectiveProductSync } from '../controllers/product-sync.controller';
 import { shopConfigSync } from '../controllers/shop-config-sync.controller';
 
 const serviceRouter = Router();
 
-serviceRouter.get('/authorize-app', async (req, res, next) => {
-  await authorizeApp(req, res).catch((error) => {
+serviceRouter.get('/connect-project', async (req, res, next) => {
+  await connectProject(req, res).catch((error) => {
     logger.error('Error authorizing app', error);
     return res.status(500).send(error.message);
   });

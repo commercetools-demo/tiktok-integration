@@ -57,7 +57,6 @@ export const inventoryEntryCreated = async (
         const productDraft =
           await Mappers.Product.commercetoolsProductToTiktokProduct(
             apiRoot,
-            process.env.TIKTOK_APP_KEY as string,
             product
           );
         await TiktokProduct.createProduct(productDraft);
@@ -140,7 +139,6 @@ export const inventoryEntryQuantitySet = async (
         const productDraft =
           await Mappers.Product.commercetoolsProductToTiktokProduct(
             apiRoot,
-            process.env.TIKTOK_APP_KEY as string,
             product
           );
         await TiktokProduct.createProduct(productDraft);

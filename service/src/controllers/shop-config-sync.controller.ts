@@ -15,17 +15,15 @@ export const shopConfigSync = async (req: Request, res: Response) => {
     const access_token =
       await CommercetoolsStorage.TokenController.getAccessToken(
         apiRoot,
-        process.env.TIKTOK_APP_KEY as string,
       );
     if (!access_token) {
       throw new Error('No access token found');
     }
-    await Services.initializeShop(
-      apiRoot,
-      access_token,
-      process.env.TIKTOK_APP_KEY as string,
-      process.env.TIKTOK_SHOP_ID as string,
-    );
+    // await Services.initializeShop(
+    //   apiRoot,
+    //   access_token,
+    //   process.env.TIKTOK_SHOP_ID as string,
+    // );
 
     res.status(200).send();
   } catch (error) {
