@@ -8,9 +8,6 @@ import {
   Utils,
 } from 'tiktok-integration-shared';
 import { logger } from '../../utils/logger.utils';
-import type {
-  TiktokSDK
-} from 'tiktok-integration-shared';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk';
 import type { Types } from 'tiktok-integration-shared';
 
@@ -98,12 +95,12 @@ export const reverseStatusUpdate = async (webhookBody: any) => {
 
 const handleUnpaidOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders:   Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
   accessToken: string,
   config: Types.ShopConfigurationData,
   commercetoolsLocale: string,
 ) => {
-  const externalOrderReferences: TiktokSDK.Order202406AddExternalOrderReferencesRequestBodyOrders[] =
+  const externalOrderReferences: Types.TiktokSDK.Order202406AddExternalOrderReferencesRequestBodyOrders[] =
     [];
   for await (const order of orders) {
     const orderDraft =
@@ -136,7 +133,7 @@ const handleUnpaidOrder = async (
 
 const handleOnHoldOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
   accessToken: string,
   config: Types.ShopConfigurationData,
   commercetoolsLocale: string,
@@ -177,7 +174,7 @@ const handleOnHoldOrder = async (
 
 const handleAwaitingShipmentOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
 ) => {
   for await (const order of orders) {
     logger.info(`AWAITING_SHIPMENT order ${orders.length} received`);
@@ -197,7 +194,7 @@ const handleAwaitingShipmentOrder = async (
 
 const handleAwaitingCollectionOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
 ) => {
   for await (const order of orders) {
     logger.info(`AWAITING_COLLECTION order ${orders.length} received`);
@@ -217,7 +214,7 @@ const handleAwaitingCollectionOrder = async (
 
 const handleInTransitOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
 ) => {
   for await (const order of orders) {
     logger.info(`IN_TRANSIT order ${orders.length} received`);
@@ -237,7 +234,7 @@ const handleInTransitOrder = async (
 
 const handleDeliveredOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
 ) => {
   for await (const order of orders) {
     logger.info(`DELIVERED order ${orders.length} received`);
@@ -257,7 +254,7 @@ const handleDeliveredOrder = async (
 
 const handleCompletedOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
 ) => {
   for await (const order of orders) {
     logger.info(`COMPLETED order ${orders.length} received`);
@@ -277,7 +274,7 @@ const handleCompletedOrder = async (
 
 const handleCancelledOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
 ) => {
   for await (const order of orders) {
     logger.info(`CANCELLED order ${orders.length} received`);

@@ -3,11 +3,11 @@ import {
   OrderUpdateAction,
 } from '@commercetools/platform-sdk';
 import { OrderController } from '../commercetools';
-import { TiktokOrder } from '../interfaces/order';
+import { Order202507GetOrderDetailResponseDataOrders } from '../interfaces/tiktok/models';
 
 export const updateCommercetoolsOrderFromTiktokOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  order: TiktokOrder,
+  order: Order202507GetOrderDetailResponseDataOrders,
   updateActions: OrderUpdateAction[],
 ) => {
   const commercetoolsOrder = await OrderController.queryOrder(
