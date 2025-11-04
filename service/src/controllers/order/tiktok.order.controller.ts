@@ -3,11 +3,11 @@ import {
   CommercetoolsStorage,
   Mappers,
   OrderController,
+  RouterService,
   Services,
   Utils,
 } from 'tiktok-integration-shared';
 import { logger } from '../../utils/logger.utils';
-import * as ServiceRouterController from '../service-router.controller';
 import type {
   TiktokSDK
 } from 'tiktok-integration-shared';
@@ -31,7 +31,7 @@ export const orderStatusChange = async (webhookBody: any) => {
     throw new Error('No access token found');
   }
 
-  const orders = await ServiceRouterController.getOrders(
+  const orders = await RouterService.getOrders(
     accessToken, 
     config.shopCipher, 
     [orderId]
@@ -122,7 +122,7 @@ const handleUnpaidOrder = async (
       ),
     );
   }
-  await ServiceRouterController.addExternalOrderReference(
+  await RouterService.addExternalOrderReference(
     accessToken,
     config.shopCipher!,
     {

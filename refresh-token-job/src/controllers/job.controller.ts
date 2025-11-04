@@ -2,8 +2,7 @@ import { Request, Response } from 'express';
 
 import CustomError from '../errors/custom.error';
 import { logger } from '../utils/logger.utils';
-import { CommercetoolsClient, Utils, CommercetoolsStorage } from 'tiktok-integration-shared';
-import type { TiktokSDK } from 'tiktok-integration-shared';
+import { CommercetoolsClient, Utils, CommercetoolsStorage, RouterService } from 'tiktok-integration-shared';
 
 /**
  * Exposed job endpoint.
@@ -25,18 +24,7 @@ export const post = async (_request: Request, res: Response) => {
       return;
     }
 
-    const serviceUrl = await CommercetoolsStorage.ServiceURLController.getServiceURLStorageLink(apiRoot);
-    if (!serviceUrl) {
-      throw new Error('Service URL not found');
-    }
-
-    const response = await fetch(`${serviceUrl}/tiktok/refresh-access-token?refresh_token=${refreshToken}`, {
-      method: 'GET',
-    });
-    if (!response.ok) {
-      throw new Error('Failed to refresh access token');
-    }
-    const data: TiktokSDK.TokenResponse = await response.json();
+    const data = await RouterService.refreshAccessToken(refreshToken);
     if (data) {
       await CommercetoolsStorage.TokenController.updateRefreshedToken(
         apiRoot,

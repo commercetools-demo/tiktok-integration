@@ -4,10 +4,10 @@ import {
   CommercetoolsStorage,
   Mappers,
   ProductController,
+  RouterService,
   Utils,
 } from 'tiktok-integration-shared';
 import { logger } from '../utils/logger.utils';
-import * as ServiceRouterController from './service-router.controller';
 
 export const fullProductSync = async (req: Request, res: Response) => {
   const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
@@ -45,7 +45,7 @@ export const fullProductSync = async (req: Request, res: Response) => {
           product,
         );
 
-      await ServiceRouterController.createProduct(
+      await RouterService.createProduct(
         accessToken,
         shopConfig.shopCipher,
         productDraft,
@@ -107,7 +107,7 @@ export const selectiveProductSync = async (req: Request, res: Response) => {
           product,
         );
 
-      await ServiceRouterController.createProduct(
+      await RouterService.createProduct(
         accessToken,
         shopConfig.shopCipher,
         productDraft,

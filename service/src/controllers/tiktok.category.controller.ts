@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { getAccessToken } from '../utils/tiktok.utils';
 import { logger } from '../utils/logger.utils';
-import * as ServiceRouter from './service-router.controller';
+import { RouterService } from 'tiktok-integration-shared';
 
 export const getCategories = async (req: Request, res: Response) => {
   const { shop_cipher, locale, keyword, listing_platform, include_prohibited_categories } = req.query;
@@ -17,7 +17,7 @@ export const getCategories = async (req: Request, res: Response) => {
     return res.status(401).send('No access token found');
   }
 
-  const categories = await ServiceRouter.getCategories(access_token, shop_cipher as string, {
+  const categories = await RouterService.getCategories(access_token, shop_cipher as string, {
     locale: locale as string | undefined,
     keyword: keyword as string | undefined,
     listing_platform: listing_platform as string | undefined,
@@ -46,7 +46,7 @@ export const getCategoryRules = async (req: Request, res: Response) => {
     return res.status(401).send('No access token found');
   }
 
-  const rules = await ServiceRouter.getCategoryRules(access_token, shop_cipher as string, category_id, {
+  const rules = await RouterService.getCategoryRules(access_token, shop_cipher as string, category_id, {
     category_version: category_version as string | undefined,
     locale: locale as string | undefined,
   });
@@ -73,7 +73,7 @@ export const getCategoryAttributes = async (req: Request, res: Response) => {
     return res.status(401).send('No access token found');
   }
 
-  const attributes = await ServiceRouter.getCategoryAttributes(access_token, shop_cipher as string, category_id, {
+  const attributes = await RouterService.getCategoryAttributes(access_token, shop_cipher as string, category_id, {
     locale: locale as string | undefined,
   });
   return res.status(200).send(attributes);

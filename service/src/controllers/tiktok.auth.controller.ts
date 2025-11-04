@@ -3,12 +3,11 @@ import {
   ChannelController,
   CommercetoolsClient,
   CommercetoolsStorage,
-  Services,
+  RouterService,
   StoreController,
   Utils,
 } from 'tiktok-integration-shared';
 import { logger } from '../utils/logger.utils';
-import * as ServiceRouterController from './service-router.controller';
 
 export const connectProject = async (req: Request, res: Response) => {
   const { shop_doc_id } = req.query;
@@ -25,7 +24,7 @@ export const connectProject = async (req: Request, res: Response) => {
 
   let data;
   try {
-    data = await ServiceRouterController.authorizeProject(
+    data = await RouterService.authorizeProject(
       shop_doc_id as string,
       serviceUrl || '',
     );

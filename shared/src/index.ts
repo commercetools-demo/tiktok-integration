@@ -7,3 +7,4 @@ export * as Types from './interfaces';
 export * as Utils from './utils';
 export * as Mappers from './tiktok/mappers';
 export * as TiktokSDK from './tiktok-sdk';
+export * as RouterService from './router-service';

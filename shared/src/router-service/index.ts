@@ -1,6 +1,6 @@
-import { logger } from '../utils/logger.utils';
-import { AppProjectMapping } from 'tiktok-integration-shared/build/firestore/controller/map.controller';
-import { TokenResponse } from 'tiktok-integration-shared/build/tiktok-sdk/client/token';
+import { AppProjectMapping } from '../firestore/controller/map.controller';
+import { TokenResponse } from '../tiktok-sdk/client/token';
+import { logger } from '../utils/logger';
 
 /**
  * Response type from router service authorize-project endpoint
@@ -9,6 +9,22 @@ export interface AuthorizeProjectResponse {
   access_token_data: TokenResponse;
   app_map_data: AppProjectMapping;
 }
+
+/**
+ * Get router service URL from environment variable
+ * @returns The router service URL
+ */
+const getRouterServiceUrl = (): string => {
+  const url = process.env.ROUTER_SERVICE_URL_ENDPOINT;
+  
+  if (!url) {
+    throw new Error(
+      'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
+    );
+  }
+  
+  return url;
+};
 
 /**
  * Authorize a project with the router service
@@ -20,13 +36,7 @@ export const authorizeProject = async (
   shop_doc_id: string,
   service_url: string,
 ): Promise<AuthorizeProjectResponse> => {
-  const routerServiceUrl = process.env.ROUTER_SERVICE_URL_ENDPOINT;
-
-  if (!routerServiceUrl) {
-    throw new Error(
-      'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
-    );
-  }
+  const url = getRouterServiceUrl();
 
   logger.info('Authorizing project with router service', {
     shop_doc_id,
@@ -35,7 +45,7 @@ export const authorizeProject = async (
     shop_id: process.env.TIKTOK_SHOP_ID as string,
   });
 
-  const response = await fetch(`${routerServiceUrl}/authorize-project`, {
+  const response = await fetch(`${url}/authorize-project`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -75,18 +85,12 @@ export const authorizeProject = async (
 export const refreshAccessToken = async (
   refresh_token: string,
 ): Promise<TokenResponse> => {
-  const routerServiceUrl = process.env.ROUTER_SERVICE_URL_ENDPOINT;
-
-  if (!routerServiceUrl) {
-    throw new Error(
-      'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
-    );
-  }
+  const url = getRouterServiceUrl();
 
   logger.info('Refreshing access token via router service');
 
   const response = await fetch(
-    `${routerServiceUrl}/tiktok/refresh-access-token?refresh_token=${encodeURIComponent(refresh_token)}`,
+    `${url}/tiktok/refresh-access-token?refresh_token=${encodeURIComponent(refresh_token)}`,
     {
       method: 'GET',
       headers: {
@@ -97,12 +101,12 @@ export const refreshAccessToken = async (
 
   if (!response.ok) {
     const error = await response.text();
-    logger.error('Failed to refresh access token', { error });
+    logger.error('Failed to refresh access token via router service', { error });
     throw new Error(`Token refresh failed: ${error}`);
   }
 
   const data: TokenResponse = await response.json();
-  logger.info('Access token refreshed successfully');
+  logger.info('Access token refreshed successfully via router service');
 
   return data;
 };
@@ -121,20 +125,14 @@ export const createProduct = async (
   productData: any,
   productImages: string[],
 ): Promise<any> => {
-  const routerServiceUrl = process.env.ROUTER_SERVICE_URL_ENDPOINT;
-
-  if (!routerServiceUrl) {
-    throw new Error(
-      'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
-    );
-  }
+  const baseUrl = getRouterServiceUrl();
 
   logger.info('Creating product via router service', {
     access_token: access_token.substring(0, 10) + '...',
     shop_cipher: shop_cipher.substring(0, 10) + '...',
   });
 
-  const url = new URL(`${routerServiceUrl}/tiktok/products`);
+  const url = new URL(`${baseUrl}/tiktok/products`);
   url.searchParams.append('access_token', access_token);
   url.searchParams.append('shop_cipher', shop_cipher);
 
@@ -170,13 +168,7 @@ export const getOrders = async (
   shop_cipher: string,
   orderIds: string[],
 ): Promise<any> => {
-  const routerServiceUrl = process.env.ROUTER_SERVICE_URL_ENDPOINT;
-
-  if (!routerServiceUrl) {
-    throw new Error(
-      'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
-    );
-  }
+  const baseUrl = getRouterServiceUrl();
 
   logger.info('Getting orders via router service', {
     access_token: access_token.substring(0, 10) + '...',
@@ -184,7 +176,7 @@ export const getOrders = async (
     orderIds,
   });
 
-  const url = new URL(`${routerServiceUrl}/tiktok/orders`);
+  const url = new URL(`${baseUrl}/tiktok/orders`);
   url.searchParams.append('access_token', access_token);
   url.searchParams.append('shop_cipher', shop_cipher);
 
@@ -220,20 +212,14 @@ export const addExternalOrderReference = async (
   shop_cipher: string,
   requestBody: any,
 ): Promise<any> => {
-  const routerServiceUrl = process.env.ROUTER_SERVICE_URL_ENDPOINT;
-
-  if (!routerServiceUrl) {
-    throw new Error(
-      'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
-    );
-  }
+  const baseUrl = getRouterServiceUrl();
 
   logger.info('Adding external order reference via router service', {
     access_token: access_token.substring(0, 10) + '...',
     shop_cipher: shop_cipher.substring(0, 10) + '...',
   });
 
-  const url = new URL(`${routerServiceUrl}/tiktok/orders/external-reference`);
+  const url = new URL(`${baseUrl}/tiktok/orders/external-reference`);
   url.searchParams.append('access_token', access_token);
   url.searchParams.append('shop_cipher', shop_cipher);
 
@@ -274,17 +260,11 @@ export const getCategories = async (
     include_prohibited_categories?: boolean;
   },
 ): Promise<any> => {
-  const routerServiceUrl = process.env.ROUTER_SERVICE_URL_ENDPOINT;
-
-  if (!routerServiceUrl) {
-    throw new Error(
-      'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
-    );
-  }
+  const baseUrl = getRouterServiceUrl();
 
   logger.info('Getting categories via router service');
 
-  const url = new URL(`${routerServiceUrl}/tiktok/categories`);
+  const url = new URL(`${baseUrl}/tiktok/categories`);
   url.searchParams.append('access_token', access_token);
   url.searchParams.append('shop_cipher', shop_cipher);
   
@@ -338,19 +318,13 @@ export const getCategoryRules = async (
     locale?: string;
   },
 ): Promise<any> => {
-  const routerServiceUrl = process.env.ROUTER_SERVICE_URL_ENDPOINT;
-
-  if (!routerServiceUrl) {
-    throw new Error(
-      'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
-    );
-  }
+  const baseUrl = getRouterServiceUrl();
 
   logger.info('Getting category rules via router service', {
     category_id,
   });
 
-  const url = new URL(`${routerServiceUrl}/tiktok/categories/${category_id}/rules`);
+  const url = new URL(`${baseUrl}/tiktok/categories/${category_id}/rules`);
   url.searchParams.append('access_token', access_token);
   url.searchParams.append('shop_cipher', shop_cipher);
   
@@ -396,19 +370,13 @@ export const getCategoryAttributes = async (
     locale?: string;
   },
 ): Promise<any> => {
-  const routerServiceUrl = process.env.ROUTER_SERVICE_URL_ENDPOINT;
-
-  if (!routerServiceUrl) {
-    throw new Error(
-      'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
-    );
-  }
+  const baseUrl = getRouterServiceUrl();
 
   logger.info('Getting category attributes via router service', {
     category_id,
   });
 
-  const url = new URL(`${routerServiceUrl}/tiktok/categories/${category_id}/attributes`);
+  const url = new URL(`${baseUrl}/tiktok/categories/${category_id}/attributes`);
   url.searchParams.append('access_token', access_token);
   url.searchParams.append('shop_cipher', shop_cipher);
   
@@ -434,3 +402,4 @@ export const getCategoryAttributes = async (
 
   return data;
 };
+
