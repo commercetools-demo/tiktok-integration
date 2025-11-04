@@ -5,11 +5,11 @@ import {
   InventoryEntryQuantitySetMessage,
 } from '@commercetools/platform-sdk';
 import {
+  CommercetoolsStorage,
   InventoryController,
   Mappers,
   ProductController,
-  TiktokInventory,
-  TiktokProduct,
+  RouterService,
   Types,
 } from 'tiktok-integration-shared';
 import { logger } from '../../utils/logger.utils';
@@ -45,7 +45,15 @@ export const inventoryEntryCreated = async (
       throw new Error(`No product found for sku ${sku}`);
     }
     const product = products[0];
-    const tiktokProducts = await TiktokProduct.productSearch(
+    
+    const accessToken = await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
+    if (!accessToken || !shopConfiguration.shopCipher) {
+      throw new Error('No access token or shop cipher found');
+    }
+
+    const tiktokProducts = await RouterService.productSearch(
+      accessToken,
+      shopConfiguration.shopCipher,
       { pageSize: 1 },
       {
         sellerSkus: [sku],
@@ -59,7 +67,16 @@ export const inventoryEntryCreated = async (
             apiRoot,
             product
           );
-        await TiktokProduct.createProduct(productDraft);
+        const allVariants = [product.masterVariant, ...product.variants];
+        const productImages = allVariants
+          .map((variant) => variant.images?.map((image) => image.url) ?? [])
+          .flat();
+        await RouterService.createProduct(
+          accessToken,
+          shopConfiguration.shopCipher,
+          productDraft,
+          productImages
+        );
       } catch (error) {
         logger.error(`Error creating product draft for product ${product.id}`);
         return inventoryEntityid;
@@ -77,7 +94,9 @@ export const inventoryEntryCreated = async (
             message.inventoryEntry
           );
         if (inventoryData) {
-          await TiktokInventory.updateInventory(
+          await RouterService.updateInventory(
+            accessToken,
+            shopConfiguration.shopCipher,
             tiktokProduct?.id ?? '',
             inventoryData
           );
@@ -127,7 +146,15 @@ export const inventoryEntryQuantitySet = async (
       throw new Error(`No product found for sku ${sku}`);
     }
     const product = products[0];
-    const tiktokProducts = await TiktokProduct.productSearch(
+    
+    const accessToken = await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
+    if (!accessToken || !shopConfiguration.shopCipher) {
+      throw new Error('No access token or shop cipher found');
+    }
+
+    const tiktokProducts = await RouterService.productSearch(
+      accessToken,
+      shopConfiguration.shopCipher,
       { pageSize: 1 },
       {
         sellerSkus: [sku],
@@ -141,7 +168,16 @@ export const inventoryEntryQuantitySet = async (
             apiRoot,
             product
           );
-        await TiktokProduct.createProduct(productDraft);
+        const allVariants = [product.masterVariant, ...product.variants];
+        const productImages = allVariants
+          .map((variant) => variant.images?.map((image) => image.url) ?? [])
+          .flat();
+        await RouterService.createProduct(
+          accessToken,
+          shopConfiguration.shopCipher,
+          productDraft,
+          productImages
+        );
       } catch (error) {
         logger.error(`Error creating product draft for product ${product.id}`);
         return inventoryEntityid;
@@ -159,7 +195,9 @@ export const inventoryEntryQuantitySet = async (
             inventory
           );
         if (inventoryData) {
-          await TiktokInventory.updateInventory(
+          await RouterService.updateInventory(
+            accessToken,
+            shopConfiguration.shopCipher,
             tiktokProduct?.id ?? '',
             inventoryData
           );
@@ -192,7 +230,14 @@ export const inventoryEntryDeleted = async (
       return inventoryEntityid;
     }
 
-    const tiktokProducts = await TiktokProduct.productSearch(
+    const accessToken = await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
+    if (!accessToken || !shopConfiguration.shopCipher) {
+      throw new Error('No access token or shop cipher found');
+    }
+
+    const tiktokProducts = await RouterService.productSearch(
+      accessToken,
+      shopConfiguration.shopCipher,
       { pageSize: 1 },
       {
         sellerSkus: [sku],
@@ -214,7 +259,9 @@ export const inventoryEntryDeleted = async (
             }
           );
         if (inventoryData) {
-          await TiktokInventory.updateInventory(
+          await RouterService.updateInventory(
+            accessToken,
+            shopConfiguration.shopCipher,
             tiktokProduct?.id ?? '',
             inventoryData
           );

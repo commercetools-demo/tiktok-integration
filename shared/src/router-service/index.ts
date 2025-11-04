@@ -403,3 +403,195 @@ export const getCategoryAttributes = async (
   return data;
 };
 
+/**
+ * Search products via router service
+ * @param access_token - The TikTok access token
+ * @param shop_cipher - The TikTok shop cipher
+ * @param options - Optional pagination options
+ * @param searchQuery - Optional search query body
+ * @returns The product search response
+ */
+export const productSearch = async (
+  access_token: string,
+  shop_cipher: string,
+  options?: {
+    pageSize?: number;
+    pageToken?: string;
+  },
+  searchQuery?: any,
+): Promise<any> => {
+  const baseUrl = getRouterServiceUrl();
+
+  logger.info('Searching products via router service');
+
+  const url = new URL(`${baseUrl}/tiktok/products/search`);
+  url.searchParams.append('access_token', access_token);
+  url.searchParams.append('shop_cipher', shop_cipher);
+  
+  if (options?.pageSize) {
+    url.searchParams.append('page_size', options.pageSize.toString());
+  }
+  if (options?.pageToken) {
+    url.searchParams.append('page_token', options.pageToken);
+  }
+
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: searchQuery ? JSON.stringify(searchQuery) : undefined,
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to search products via router service', { error });
+    throw new Error(`Product search failed: ${error}`);
+  }
+
+  const data = await response.json();
+  logger.info('Products searched successfully via router service');
+
+  return data;
+};
+
+/**
+ * Search inventory via router service
+ * @param access_token - The TikTok access token
+ * @param shop_cipher - The TikTok shop cipher
+ * @param searchQuery - Optional search query body
+ * @returns The inventory search response
+ */
+export const searchInventory = async (
+  access_token: string,
+  shop_cipher: string,
+  searchQuery?: any,
+): Promise<any> => {
+  const baseUrl = getRouterServiceUrl();
+
+  logger.info('Searching inventory via router service');
+
+  const url = new URL(`${baseUrl}/tiktok/inventory/search`);
+  url.searchParams.append('access_token', access_token);
+  url.searchParams.append('shop_cipher', shop_cipher);
+
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: searchQuery ? JSON.stringify(searchQuery) : undefined,
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to search inventory via router service', { error });
+    throw new Error(`Inventory search failed: ${error}`);
+  }
+
+  const data = await response.json();
+  logger.info('Inventory searched successfully via router service');
+
+  return data;
+};
+
+/**
+ * Update inventory via router service
+ * @param access_token - The TikTok access token
+ * @param shop_cipher - The TikTok shop cipher
+ * @param product_id - The product ID
+ * @param inventoryData - The inventory data to update
+ * @returns The update inventory response
+ */
+export const updateInventory = async (
+  access_token: string,
+  shop_cipher: string,
+  product_id: string,
+  inventoryData: any,
+): Promise<any> => {
+  const baseUrl = getRouterServiceUrl();
+
+  logger.info('Updating inventory via router service', {
+    access_token: access_token.substring(0, 10) + '...',
+    shop_cipher: shop_cipher.substring(0, 10) + '...',
+    product_id,
+  });
+
+  const url = new URL(`${baseUrl}/tiktok/inventory/${product_id}`);
+  url.searchParams.append('access_token', access_token);
+  url.searchParams.append('shop_cipher', shop_cipher);
+
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(inventoryData),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to update inventory via router service', { error });
+    throw new Error(`Inventory update failed: ${error}`);
+  }
+
+  const data = await response.json();
+  logger.info('Inventory updated successfully via router service');
+
+  return data;
+};
+
+/**
+ * Update SKU inventory via router service
+ * @param access_token - The TikTok access token
+ * @param shop_cipher - The TikTok shop cipher
+ * @param product_id - The product ID
+ * @param sku_id - The SKU ID
+ * @param inventory - The inventory data for the SKU
+ * @returns The update inventory response
+ */
+export const updateSkuInventory = async (
+  access_token: string,
+  shop_cipher: string,
+  product_id: string,
+  sku_id: string,
+  inventory: Array<{
+    warehouseId?: string;
+    quantity?: number;
+    backorderQuantity?: number;
+    handlingTime?: number;
+  }>,
+): Promise<any> => {
+  const baseUrl = getRouterServiceUrl();
+
+  logger.info('Updating SKU inventory via router service', {
+    access_token: access_token.substring(0, 10) + '...',
+    shop_cipher: shop_cipher.substring(0, 10) + '...',
+    product_id,
+    sku_id,
+  });
+
+  const url = new URL(`${baseUrl}/tiktok/inventory/${product_id}/sku/${sku_id}`);
+  url.searchParams.append('access_token', access_token);
+  url.searchParams.append('shop_cipher', shop_cipher);
+
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ inventory }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to update SKU inventory via router service', { error });
+    throw new Error(`SKU inventory update failed: ${error}`);
+  }
+
+  const data = await response.json();
+  logger.info('SKU inventory updated successfully via router service');
+
+  return data;
+};
+
