@@ -4,9 +4,18 @@ import {
   GoogleCloudPubSubDestination,
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
+import { RouterService } from 'tiktok-integration-shared';
 
 const CUSTOMER_CREATE_SUBSCRIPTION_KEY =
   'myconnector-customerCreateSubscription';
+
+export async function announcePubsubTopic(
+  projectKey: string,
+  topicName: string,
+  projectId: string
+): Promise<void> {
+  await RouterService.publishWebhook(projectKey, topicName, projectId);
+}
 
 export async function createGcpPubSubCustomerCreateSubscription(
   apiRoot: ByProjectKeyRequestBuilder,
@@ -50,7 +59,7 @@ async function createSubscription(
               'productCreated',
               'ProductPublished',
               'ProductUnpublished',
-              'ProductDeleted'
+              'ProductDeleted',
             ],
           },
           {
@@ -67,7 +76,7 @@ async function createSubscription(
               'ProductTailoringCreated',
               'ProductTailoringDeleted',
               'ProductTailoringPublished',
-              'ProductTailoringUnpublished'
+              'ProductTailoringUnpublished',
             ],
           },
         ],

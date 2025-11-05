@@ -4,6 +4,7 @@ dotenv.config();
 import { CommercetoolsClient, Utils } from 'tiktok-integration-shared';
 import { assertError, assertString } from '../utils/assert.utils';
 import {
+  announcePubsubTopic,
   createAzureServiceBusCustomerCreateSubscription,
   createGcpPubSubCustomerCreateSubscription,
 } from './actions';
@@ -37,6 +38,11 @@ async function postDeploy(properties: Map<string, unknown>): Promise<void> {
       assertString(projectId, CONNECT_GCP_PROJECT_ID_KEY);
       await createGcpPubSubCustomerCreateSubscription(
         apiRoot,
+        topicName,
+        projectId
+      );
+      await announcePubsubTopic(
+        Utils.readConfiguration().projectKey,
         topicName,
         projectId
       );
