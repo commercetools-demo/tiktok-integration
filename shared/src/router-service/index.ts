@@ -1,5 +1,4 @@
-import { AppProjectMapping } from '../firestore/controller/map.controller';
-import { TokenResponse } from '../interfaces';
+import { AppProjectMapping, TokenResponse } from '../interfaces';
 import type {
   Order202406AddExternalOrderReferencesRequestBody,
   Order202507GetOrderDetailResponseDataOrders,

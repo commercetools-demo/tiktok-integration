@@ -26,3 +26,34 @@ export type TokenResponse = {
   seller_base_region?: string;
   request_id?: string;
 };
+
+/**
+ * Interface for app-project mapping options
+ */
+export interface AppProjectMappingOptions {
+  code?: string;
+  shop_region?: string;
+  locale?: string;
+  seller_name?: string;
+  seller_id?: string;
+  code_consumed?: boolean;
+  shop_id?: string;
+  shop_cipher?: string;
+  warehouses?: {
+    id: string;
+    entityId: string;
+  }[];
+}
+
+/**
+ * Interface for app-project mapping data
+ */
+export interface AppProjectMapping {
+  app_key?: string;
+  project_key?: string;
+  service_url?: string;
+  shop_id?: string;
+  options?: AppProjectMappingOptions;
+  createdAt?: string;
+  updatedAt?: string;
+}

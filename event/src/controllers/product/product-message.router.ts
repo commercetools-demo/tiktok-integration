@@ -7,8 +7,7 @@ import {
 import {
   CommercetoolsClient,
   CommercetoolsStorage,
-  ProductController,
-  Utils,
+  Utils
 } from 'tiktok-integration-shared';
 import { logger } from '../../utils/logger.utils';
 import { productCreated } from './product-created.controller';
@@ -54,7 +53,6 @@ export const productMessageHandler = async (
     // TODO: ProductTailoringCreated, ProductTailoringPublished,
     // TODO: ProductTailoringNameSet, ProductTailoringDescriptionSet
     // TODO: ProductVariantTailoringAdded, ProductTailoringImageAdded
-    // TODO: InventoryEntryQuantitySet
     // ADD variant
     default:
       return productId;

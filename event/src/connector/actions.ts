@@ -47,8 +47,27 @@ async function createSubscription(
           {
             resourceTypeId: 'product',
             types: [
+              'productCreated',
               'ProductPublished',
               'ProductUnpublished',
+              'ProductDeleted'
+            ],
+          },
+          {
+            resourceTypeId: 'inventory-entry',
+            types: [
+              'InventoryEntryCreated',
+              'inventoryEntryQuantitySet',
+              'inventoryEntryDeleted',
+            ],
+          },
+          {
+            resourceTypeId: 'product-tailoring',
+            types: [
+              'ProductTailoringCreated',
+              'ProductTailoringDeleted',
+              'ProductTailoringPublished',
+              'ProductTailoringUnpublished'
             ],
           },
         ],
