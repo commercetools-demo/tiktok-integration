@@ -1,17 +1,15 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import express, { Express } from 'express';
 import bodyParser from 'body-parser';
+import express, { Express } from 'express';
 
 // Import routes
+import { Utils } from 'tiktok-integration-shared';
+import CustomError from './errors/custom.error';
+import { errorMiddleware } from './middleware/error.middleware';
 import ServiceRoutes from './routes/service.route';
 import TiktokRoutes from './routes/tiktok.route';
-import WebhookRoutes from './routes/webhook.route';
-import { Utils } from 'tiktok-integration-shared';
-import { errorMiddleware } from './middleware/error.middleware';
-import CustomError from './errors/custom.error';
-import { logger } from './utils/logger.utils';
 
 // Read env variables
 Utils.readConfiguration();
@@ -30,9 +28,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Define routes
 app.use('/service', ServiceRoutes);
-app.use('/service/webhook', WebhookRoutes);
 featureFlagEnableTiktokRoutes && app.use('/service/tiktok', TiktokRoutes);
-app.use('*', () => {
+app.use('*', (req, res, next) => {
+  console.log('Path not found.', req.path);
   throw new CustomError(404, 'Path not found.');
 });
 // Global error handler

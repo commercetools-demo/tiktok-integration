@@ -802,3 +802,47 @@ export const deleteProducts = async (
   return data;
 };
 
+/**
+ * Publish webhook configuration via router service
+ * @param project_key - The commercetools project key
+ * @param pubsub_topic - The Google Cloud Pub/Sub topic
+ * @param pubsub_project - The Google Cloud Pub/Sub project
+ * @returns Success message
+ */
+export const publishWebhook = async (
+  project_key: string,
+  pubsub_topic: string,
+  pubsub_project: string,
+): Promise<string> => {
+  const url = getRouterServiceUrl();
+
+  logger.info('Publishing webhook via router service', {
+    project_key,
+    pubsub_topic,
+    pubsub_project,
+  });
+
+  const response = await fetch(`${url}/publish-webhook`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      project_key,
+      pubsub_topic,
+      pubsub_project,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to publish webhook via router service', { error });
+    throw new Error(`Webhook publish failed: ${error}`);
+  }
+
+  const data = await response.text();
+  logger.info('Webhook published successfully via router service');
+
+  return data;
+};
+

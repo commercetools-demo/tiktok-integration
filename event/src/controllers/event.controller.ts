@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import CustomError from '../errors/custom.error';
 import { logger } from '../utils/logger.utils';
-import { resourceMessage } from './message.controller';
+import { resourceMessage, resourceTiktokWebhook } from './message.controller';
 
 /**
  * Exposed event POST endpoint.
@@ -35,20 +35,25 @@ export const post = async (request: Request, response: Response) => {
     ? Buffer.from(pubSubMessage.data, 'base64').toString().trim()
     : undefined;
 
-  // console.log('decodedData', decodedData);
-
   try {
     if (decodedData) {
       const jsonData = JSON.parse(decodedData);
       //CoCo sending message to indicate the resource was created, does not need processing
-      console.log('Event message received ' + jsonData.notificationType + ' for resource ' + jsonData.resource.typeId + ' with type ' + jsonData.type);
+      logger.info(
+        'Event message received ' +
+          jsonData.notificationType +
+          ' for resource ' +
+          jsonData.resource?.typeId +
+          ' with type ' +
+          jsonData.type
+      );
       switch (jsonData.notificationType) {
         case 'Message':
           await resourceMessage(jsonData);
           break;
-        case 'ResourceDeleted':
-          console.log('Resource deleted');
-          console.log('Resource created');
+        case 'TiktokWebhook':
+          resourceTiktokWebhook(jsonData);
+          break;
       }
     }
   } catch (error) {

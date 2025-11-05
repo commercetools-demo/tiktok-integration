@@ -10,8 +10,9 @@ import {
 import { logger } from '../../utils/logger.utils';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk';
 import type { Types } from 'tiktok-integration-shared';
+import { TiktokWebhookMessageType } from '../message.controller';
 
-export const orderStatusChange = async (webhookBody: any) => {
+export const orderStatusChange = async (webhookBody: TiktokWebhookMessageType) => {
   const orderId = webhookBody.data.order_id;
   const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
   const commercetoolsLocale = await Services.getCommercetoolsLocale(
@@ -37,6 +38,9 @@ export const orderStatusChange = async (webhookBody: any) => {
   if (!orders || orders.length === 0) {
     throw new Error('No orders found');
   }
+
+  console.log('webhookBody.data.order_status', webhookBody.data.order_status);
+  
 
   switch (webhookBody.data.order_status) {
     case 'UNPAID':
@@ -89,7 +93,7 @@ export const orderStatusChange = async (webhookBody: any) => {
   }
 };
 
-export const reverseStatusUpdate = async (webhookBody: any) => {
+export const reverseStatusUpdate = async (webhookBody: TiktokWebhookMessageType) => {
   console.log('Reverse status update', JSON.stringify(webhookBody, null, 2));
 };
 
