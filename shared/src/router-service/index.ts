@@ -1,5 +1,18 @@
 import { AppProjectMapping } from '../firestore/controller/map.controller';
 import { TokenResponse } from '../interfaces';
+import type {
+  Order202406AddExternalOrderReferencesRequestBody,
+  Order202507GetOrderDetailResponseDataOrders,
+  Product202309CreateProductResponse,
+  Product202309GetAttributesResponse,
+  Product202309GetCategoriesResponseDataCategories,
+  Product202309GetCategoryRulesResponse,
+  Product202309GetProductResponseData,
+  Product202309InventorySearchResponseData,
+  Product202309UpdateInventoryResponse,
+  Product202502SearchProductsResponseData,
+  Product202509EditProductResponse,
+} from '../interfaces/tiktok/models';
 import { logger } from '../utils/logger';
 
 /**
@@ -124,7 +137,7 @@ export const createProduct = async (
   shop_cipher: string,
   productData: any,
   productImages: string[],
-): Promise<any> => {
+): Promise<Product202309CreateProductResponse> => {
   const baseUrl = getRouterServiceUrl();
 
   logger.info('Creating product via router service', {
@@ -167,7 +180,7 @@ export const getOrders = async (
   access_token: string,
   shop_cipher: string,
   orderIds: string[],
-): Promise<any> => {
+): Promise<Order202507GetOrderDetailResponseDataOrders[]> => {
   const baseUrl = getRouterServiceUrl();
 
   logger.info('Getting orders via router service', {
@@ -211,7 +224,7 @@ export const addExternalOrderReference = async (
   access_token: string,
   shop_cipher: string,
   requestBody: any,
-): Promise<any> => {
+): Promise<Order202406AddExternalOrderReferencesRequestBody> => {
   const baseUrl = getRouterServiceUrl();
 
   logger.info('Adding external order reference via router service', {
@@ -259,7 +272,7 @@ export const getCategories = async (
     listing_platform?: string;
     include_prohibited_categories?: boolean;
   },
-): Promise<any> => {
+): Promise<Product202309GetCategoriesResponseDataCategories[]> => {
   const baseUrl = getRouterServiceUrl();
 
   logger.info('Getting categories via router service');
@@ -317,7 +330,7 @@ export const getCategoryRules = async (
     category_version?: string;
     locale?: string;
   },
-): Promise<any> => {
+): Promise<Product202309GetCategoryRulesResponse> => {
   const baseUrl = getRouterServiceUrl();
 
   logger.info('Getting category rules via router service', {
@@ -369,7 +382,7 @@ export const getCategoryAttributes = async (
   options?: {
     locale?: string;
   },
-): Promise<any> => {
+): Promise<Product202309GetAttributesResponse> => {
   const baseUrl = getRouterServiceUrl();
 
   logger.info('Getting category attributes via router service', {
@@ -419,7 +432,7 @@ export const productSearch = async (
     pageToken?: string;
   },
   searchQuery?: any,
-): Promise<any> => {
+): Promise<Product202502SearchProductsResponseData | undefined> => {
   const baseUrl = getRouterServiceUrl();
 
   logger.info('Searching products via router service');
@@ -456,6 +469,65 @@ export const productSearch = async (
 };
 
 /**
+ * Get multiple products by IDs via router service
+ * @param access_token - The TikTok access token
+ * @param shop_cipher - The TikTok shop cipher
+ * @param product_ids - Array of product IDs to fetch
+ * @param options - Optional query parameters
+ * @returns The products response with metadata
+ */
+export const getProductsByIds = async (
+  access_token: string,
+  shop_cipher: string,
+  product_ids: string[],
+  options?: {
+    locale?: string;
+    draft?: boolean;
+  },
+): Promise<(Product202309GetProductResponseData | undefined)[]> => {
+  const baseUrl = getRouterServiceUrl();
+
+  logger.info('Getting products by IDs via router service', {
+    access_token: access_token.substring(0, 10) + '...',
+    shop_cipher: shop_cipher.substring(0, 10) + '...',
+    product_count: product_ids.length,
+  });
+
+  const url = new URL(`${baseUrl}/tiktok/products/batch/get`);
+  url.searchParams.append('access_token', access_token);
+  url.searchParams.append('shop_cipher', shop_cipher);
+  
+  if (options?.locale) {
+    url.searchParams.append('locale', options.locale);
+  }
+  if (options?.draft !== undefined) {
+    url.searchParams.append('draft', options.draft.toString());
+  }
+
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ product_ids }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to get products by IDs via router service', { error });
+    throw new Error(`Get products by IDs failed: ${error}`);
+  }
+
+  const data = await response.json();
+  logger.info('Products retrieved successfully via router service', {
+    total: data.total,
+    requested: data.requested,
+  });
+
+  return data;
+};
+
+/**
  * Search inventory via router service
  * @param access_token - The TikTok access token
  * @param shop_cipher - The TikTok shop cipher
@@ -466,7 +538,7 @@ export const searchInventory = async (
   access_token: string,
   shop_cipher: string,
   searchQuery?: any,
-): Promise<any> => {
+): Promise<Product202309InventorySearchResponseData> => {
   const baseUrl = getRouterServiceUrl();
 
   logger.info('Searching inventory via router service');
@@ -508,7 +580,7 @@ export const updateInventory = async (
   shop_cipher: string,
   product_id: string,
   inventoryData: any,
-): Promise<any> => {
+): Promise<Product202309UpdateInventoryResponse> => {
   const baseUrl = getRouterServiceUrl();
 
   logger.info('Updating inventory via router service', {
@@ -561,7 +633,7 @@ export const updateSkuInventory = async (
     backorderQuantity?: number;
     handlingTime?: number;
   }>,
-): Promise<any> => {
+): Promise<Product202309UpdateInventoryResponse> => {
   const baseUrl = getRouterServiceUrl();
 
   logger.info('Updating SKU inventory via router service', {
@@ -591,6 +663,52 @@ export const updateSkuInventory = async (
 
   const data = await response.json();
   logger.info('SKU inventory updated successfully via router service');
+
+  return data;
+};
+
+/**
+ * Publish a product via router service (update and activate)
+ * @param access_token - The TikTok access token
+ * @param shop_cipher - The TikTok shop cipher
+ * @param product_id - The product ID to publish
+ * @param productData - The product data to update
+ * @returns The publish product response
+ */
+export const publishProduct = async (
+  access_token: string,
+  shop_cipher: string,
+  product_id: string,
+  productData: any,
+): Promise<Product202509EditProductResponse> => {
+  const baseUrl = getRouterServiceUrl();
+
+  logger.info('Publishing product via router service', {
+    access_token: access_token.substring(0, 10) + '...',
+    shop_cipher: shop_cipher.substring(0, 10) + '...',
+    product_id,
+  });
+
+  const url = new URL(`${baseUrl}/tiktok/products/${product_id}/publish`);
+  url.searchParams.append('access_token', access_token);
+  url.searchParams.append('shop_cipher', shop_cipher);
+
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(productData),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to publish product via router service', { error });
+    throw new Error(`Product publish failed: ${error}`);
+  }
+
+  const data = await response.json();
+  logger.info('Product published successfully via router service');
 
   return data;
 };

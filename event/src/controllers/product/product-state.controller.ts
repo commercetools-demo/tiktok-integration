@@ -2,13 +2,15 @@ import {
   ByProjectKeyRequestBuilder,
   ProductDeletedMessage,
   ProductPublishedMessage,
-  ProductUnpublishedMessage
+  ProductUnpublishedMessage,
 } from '@commercetools/platform-sdk';
 import type { Types } from 'tiktok-integration-shared';
 import {
+  CommercetoolsStorage,
   Mappers,
   ProductController,
-  TiktokProduct
+  RouterService,
+  TiktokProduct,
 } from 'tiktok-integration-shared';
 import { logger } from '../../utils/logger.utils';
 
@@ -22,13 +24,21 @@ export const productPublished = async (
     const product = message.productProjection;
     logger.info(`Product ${product.id} published`);
 
+    const accessToken =
+      await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
+    if (!accessToken || !shopConfiguration.shopCipher) {
+      throw new Error('No access token or shop cipher found');
+    }
+
     const variantSKUs = [product.masterVariant, ...product.variants]
       .map((variant) => variant.sku)
       .filter((sku) => typeof sku !== 'undefined');
     if (!variantSKUs || !variantSKUs.length) {
       throw new Error(`No variants found for product ${productId}`);
     }
-    const tiktokProducts = await TiktokProduct.productSearch(
+    const tiktokProducts = await RouterService.productSearch(
+      accessToken,
+      shopConfiguration.shopCipher,
       { pageSize: variantSKUs.length },
       {
         sellerSkus: variantSKUs,
@@ -36,24 +46,72 @@ export const productPublished = async (
     );
 
     if (!tiktokProducts || !tiktokProducts.products?.length) {
-      // TODO: create product in tiktok
       try {
         const productDraft =
           await Mappers.Product.commercetoolsProductToTiktokProduct(
             apiRoot,
-            product,
+            product
           );
-        await TiktokProduct.createProduct(productDraft);
-      } catch (error) {
-        logger.error(
-          `Error creating product draft for product ${product.id}`,
+        const allVariants = [product.masterVariant, ...product.variants];
+        const productImages = allVariants
+          .map((variant) => variant.images?.map((image) => image.url) ?? [])
+          .flat();
+        await RouterService.createProduct(
+          accessToken,
+          shopConfiguration.shopCipher,
+          productDraft,
+          productImages
         );
+      } catch (error) {
+        logger.error(`Error creating product draft for product ${product.id}`);
         return productId;
       }
       return productId;
     } else {
-      await TiktokProduct.mergeAndUpdateProductsFromCommercetoolsProduct(apiRoot, shopConfiguration,  tiktokProducts, product);
-      logger.info(`Merged and updated ${tiktokProducts.products?.length} tiktok products for product ${product.id}`);
+      const tiktokProductIds: string[] = [];
+      tiktokProductIds.push(
+        ...tiktokProducts.products!.map((tiktokProduct) => tiktokProduct.id!)
+      );
+      logger.info(
+        `Found ${tiktokProductIds} tiktok products for product ${product.id}`
+      );
+      const tiktokProductsData = await RouterService.getProductsByIds(
+        accessToken,
+        shopConfiguration.shopCipher,
+        tiktokProductIds,
+        {
+          draft: false,
+          locale: shopConfiguration.locale,
+        }
+      )
+      if (!tiktokProductsData || !tiktokProductsData.length) {
+        throw new Error(
+          `No tiktok product found for product ${product.id}`
+        );
+      }
+      await Promise.all(
+        tiktokProductsData
+          .filter(
+            (tiktokProductData) => typeof tiktokProductData !== 'undefined'
+          )
+          .map(async (tiktokProductData) => {
+            const merged =
+              await Mappers.Product.mergeTiktokProductAndCommercetoolsProductToTiktokProductEdit(
+                apiRoot,
+                tiktokProductData,
+                product
+              );
+            return RouterService.publishProduct(
+              accessToken,
+              shopConfiguration.shopCipher!,
+              tiktokProductData.id!,
+              merged
+            );
+          })
+      );
+      logger.info(
+        `Merged and updated ${tiktokProducts.products?.length} tiktok products for product ${product.id}`
+      );
       return productId;
     }
   } catch (error: any) {
@@ -66,23 +124,37 @@ export const productUnpublished = async (
   apiRoot: ByProjectKeyRequestBuilder,
   shopConfiguration: Types.ShopConfigurationData,
   message: ProductUnpublishedMessage,
-  productId: string,
+  productId: string
 ): Promise<string> => {
   try {
     logger.info(`Product ${productId} unpublished`);
-  
-    const product = await ProductController.getUnpublishedProduct(apiRoot, productId);
+
+    const accessToken =
+      await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
+    if (!accessToken || !shopConfiguration.shopCipher) {
+      throw new Error('No access token or shop cipher found');
+    }
+
+    const product = await ProductController.getUnpublishedProduct(
+      apiRoot,
+      productId
+    );
     if (!product) {
       throw new Error(`Product ${productId} not found in commercetools`);
     }
-    const variantSKUs = [product.masterData.current.masterVariant, ...product.masterData.current.variants]
+    const variantSKUs = [
+      product.masterData.current.masterVariant,
+      ...product.masterData.current.variants,
+    ]
       .map((variant) => variant.sku)
       .filter((sku) => typeof sku !== 'undefined');
     if (!variantSKUs || !variantSKUs.length) {
       throw new Error(`No variants found for product ${productId}`);
     }
     const tiktokProductIds = [];
-    const tiktokProducts = await TiktokProduct.productSearch(
+    const tiktokProducts = await RouterService.productSearch(
+      accessToken,
+      shopConfiguration.shopCipher,
       { pageSize: variantSKUs.length },
       {
         sellerSkus: variantSKUs,
@@ -90,16 +162,22 @@ export const productUnpublished = async (
     );
 
     if (!tiktokProducts || !tiktokProducts.products?.length) {
-        logger.info(`No tiktok products found for product ${productId}. Nothing to do.`);
-        return productId;
+      logger.info(
+        `No tiktok products found for product ${productId}. Nothing to do.`
+      );
+      return productId;
     } else {
       tiktokProductIds.push(
         ...tiktokProducts.products.map((tiktokProduct) => tiktokProduct.id!)
       );
-      logger.info(`Found ${tiktokProductIds} tiktok products for product ${productId}`);
-      
+      logger.info(
+        `Found ${tiktokProductIds} tiktok products for product ${productId}`
+      );
+
       await TiktokProduct.deactivateProducts(tiktokProductIds);
-      logger.info(`Deactivated ${tiktokProductIds} tiktok products for product ${productId}`);
+      logger.info(
+        `Deactivated ${tiktokProductIds} tiktok products for product ${productId}`
+      );
       return productId;
     }
   } catch (error) {
@@ -112,11 +190,17 @@ export const productDeleted = async (
   apiRoot: ByProjectKeyRequestBuilder,
   shopConfiguration: Types.ShopConfigurationData,
   message: ProductDeletedMessage,
-  productId: string,
+  productId: string
 ): Promise<string> => {
   try {
     logger.info(`Product ${productId} unpublished`);
-  
+
+    const accessToken =
+      await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
+    if (!accessToken || !shopConfiguration.shopCipher) {
+      throw new Error('No access token or shop cipher found');
+    }
+
     const product = message.currentProjection;
     if (!product) {
       throw new Error(`Product ${productId} not found in commercetools`);
@@ -128,7 +212,9 @@ export const productDeleted = async (
       throw new Error(`No variants found for product ${productId}`);
     }
     const tiktokProductIds = [];
-    const tiktokProducts = await TiktokProduct.productSearch(
+    const tiktokProducts = await RouterService.productSearch(
+      accessToken,
+      shopConfiguration.shopCipher,
       { pageSize: variantSKUs.length },
       {
         sellerSkus: variantSKUs,
@@ -136,16 +222,22 @@ export const productDeleted = async (
     );
 
     if (!tiktokProducts || !tiktokProducts.products?.length) {
-        logger.info(`No tiktok products found for product ${productId}. Nothing to do.`);
-        return productId;
+      logger.info(
+        `No tiktok products found for product ${productId}. Nothing to do.`
+      );
+      return productId;
     } else {
       tiktokProductIds.push(
         ...tiktokProducts.products.map((tiktokProduct) => tiktokProduct.id!)
       );
-      logger.info(`Found ${tiktokProductIds} tiktok products for product ${productId}`);
-      
+      logger.info(
+        `Found ${tiktokProductIds} tiktok products for product ${productId}`
+      );
+
       await TiktokProduct.deleteProducts(tiktokProductIds);
-      logger.info(`Deleted ${tiktokProductIds} tiktok products for product ${productId}`);
+      logger.info(
+        `Deleted ${tiktokProductIds} tiktok products for product ${productId}`
+      );
       return productId;
     }
   } catch (error) {
