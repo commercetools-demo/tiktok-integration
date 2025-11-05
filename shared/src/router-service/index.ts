@@ -4,6 +4,8 @@ import type {
   Order202406AddExternalOrderReferencesRequestBody,
   Order202507GetOrderDetailResponseDataOrders,
   Product202309CreateProductResponse,
+  Product202309DeactivateProductsResponse,
+  Product202309DeleteProductsResponse,
   Product202309GetAttributesResponse,
   Product202309GetCategoriesResponseDataCategories,
   Product202309GetCategoryRulesResponse,
@@ -709,6 +711,94 @@ export const publishProduct = async (
 
   const data = await response.json();
   logger.info('Product published successfully via router service');
+
+  return data;
+};
+
+/**
+ * Deactivate multiple products via router service
+ * @param access_token - The TikTok access token
+ * @param shop_cipher - The TikTok shop cipher
+ * @param product_ids - Array of product IDs to deactivate
+ * @returns The deactivate products response
+ */
+export const deactivateProducts = async (
+  access_token: string,
+  shop_cipher: string,
+  product_ids: string[],
+): Promise<Product202309DeactivateProductsResponse> => {
+  const baseUrl = getRouterServiceUrl();
+
+  logger.info('Deactivating products via router service', {
+    access_token: access_token.substring(0, 10) + '...',
+    shop_cipher: shop_cipher.substring(0, 10) + '...',
+    product_count: product_ids.length,
+  });
+
+  const url = new URL(`${baseUrl}/tiktok/products/batch/deactivate`);
+  url.searchParams.append('access_token', access_token);
+  url.searchParams.append('shop_cipher', shop_cipher);
+
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ product_ids }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to deactivate products via router service', { error });
+    throw new Error(`Products deactivation failed: ${error}`);
+  }
+
+  const data = await response.json();
+  logger.info('Products deactivated successfully via router service');
+
+  return data;
+};
+
+/**
+ * Delete multiple products via router service
+ * @param access_token - The TikTok access token
+ * @param shop_cipher - The TikTok shop cipher
+ * @param product_ids - Array of product IDs to delete
+ * @returns The delete products response
+ */
+export const deleteProducts = async (
+  access_token: string,
+  shop_cipher: string,
+  product_ids: string[],
+): Promise<Product202309DeleteProductsResponse> => {
+  const baseUrl = getRouterServiceUrl();
+
+  logger.info('Deleting products via router service', {
+    access_token: access_token.substring(0, 10) + '...',
+    shop_cipher: shop_cipher.substring(0, 10) + '...',
+    product_count: product_ids.length,
+  });
+
+  const url = new URL(`${baseUrl}/tiktok/products/batch`);
+  url.searchParams.append('access_token', access_token);
+  url.searchParams.append('shop_cipher', shop_cipher);
+
+  const response = await fetch(url.toString(), {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ product_ids }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to delete products via router service', { error });
+    throw new Error(`Products deletion failed: ${error}`);
+  }
+
+  const data = await response.json();
+  logger.info('Products deleted successfully via router service');
 
   return data;
 };

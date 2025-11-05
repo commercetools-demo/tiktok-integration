@@ -10,7 +10,6 @@ import {
   Mappers,
   ProductController,
   RouterService,
-  TiktokProduct,
 } from 'tiktok-integration-shared';
 import { logger } from '../../utils/logger.utils';
 
@@ -174,7 +173,12 @@ export const productUnpublished = async (
         `Found ${tiktokProductIds} tiktok products for product ${productId}`
       );
 
-      await TiktokProduct.deactivateProducts(tiktokProductIds);
+      await RouterService.deactivateProducts(
+        accessToken,
+        shopConfiguration.shopCipher!,
+        tiktokProductIds
+      );
+
       logger.info(
         `Deactivated ${tiktokProductIds} tiktok products for product ${productId}`
       );
@@ -234,7 +238,11 @@ export const productDeleted = async (
         `Found ${tiktokProductIds} tiktok products for product ${productId}`
       );
 
-      await TiktokProduct.deleteProducts(tiktokProductIds);
+      await RouterService.deleteProducts(
+        accessToken,
+        shopConfiguration.shopCipher!,
+        tiktokProductIds
+      );
       logger.info(
         `Deleted ${tiktokProductIds} tiktok products for product ${productId}`
       );
