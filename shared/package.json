@@ -14,7 +14,9 @@
   "dependencies": {
     "@commercetools-backend/loggers": "^24.9.0",
     "@commercetools/platform-sdk": "^8.18.0",
-    "@commercetools/sdk-client-v2": "^3.0.0"
+    "@commercetools/sdk-client-v2": "^3.0.0",
+    "@types/request": "^2.48.13",
+    "request": "^2.88.2"
   },
   "resolutions": {
     "form-data": "^2.5.5"
