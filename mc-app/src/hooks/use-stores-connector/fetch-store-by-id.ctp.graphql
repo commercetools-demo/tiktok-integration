@@ -1,0 +1,33 @@
+query FetchStoreById($storeId: String!) {
+  store(id: $storeId) {
+    id
+    version
+    key
+    name
+    nameAllLocales {
+      locale
+      value
+    }
+    languages
+    countries
+    distributionChannels {
+      id
+      key
+    }
+    supplyChannels {
+      id
+      key
+    }
+    custom {
+      type {
+        id
+        key
+      }
+      customFieldsRaw {
+        name
+        value
+      }
+    }
+  }
+}
+

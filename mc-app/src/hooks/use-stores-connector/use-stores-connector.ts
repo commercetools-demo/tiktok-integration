@@ -5,9 +5,11 @@ import type { ApolloError } from '@apollo/client';
 import {
   useMcQuery,
   useMcMutation,
+  useMcLazyQuery,
 } from '@commercetools-frontend/application-shell';
 import { GRAPHQL_TARGETS } from '@commercetools-frontend/constants';
 import FetchStoresQuery from './fetch-stores.ctp.graphql';
+import FetchStoreByIdQuery from './fetch-store-by-id.ctp.graphql';
 import UpdateStoreCustomMutation from './update-store-custom.ctp.graphql';
 
 type TCustomFieldRaw = {
@@ -61,6 +63,14 @@ type TFetchStoresQueryVariables = {
   sort?: string[];
 };
 
+type TFetchStoreByIdQuery = {
+  store?: TStore;
+};
+
+type TFetchStoreByIdQueryVariables = {
+  storeId: string;
+};
+
 type TUpdateStoreCustomMutation = {
   updateStore: TStore;
 };
@@ -111,18 +121,46 @@ export const useStoresFetcher: TUseStoresFetcher = (variables = {}) => {
   };
 };
 
+type TUseStoreByIdFetcher = () => {
+  getStoreById: (storeId: string) => Promise<TStore | undefined>;
+  loading: boolean;
+};
+
+export const useStoreByIdFetcher: TUseStoreByIdFetcher = () => {
+  const [fetchStore, { loading }] = useMcLazyQuery<
+    TFetchStoreByIdQuery,
+    TFetchStoreByIdQueryVariables
+  >(FetchStoreByIdQuery);
+
+  const getStoreById = async (storeId: string): Promise<TStore | undefined> => {
+    const result = await fetchStore({
+      variables: { storeId },
+      context: {
+        target: GRAPHQL_TARGETS.COMMERCETOOLS_PLATFORM,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    return result.data?.store;
+  };
+
+  return {
+    getStoreById,
+    loading,
+  };
+};
+
 type TUseStoreCustomUpdater = () => {
   updateStoreCustom: (params: {
     storeId: string;
-    version: number;
     typeKey?: string;
-    typeId?: string;
     fields?: Record<string, any>;
   }) => Promise<TStore>;
   loading: boolean;
 };
 
 export const useStoreCustomUpdater: TUseStoreCustomUpdater = () => {
+  const { getStoreById } = useStoreByIdFetcher();
   const [updateStoreMutation, { loading }] = useMcMutation<
     TUpdateStoreCustomMutation,
     TUpdateStoreCustomMutationVariables
@@ -130,15 +168,20 @@ export const useStoreCustomUpdater: TUseStoreCustomUpdater = () => {
 
   const updateStoreCustom = async ({
     storeId,
-    version,
     typeKey,
     fields = {},
   }: {
     storeId: string;
-    version: number;
     typeKey?: string;
     fields?: Record<string, any>;
   }) => {
+    // Fetch the latest version first
+    const store = await getStoreById(storeId);
+    
+    if (!store) {
+      throw new Error(`Store with id ${storeId} not found`);
+    }
+
     const actions: TUpdateStoreCustomMutationVariables['actions'] = [];
 
     // Set custom type action
@@ -161,7 +204,7 @@ export const useStoreCustomUpdater: TUseStoreCustomUpdater = () => {
         },
         variables: {
           storeId,
-          version,
+          version: store.version,
           actions,
         },
       });

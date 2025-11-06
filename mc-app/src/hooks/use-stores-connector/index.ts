@@ -1,2 +1,6 @@
-export { useStoresFetcher, useStoreCustomUpdater } from './use-stores-connector';
+export {
+  useStoresFetcher,
+  useStoreByIdFetcher,
+  useStoreCustomUpdater,
+} from './use-stores-connector';
 
