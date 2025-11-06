@@ -40,5 +40,8 @@
     "ts-jest": "^29.1.1",
     "typescript": "^5.1.6"
   },
+  "resolutions": {
+    "form-data": "2.5.5"
+  },
   "packageManager": "yarn@1.22.22"
 }

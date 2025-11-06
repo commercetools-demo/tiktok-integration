@@ -42,5 +42,8 @@
     "request": "^2.88.2",
     "validator": "^13.11.0"
   },
+  "resolutions": {
+    "form-data": "2.5.5"
+  },
   "packageManager": "yarn@1.22.22"
 }
