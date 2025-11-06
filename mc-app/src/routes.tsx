@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import Spacings from '@commercetools-uikit/spacings';
 import Welcome from './components/welcome';
+import ConnectProject from './components/connect-project';
 import { ServiceUrlProvider } from './contexts';
 
 type ApplicationRoutesProps = {
@@ -25,6 +26,9 @@ const ApplicationRoutes = (_props: ApplicationRoutesProps) => {
     <ServiceUrlProvider>
       <Spacings.Inset scale="l">
         <Switch>
+          <Route path={`${match.path}/connect`} exact>
+            <ConnectProject />
+          </Route>
           <Route>
             <Welcome />
           </Route>

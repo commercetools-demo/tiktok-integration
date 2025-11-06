@@ -1,2 +1,2 @@
-export { useServiceUrlFetcher } from './use-service-url';
+export { useServiceUrlFetcher, useConnectProject } from './use-service-url';
 

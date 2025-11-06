@@ -1,6 +1,7 @@
 /// <reference path="../../../@types/commercetools__sync-actions/index.d.ts" />
 /// <reference path="../../../@types-extensions/graphql-ctp/index.d.ts" />
 
+import { useState } from 'react';
 import type { ApolloError } from '@apollo/client';
 import { useMcQuery } from '@commercetools-frontend/application-shell';
 import { GRAPHQL_TARGETS } from '@commercetools-frontend/constants';
@@ -58,6 +59,43 @@ export const useServiceUrlFetcher: TUseServiceUrlFetcher = () => {
   return {
     serviceUrl,
     error,
+    loading,
+  };
+};
+
+type TUseConnectProject = () => {
+  connectProject: (serviceUrl: string, token: string) => Promise<void>;
+  loading: boolean;
+};
+
+export const useConnectProject: TUseConnectProject = () => {
+  const [loading, setLoading] = useState(false);
+
+  const connectProject = async (serviceUrl: string, token: string) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${serviceUrl}/connect-project?shop_doc_id=${token}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to connect project: ${response.statusText}`);
+      }
+
+      return await response.json();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    connectProject,
     loading,
   };
 };
