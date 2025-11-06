@@ -11,7 +11,7 @@ import {
   ProductController,
   RouterService,
   Types,
-} from 'tiktok-integration-shared';
+} from '../../shared';
 import { logger } from '../../utils/logger.utils';
 
 export const inventoryEntryCreated = async (

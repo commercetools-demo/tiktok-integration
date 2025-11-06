@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { CommercetoolsClient, Utils } from 'tiktok-integration-shared';
+import { CommercetoolsClient, Utils } from '../shared';
 import { assertError } from '../utils/assert.utils';
 import { deleteCustomerCreateSubscription } from './actions';
 

@@ -2,7 +2,7 @@ import {
   ByProjectKeyRequestBuilder,
   ProductCreatedMessage
 } from '@commercetools/platform-sdk';
-import type { Types } from 'tiktok-integration-shared';
+import type { Types } from '../../shared';
 import { logger } from '../../utils/logger.utils';
 
 export const productCreated = async (

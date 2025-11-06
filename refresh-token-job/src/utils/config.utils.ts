@@ -1,4 +1,4 @@
-import type { Types as SharedTypes } from 'tiktok-integration-shared';
+import type { Types as SharedTypes } from '../shared';
 
 /**
  * Read the configuration env vars

@@ -8,7 +8,7 @@ import JobRoutes from './routes/job.route';
 
 import { errorMiddleware } from './middleware/error.middleware';
 import CustomError from './errors/custom.error';
-import { Utils } from 'tiktok-integration-shared';
+import { Utils } from './shared';
 
 // Read env variables
 Utils.readConfiguration();

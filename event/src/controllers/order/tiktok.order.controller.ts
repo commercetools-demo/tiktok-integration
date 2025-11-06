@@ -6,10 +6,10 @@ import {
   RouterService,
   Services,
   Utils,
-} from 'tiktok-integration-shared';
+} from '../../shared';
 import { logger } from '../../utils/logger.utils';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk';
-import type { Types } from 'tiktok-integration-shared';
+import type { Types } from '../../shared';
 import { TiktokWebhookMessageType } from '../message.controller';
 
 export const orderStatusChange = async (webhookBody: TiktokWebhookMessageType) => {
