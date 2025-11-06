@@ -1,0 +1,68 @@
+
+=== TikTok Types Cleanup Summary ===
+
+Total types analyzed: 1383
+Types kept (used): 191
+Types removed (unused): 1192
+Space saved: ~1192 type definition files
+
+=== Used Types (Kept) ===
+  - Order202406AddExternalOrderReferencesRequestBody
+  - Order202406AddExternalOrderReferencesRequestBodyOrders
+  - Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrder
+  - Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrderLineItems
+  - Order202507GetOrderDetailResponse
+  - Order202507GetOrderDetailResponseData
+  - Order202507GetOrderDetailResponseDataOrders
+  - Order202507GetOrderDetailResponseDataOrdersHandlingDuration
+  - Order202507GetOrderDetailResponseDataOrdersLineItems
+  - Order202507GetOrderDetailResponseDataOrdersLineItemsCombinedListingSkus
+  - Order202507GetOrderDetailResponseDataOrdersLineItemsItemTax
+  - Order202507GetOrderDetailResponseDataOrdersPackages
+  - Order202507GetOrderDetailResponseDataOrdersPayment
+  - Order202507GetOrderDetailResponseDataOrdersRecipientAddress
+  - Order202507GetOrderDetailResponseDataOrdersRecipientAddressDeliveryPreferences
+  - Order202507GetOrderDetailResponseDataOrdersRecipientAddressDistrictInfo
+  - Product202309CreateProductRequestBody
+  - Product202309CreateProductRequestBodyCertifications
+  - Product202309CreateProductRequestBodyCertificationsFiles
+  - Product202309CreateProductRequestBodyCertificationsImages
+  - Product202309CreateProductRequestBodyMainImages
+  - Product202309CreateProductRequestBodyPackageDimensions
+  - Product202309CreateProductRequestBodyPackageWeight
+  - Product202309CreateProductRequestBodyProductAttributes
+  - Product202309CreateProductRequestBodyProductAttributesValues
+  - Product202309CreateProductRequestBodySizeChart
+  - Product202309CreateProductRequestBodySizeChartImage
+  - Product202309CreateProductRequestBodySizeChartTemplate
+  - Product202309CreateProductRequestBodySkus
+  - Product202309CreateProductRequestBodySkusCombinedSkus
+  - Product202309CreateProductRequestBodySkusExternalListPrices
+  - Product202309CreateProductRequestBodySkusIdentifierCode
+  - Product202309CreateProductRequestBodySkusInventory
+  - Product202309CreateProductRequestBodySkusListPrice
+  - Product202309CreateProductRequestBodySkusPreSale
+  - Product202309CreateProductRequestBodySkusPreSaleFulfillmentType
+  - Product202309CreateProductRequestBodySkusPrice
+  - Product202309CreateProductRequestBodySkusSalesAttributes
+  - Product202309CreateProductRequestBodySkusSalesAttributesSkuImg
+  - Product202309CreateProductRequestBodySkusSalesAttributesSupplementarySkuImages
+  - Product202309CreateProductRequestBodyVideo
+  - Product202309CreateProductResponse
+  - Product202309CreateProductResponseData
+  - Product202309CreateProductResponseDataSkus
+  - Product202309CreateProductResponseDataSkusSalesAttributes
+  - Product202309CreateProductResponseDataWarnings
+  - Product202309DeactivateProductsResponse
+  - Product202309DeactivateProductsResponseData
+  - Product202309DeactivateProductsResponseDataErrors
+  - Product202309DeactivateProductsResponseDataErrorsDetail
+  ... and 141 more
+
+=== Cleanup Details ===
+- Deleted 1192 type definition files
+- Updated models.ts to export only 191 types
+- Cleaned up empty directories
+
+The cleanup is complete. Your TikTok type definitions now only contain
+types that are actually used in your applications and shared module.
