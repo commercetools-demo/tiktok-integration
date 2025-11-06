@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import express, { Express } from 'express';
 
 // Import routes
-import { Utils } from 'tiktok-integration-shared';
+import { Utils } from './shared';
 import CustomError from './errors/custom.error';
 import { errorMiddleware } from './middleware/error.middleware';
 import ServiceRoutes from './routes/service.route';

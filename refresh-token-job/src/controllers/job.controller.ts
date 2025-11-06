@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import CustomError from '../errors/custom.error';
 import { logger } from '../utils/logger.utils';
-import { CommercetoolsClient, Utils, CommercetoolsStorage, RouterService } from 'tiktok-integration-shared';
+import { CommercetoolsClient, Utils, CommercetoolsStorage, RouterService } from '../shared';
 
 /**
  * Exposed job endpoint.

@@ -6,7 +6,7 @@ import {
   RouterService,
   StoreController,
   Utils,
-} from 'tiktok-integration-shared';
+} from '../shared';
 import { logger } from '../utils/logger.utils';
 
 export const connectProject = async (req: Request, res: Response) => {

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { getAccessToken } from '../utils/tiktok.utils';
 import { logger } from '../utils/logger.utils';
-import { RouterService } from 'tiktok-integration-shared';
+import { RouterService } from '../shared';
 
 export const getCategories = async (req: Request, res: Response) => {
   const { shop_cipher, locale, keyword, listing_platform, include_prohibited_categories } = req.query;
