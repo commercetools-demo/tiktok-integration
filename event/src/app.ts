@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 
 // Import routes
 import EventRoutes from './routes/event.route';
-import { Utils } from 'tiktok-integration-shared';
+import { Utils } from './shared';
 import { errorMiddleware } from './middleware/error.middleware';
 import CustomError from './errors/custom.error';
 
