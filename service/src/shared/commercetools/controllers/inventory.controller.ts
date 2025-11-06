@@ -1,4 +1,7 @@
-import { ByProjectKeyRequestBuilder, InventoryEntry } from '@commercetools/platform-sdk';
+import {
+  ByProjectKeyRequestBuilder,
+  InventoryEntry,
+} from '@commercetools/platform-sdk';
 
 export const getInventorybyId = async (
   apiRoot: ByProjectKeyRequestBuilder,

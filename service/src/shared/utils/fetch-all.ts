@@ -11,8 +11,8 @@ export const fetchAllEntitiesRecusively = async <T>(
     limit: number,
     offset: number,
   ) => Promise<PagedResponse<T>>,
-  limit: number = 100,
-  offset: number = 0,
+  limit = 100,
+  offset = 0,
   accumulatedProducts: T[] = [],
 ): Promise<PagedResponse<T>> => {
   const response = await promiseFn(apiRoot, shopConfiguration, limit, offset);

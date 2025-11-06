@@ -1,9 +1,5 @@
 import { Request, Response } from 'express';
-import {
-  CommercetoolsClient,
-  CommercetoolsStorage,
-  Utils,
-} from '../shared';
+import { CommercetoolsClient, CommercetoolsStorage, Utils } from '../shared';
 import CustomError from '../errors/custom.error';
 
 export const shopConfigSync = async (req: Request, res: Response) => {
@@ -12,9 +8,7 @@ export const shopConfigSync = async (req: Request, res: Response) => {
       Utils.readConfiguration(),
     );
     const access_token =
-      await CommercetoolsStorage.TokenController.getAccessToken(
-        apiRoot,
-      );
+      await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
     if (!access_token) {
       throw new Error('No access token found');
     }

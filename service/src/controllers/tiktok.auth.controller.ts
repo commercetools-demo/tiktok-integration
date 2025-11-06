@@ -58,10 +58,6 @@ export const connectProject = async (req: Request, res: Response) => {
     if (!isAuthorized) {
       throw new Error('App is not authorized to access the shop');
     }
-    const { locale } =
-      await CommercetoolsStorage.ShopConfigController.getLocaleAndShopRegion(
-        apiRoot,
-      );
 
     const stores = await StoreController.findStore(apiRoot, [
       'custom(fields(isTikTokShop=true))',
@@ -85,7 +81,11 @@ export const connectProject = async (req: Request, res: Response) => {
       throw new Error('No warehouses found');
     }
 
-    const tiktokWarehouse = warehouses.find((warehouse: any) => warehouseChannels.find((channel) => channel.custom?.fields.warehouseId === warehouse.id));
+    const tiktokWarehouse = warehouses.find((warehouse: any) =>
+      warehouseChannels.find(
+        (channel) => channel.custom?.fields.warehouseId === warehouse.id,
+      ),
+    );
 
     if (!tiktokWarehouse) {
       throw new Error('No warehouse found');
@@ -140,7 +140,7 @@ export const connectProject = async (req: Request, res: Response) => {
     };
   }
 
-  console.log(
+  logger.info(
     `Token stored successfully for seller: ${data.app_map_data.options?.seller_name}`,
   );
 };

@@ -28,7 +28,6 @@ export const fullProductSync = async (req: Request, res: Response) => {
     return res.status(400).send('Access token not found');
   }
 
-
   const products = await ProductController.getAllProducts(apiRoot, shopConfig);
 
   res.status(200).send('Full sync started...');
@@ -94,7 +93,7 @@ export const selectiveProductSync = async (req: Request, res: Response) => {
   }
   res.status(200).send('Selective sync started...');
 
-  console.log('products', products.length);
+  logger.info('products', products.length);
   for await (const product of products) {
     try {
       const allVariants = [product.masterVariant, ...product.variants];

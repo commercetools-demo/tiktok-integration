@@ -7,6 +7,7 @@ import {
 import { getAccessTokenVariableKey } from '../../utils';
 import { AccessTokenData } from '../../interfaces';
 import { TokenResponse } from '../../interfaces';
+import { logger } from '../../utils/logger';
 /**
  * Store access token and shop information in CommerceTools custom objects
  * @param apiRoot - The CommerceTools API root
@@ -90,7 +91,7 @@ export const getTokensNeedingRefresh = async (
 
     return null;
   } catch (error) {
-    console.error('Error querying tokens:', error);
+    logger.error('Error querying tokens:', error);
     throw error;
   }
 };

@@ -8,28 +8,25 @@ import {
 
 const tiktokRouter = Router();
 
-tiktokRouter.get('/categories', async (req, res, next) => {
+tiktokRouter.get('/categories', async (req, res) => {
   await getCategories(req, res).catch((error) => {
     logger.error('Error getting categories', error);
     return res.status(500).send(error.message);
   });
 });
 
-tiktokRouter.get('/categories/:category_id/rules', async (req, res, next) => {
+tiktokRouter.get('/categories/:category_id/rules', async (req, res) => {
   await getCategoryRules(req, res).catch((error) => {
     logger.error('Error getting category rules', error);
     return res.status(500).send(error.message);
   });
 });
 
-tiktokRouter.get(
-  '/categories/:category_id/attributes',
-  async (req, res, next) => {
-    await getCategoryAttributes(req, res).catch((error) => {
-      logger.error('Error getting category attributes', error);
-      return res.status(500).send(error.message);
-    });
-  },
-);
+tiktokRouter.get('/categories/:category_id/attributes', async (req, res) => {
+  await getCategoryAttributes(req, res).catch((error) => {
+    logger.error('Error getting category attributes', error);
+    return res.status(500).send(error.message);
+  });
+});
 
 export default tiktokRouter;

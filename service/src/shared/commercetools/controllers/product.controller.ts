@@ -11,8 +11,8 @@ import { logger } from '../../utils/logger';
 const getProducts = async (
   apiRoot: ByProjectKeyRequestBuilder,
   shopConfiguration: ShopConfigurationData,
-  limit: number = 100,
-  offset: number = 0,
+  limit = 100,
+  offset = 0,
 ): Promise<ProductProjectionPagedQueryResponse> => {
   return apiRoot
     .productProjections()
@@ -48,7 +48,7 @@ export const getUnpublishedProduct = async (
   apiRoot: ByProjectKeyRequestBuilder,
   productId: string,
 ): Promise<Product | null> => {
-  console.log('getUnpublishedProduct', productId);
+  logger.info('getUnpublishedProduct', productId);
   return apiRoot
     .products()
     .withId({ ID: productId })
@@ -110,9 +110,7 @@ export const queryProduct = async (
     );
   }
   if (query.productIds) {
-    where.push(
-      `id in (${query.productIds.map((id) => `"${id}"`).join(',')})`,
-    );
+    where.push(`id in (${query.productIds.map((id) => `"${id}"`).join(',')})`);
   }
   if (where.length === 0) {
     return [];

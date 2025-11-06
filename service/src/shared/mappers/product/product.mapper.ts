@@ -57,7 +57,6 @@ export const commercetoolsProductToTiktokProduct = async (
   }
 
   const allVariants = [product.masterVariant, ...product.variants];
-  
 
   const productDraft: Product202309CreateProductRequestBody = {
     saveMode: commercetoolsProductStateToSaveMode(product),
@@ -228,14 +227,13 @@ const commercetoolsVariantToTiktokSKUInventory = (
   ];
 };
 
-
 export const commercetoolsPriceToTiktokPrice = (
   price: Price,
 ): Product202309CreateProductRequestBodySkusPrice | undefined => {
   if (!price) {
     return undefined;
   }
-  let discounted = price.discounted?.value;
+  const discounted = price.discounted?.value;
   return {
     amount: priceCentAmountToAmount(
       price.value.centAmount,
@@ -448,7 +446,7 @@ const priceCentAmountToAmount = (
 export const tiktokProductToTiktokProductEdit = (
   product: Product202309GetProductResponseData,
 ): Product202309EditProductRequestBody => {
-  const categoryId = product.categoryChains?.find( cat => cat.isLeaf)?.id;
+  const categoryId = product.categoryChains?.find((cat) => cat.isLeaf)?.id;
 
   const editProductData: Product202309EditProductRequestBody = {
     title: product.title,
@@ -468,31 +466,34 @@ export const tiktokProductToTiktokProductEdit = (
   return editProductData;
 };
 
-export const mergeTiktokProductAndCommercetoolsProductToTiktokProductEdit = async (
-  apiRoot: ByProjectKeyRequestBuilder,
-  product: Product202309GetProductResponseData,
-  commercetoolsProduct?: ProductProjection,
-): Promise<Product202309EditProductRequestBody> => {
+export const mergeTiktokProductAndCommercetoolsProductToTiktokProductEdit =
+  async (
+    apiRoot: ByProjectKeyRequestBuilder,
+    product: Product202309GetProductResponseData,
+    commercetoolsProduct?: ProductProjection,
+  ): Promise<Product202309EditProductRequestBody> => {
+    if (!commercetoolsProduct) {
+      throw new Error('Commercetools product is required');
+    }
+    const originalProductData = await commercetoolsProductToTiktokProduct(
+      apiRoot,
+      commercetoolsProduct,
+    );
 
-  if (!commercetoolsProduct) {
-    throw new Error('Commercetools product is required');
-  }
-  const originalProductData = await commercetoolsProductToTiktokProduct(apiRoot, commercetoolsProduct);
-
-  const editProductData: Product202309EditProductRequestBody = {
-    title: product.title,
-    description: product.description,
-    categoryVersion: 'v2',
-    mainImages: product.mainImages?.map((image) => ({
-      uri: image.uri,
-    })),
-    packageWeight: product.packageWeight,
-    skus: product.skus?.map((sku) => ({
-      id: sku.id,
-      price: sku.price,
-      listPrice: sku.listPrice,
-    })),
-    ...originalProductData,
+    const editProductData: Product202309EditProductRequestBody = {
+      title: product.title,
+      description: product.description,
+      categoryVersion: 'v2',
+      mainImages: product.mainImages?.map((image) => ({
+        uri: image.uri,
+      })),
+      packageWeight: product.packageWeight,
+      skus: product.skus?.map((sku) => ({
+        id: sku.id,
+        price: sku.price,
+        listPrice: sku.listPrice,
+      })),
+      ...originalProductData,
+    };
+    return editProductData;
   };
-  return editProductData;
-};

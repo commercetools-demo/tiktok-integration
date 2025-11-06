@@ -10,8 +10,11 @@ async function postDeploy(properties: Map<string, unknown>): Promise<void> {
 
   assertString(applicationUrl, CONNECT_APPLICATION_URL_KEY);
 
-  const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration()); 
-  await CommercetoolsStorage.ServiceURLController.createServiceURLStorageLink(apiRoot, applicationUrl as string);
+  const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
+  await CommercetoolsStorage.ServiceURLController.createServiceURLStorageLink(
+    apiRoot,
+    applicationUrl as string,
+  );
 }
 
 async function run(): Promise<void> {

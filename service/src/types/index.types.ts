@@ -12,4 +12,6 @@ export type ValidatorCreator = (
 
 export type ValidatorFunction = (o: object) => boolean;
 
-export type Wrapper = (validator: ValidatorFunction) => (value: object) => boolean;
+export type Wrapper = (
+  validator: ValidatorFunction,
+) => (value: object) => boolean;

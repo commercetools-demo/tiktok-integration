@@ -4,7 +4,13 @@ import { logger } from '../utils/logger.utils';
 import { RouterService } from '../shared';
 
 export const getCategories = async (req: Request, res: Response) => {
-  const { shop_cipher, locale, keyword, listing_platform, include_prohibited_categories } = req.query;
+  const {
+    shop_cipher,
+    locale,
+    keyword,
+    listing_platform,
+    include_prohibited_categories,
+  } = req.query;
 
   if (!shop_cipher) {
     logger.error('No shop cipher found');
@@ -17,12 +23,16 @@ export const getCategories = async (req: Request, res: Response) => {
     return res.status(401).send('No access token found');
   }
 
-  const categories = await RouterService.getCategories(access_token, shop_cipher as string, {
-    locale: locale as string | undefined,
-    keyword: keyword as string | undefined,
-    listing_platform: listing_platform as string | undefined,
-    include_prohibited_categories: include_prohibited_categories === 'true',
-  });
+  const categories = await RouterService.getCategories(
+    access_token,
+    shop_cipher as string,
+    {
+      locale: locale as string | undefined,
+      keyword: keyword as string | undefined,
+      listing_platform: listing_platform as string | undefined,
+      include_prohibited_categories: include_prohibited_categories === 'true',
+    },
+  );
   return res.status(200).send(categories);
 };
 
@@ -46,10 +56,15 @@ export const getCategoryRules = async (req: Request, res: Response) => {
     return res.status(401).send('No access token found');
   }
 
-  const rules = await RouterService.getCategoryRules(access_token, shop_cipher as string, category_id, {
-    category_version: category_version as string | undefined,
-    locale: locale as string | undefined,
-  });
+  const rules = await RouterService.getCategoryRules(
+    access_token,
+    shop_cipher as string,
+    category_id,
+    {
+      category_version: category_version as string | undefined,
+      locale: locale as string | undefined,
+    },
+  );
   return res.status(200).send(rules);
 };
 
@@ -73,8 +88,13 @@ export const getCategoryAttributes = async (req: Request, res: Response) => {
     return res.status(401).send('No access token found');
   }
 
-  const attributes = await RouterService.getCategoryAttributes(access_token, shop_cipher as string, category_id, {
-    locale: locale as string | undefined,
-  });
+  const attributes = await RouterService.getCategoryAttributes(
+    access_token,
+    shop_cipher as string,
+    category_id,
+    {
+      locale: locale as string | undefined,
+    },
+  );
   return res.status(200).send(attributes);
 };
