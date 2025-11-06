@@ -6,7 +6,7 @@ import {
   ProductController,
   RouterService,
   Utils,
-} from 'tiktok-integration-shared';
+} from '../shared';
 import { logger } from '../utils/logger.utils';
 
 export const fullProductSync = async (req: Request, res: Response) => {

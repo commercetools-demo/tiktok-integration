@@ -1,4 +1,4 @@
-import { CommercetoolsClient, CommercetoolsStorage, Utils } from 'tiktok-integration-shared';
+import { CommercetoolsClient, CommercetoolsStorage, Utils } from '../shared';
 
 export const getAccessToken = async () => {
   const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());

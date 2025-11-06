@@ -4,13 +4,13 @@ import {
   ProductPublishedMessage,
   ProductUnpublishedMessage,
 } from '@commercetools/platform-sdk';
-import type { Types } from 'tiktok-integration-shared';
+import type { Types } from '../../shared';
 import {
   CommercetoolsStorage,
   Mappers,
   ProductController,
   RouterService,
-} from 'tiktok-integration-shared';
+} from '../../shared';
 import { logger } from '../../utils/logger.utils';
 
 export const productPublished = async (

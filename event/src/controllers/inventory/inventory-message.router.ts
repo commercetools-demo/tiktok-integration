@@ -7,7 +7,7 @@ import {
   CommercetoolsClient,
   CommercetoolsStorage,
   Utils,
-} from 'tiktok-integration-shared';
+} from '../../shared';
 import { logger } from '../../utils/logger.utils';
 import {
   inventoryEntryCreated,

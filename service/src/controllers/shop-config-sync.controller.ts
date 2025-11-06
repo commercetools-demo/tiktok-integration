@@ -4,7 +4,7 @@ import {
   CommercetoolsStorage,
   Services,
   Utils,
-} from 'tiktok-integration-shared';
+} from '../shared';
 import CustomError from '../errors/custom.error';
 
 export const shopConfigSync = async (req: Request, res: Response) => {
