@@ -3,13 +3,10 @@ query FetchStoreById($storeId: String!) {
     id
     version
     key
-    name
     nameAllLocales {
       locale
       value
     }
-    languages
-    countries
     distributionChannels {
       id
       key

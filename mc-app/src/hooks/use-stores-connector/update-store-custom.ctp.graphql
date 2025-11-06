@@ -7,7 +7,6 @@ mutation UpdateStoreCustom(
     id
     version
     key
-    name
     custom {
       type {
         id

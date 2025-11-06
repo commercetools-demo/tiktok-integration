@@ -4,12 +4,10 @@ query FetchChannelById($channelId: String!) {
     version
     key
     roles
-    name
     nameAllLocales {
       locale
       value
     }
-    description
     descriptionAllLocales {
       locale
       value

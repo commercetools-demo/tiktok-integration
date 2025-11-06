@@ -191,7 +191,10 @@ export const useStoreCustomUpdater: TUseStoreCustomUpdater = () => {
             typeId: 'type',
             key: typeKey,
           },
-          fields: fields
+          fields: Object.entries(fields).map(([key, value]) => ({
+            name: key,
+            value: value.toString(),
+          })),
         },
       });
     } 
