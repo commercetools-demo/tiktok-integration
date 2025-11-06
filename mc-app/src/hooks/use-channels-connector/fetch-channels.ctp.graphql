@@ -8,12 +8,10 @@ query FetchChannels($limit: Int, $offset: Int, $sort: [String!]) {
       version
       key
       roles
-      name
       nameAllLocales {
         locale
         value
       }
-      description
       descriptionAllLocales {
         locale
         value

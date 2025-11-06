@@ -7,12 +7,10 @@ query FetchStores($limit: Int, $offset: Int, $sort: [String!]) {
       id
       version
       key
-      name
       nameAllLocales {
         locale
         value
       }
-      languages
       distributionChannels {
         id
         key
