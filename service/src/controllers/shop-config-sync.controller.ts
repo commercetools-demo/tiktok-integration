@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import {
   CommercetoolsClient,
   CommercetoolsStorage,
-  Services,
   Utils,
 } from '../shared';
 import CustomError from '../errors/custom.error';
