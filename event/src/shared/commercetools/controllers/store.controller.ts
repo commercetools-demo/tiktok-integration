@@ -2,7 +2,7 @@ import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk';
 
 export const findStore = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  query: string[],
+  query: string[]
 ) => {
   const stores = await apiRoot
     .stores()

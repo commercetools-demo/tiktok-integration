@@ -3,11 +3,7 @@ import {
   InventoryEntryDeletedMessage,
   InventoryEntryQuantitySetMessage,
 } from '@commercetools/platform-sdk';
-import {
-  CommercetoolsClient,
-  CommercetoolsStorage,
-  Utils,
-} from '../../shared';
+import { CommercetoolsClient, CommercetoolsStorage, Utils } from '../../shared';
 import { logger } from '../../utils/logger.utils';
 import {
   inventoryEntryCreated,

@@ -12,35 +12,29 @@ import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk';
 import type { Types } from '../../shared';
 import { TiktokWebhookMessageType } from '../message.controller';
 
-export const orderStatusChange = async (webhookBody: TiktokWebhookMessageType) => {
+export const orderStatusChange = async (
+  webhookBody: TiktokWebhookMessageType
+) => {
   const orderId = webhookBody.data.order_id;
   const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
-  const commercetoolsLocale = await Services.getCommercetoolsLocale(
-    apiRoot,
-  );
-  const accessToken = await CommercetoolsStorage.TokenController.getAccessToken(
-    apiRoot,
-  );
+  const commercetoolsLocale = await Services.getCommercetoolsLocale(apiRoot);
+  const accessToken =
+    await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
   const config =
     await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
-      apiRoot,
+      apiRoot
     );
   if (!accessToken || !config?.shopCipher) {
     throw new Error('No access token found');
   }
 
-  const orders = await RouterService.getOrders(
-    accessToken, 
-    config.shopCipher, 
-    [orderId]
-  );
+  const orders = await RouterService.getOrders(accessToken, config.shopCipher, [
+    orderId,
+  ]);
 
   if (!orders || orders.length === 0) {
     throw new Error('No orders found');
   }
-
-  console.log('webhookBody.data.order_status', webhookBody.data.order_status);
-  
 
   switch (webhookBody.data.order_status) {
     case 'UNPAID':
@@ -49,7 +43,7 @@ export const orderStatusChange = async (webhookBody: TiktokWebhookMessageType) =
         orders,
         accessToken,
         config,
-        commercetoolsLocale,
+        commercetoolsLocale
       );
       break;
 
@@ -59,7 +53,7 @@ export const orderStatusChange = async (webhookBody: TiktokWebhookMessageType) =
         orders,
         accessToken,
         config,
-        commercetoolsLocale,
+        commercetoolsLocale
       );
       break;
 
@@ -93,16 +87,18 @@ export const orderStatusChange = async (webhookBody: TiktokWebhookMessageType) =
   }
 };
 
-export const reverseStatusUpdate = async (webhookBody: TiktokWebhookMessageType) => {
-  console.log('Reverse status update', JSON.stringify(webhookBody, null, 2));
+export const reverseStatusUpdate = async (
+  webhookBody: TiktokWebhookMessageType
+) => {
+  logger.info('Reverse status update', JSON.stringify(webhookBody, null, 2));
 };
 
 const handleUnpaidOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders:   Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
   accessToken: string,
   config: Types.ShopConfigurationData,
-  commercetoolsLocale: string,
+  commercetoolsLocale: string
 ) => {
   const externalOrderReferences: Types.TiktokSDK.Order202406AddExternalOrderReferencesRequestBodyOrders[] =
     [];
@@ -114,13 +110,13 @@ const handleUnpaidOrder = async (
       });
     const commercetoolsOrder = await OrderController.createOrder(
       apiRoot,
-      orderDraft,
+      orderDraft
     );
     externalOrderReferences.push(
       Mappers.Order.mapCommercetoolsOrderToTiktokOrderReference(
         order,
-        commercetoolsOrder,
-      ),
+        commercetoolsOrder
+      )
     );
   }
   await RouterService.addExternalOrderReference(
@@ -128,10 +124,10 @@ const handleUnpaidOrder = async (
     config.shopCipher!,
     {
       orders: externalOrderReferences,
-    },
+    }
   );
   logger.info(
-    `Added ${externalOrderReferences.length} external order references`,
+    `Added ${externalOrderReferences.length} external order references`
   );
 };
 
@@ -140,7 +136,7 @@ const handleOnHoldOrder = async (
   orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
   accessToken: string,
   config: Types.ShopConfigurationData,
-  commercetoolsLocale: string,
+  commercetoolsLocale: string
 ) => {
   for await (const order of orders) {
     logger.info(`ON_HOLD order ${order} received`);
@@ -151,7 +147,7 @@ const handleOnHoldOrder = async (
       });
     const commercetoolsPayment = await OrderController.createPayment(
       apiRoot,
-      commercetoolsPaymentDraft,
+      commercetoolsPaymentDraft
     );
     const updatedOrder = await Services.updateCommercetoolsOrderFromTiktokOrder(
       apiRoot,
@@ -168,17 +164,17 @@ const handleOnHoldOrder = async (
           action: 'changePaymentState',
           paymentState: 'Paid',
         },
-      ],
+      ]
     );
     logger.info(
-      `Updated order ${updatedOrder.id} with payment ${commercetoolsPayment.id}`,
+      `Updated order ${updatedOrder.id} with payment ${commercetoolsPayment.id}`
     );
   }
 };
 
 const handleAwaitingShipmentOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[]
 ) => {
   for await (const order of orders) {
     logger.info(`AWAITING_SHIPMENT order ${orders.length} received`);
@@ -190,7 +186,7 @@ const handleAwaitingShipmentOrder = async (
           action: 'changeShipmentState',
           shipmentState: 'Pending',
         },
-      ],
+      ]
     );
     logger.info(`Updated order ${updatedOrder.id} with shipment state Pending`);
   }
@@ -198,7 +194,7 @@ const handleAwaitingShipmentOrder = async (
 
 const handleAwaitingCollectionOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[]
 ) => {
   for await (const order of orders) {
     logger.info(`AWAITING_COLLECTION order ${orders.length} received`);
@@ -210,7 +206,7 @@ const handleAwaitingCollectionOrder = async (
           action: 'changeShipmentState',
           shipmentState: 'Pending',
         },
-      ],
+      ]
     );
     logger.info(`Updated order ${updatedOrder.id} with shipment state Pending`);
   }
@@ -218,7 +214,7 @@ const handleAwaitingCollectionOrder = async (
 
 const handleInTransitOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[]
 ) => {
   for await (const order of orders) {
     logger.info(`IN_TRANSIT order ${orders.length} received`);
@@ -230,7 +226,7 @@ const handleInTransitOrder = async (
           action: 'changeShipmentState',
           shipmentState: 'Shipped',
         },
-      ],
+      ]
     );
     logger.info(`Updated order ${updatedOrder.id} with shipment state Shipped`);
   }
@@ -238,7 +234,7 @@ const handleInTransitOrder = async (
 
 const handleDeliveredOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[]
 ) => {
   for await (const order of orders) {
     logger.info(`DELIVERED order ${orders.length} received`);
@@ -250,7 +246,7 @@ const handleDeliveredOrder = async (
           action: 'changeShipmentState',
           shipmentState: 'Delivered',
         },
-      ],
+      ]
     );
     logger.info(`Updated order ${updatedOrder.id} with order state Delivered`);
   }
@@ -258,7 +254,7 @@ const handleDeliveredOrder = async (
 
 const handleCompletedOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[]
 ) => {
   for await (const order of orders) {
     logger.info(`COMPLETED order ${orders.length} received`);
@@ -270,7 +266,7 @@ const handleCompletedOrder = async (
           action: 'changeOrderState',
           orderState: 'Completed',
         },
-      ],
+      ]
     );
     logger.info(`Updated order ${updatedOrder.id} with order state Completed`);
   }
@@ -278,7 +274,7 @@ const handleCompletedOrder = async (
 
 const handleCancelledOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[],
+  orders: Types.TiktokSDK.Order202507GetOrderDetailResponseDataOrders[]
 ) => {
   for await (const order of orders) {
     logger.info(`CANCELLED order ${orders.length} received`);
@@ -290,7 +286,7 @@ const handleCancelledOrder = async (
           action: 'changeOrderState',
           orderState: 'Cancelled',
         },
-      ],
+      ]
     );
     logger.info(`Updated order ${updatedOrder.id} with order state Cancelled`);
   }

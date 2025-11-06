@@ -1,8 +1,11 @@
-import { ByProjectKeyRequestBuilder, InventoryEntry } from '@commercetools/platform-sdk';
+import {
+  ByProjectKeyRequestBuilder,
+  InventoryEntry,
+} from '@commercetools/platform-sdk';
 
 export const getInventorybyId = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  id: string,
+  id: string
 ): Promise<InventoryEntry | null> => {
   return apiRoot
     .inventory()

@@ -1,7 +1,16 @@
-import { logger } from "../utils/logger.utils";
-import { inventoryEntryMessageHandler, InventoryEntryMessageType } from "./inventory/inventory-message.router";
-import { orderStatusChange, reverseStatusUpdate } from "./order/tiktok.order.controller";
-import { ProductMessageType, productMessageHandler } from "./product/product-message.router";
+import { logger } from '../utils/logger.utils';
+import {
+  inventoryEntryMessageHandler,
+  InventoryEntryMessageType,
+} from './inventory/inventory-message.router';
+import {
+  orderStatusChange,
+  reverseStatusUpdate,
+} from './order/tiktok.order.controller';
+import {
+  ProductMessageType,
+  productMessageHandler,
+} from './product/product-message.router';
 
 export type TiktokWebhookMessageType = {
   type: number;
@@ -17,20 +26,30 @@ export type TiktokWebhookMessageType = {
   };
 };
 
-export const resourceMessage = async (message: ProductMessageType | InventoryEntryMessageType) => {
+export const resourceMessage = async (
+  message: ProductMessageType | InventoryEntryMessageType
+) => {
   const { resource } = message;
   const { typeId, id } = resource;
   if (typeId === 'product') {
-    const product = await productMessageHandler(message as ProductMessageType, id);
-    console.log(product);
+    const product = await productMessageHandler(
+      message as ProductMessageType,
+      id
+    );
+    logger.info(product);
   }
   if (typeId === 'inventory-entry') {
-    const inventoryEntityid = await inventoryEntryMessageHandler(message as InventoryEntryMessageType, id);
-    console.log(inventoryEntityid);
+    const inventoryEntityid = await inventoryEntryMessageHandler(
+      message as InventoryEntryMessageType,
+      id
+    );
+    logger.info(inventoryEntityid);
   }
-}
+};
 
-export const resourceTiktokWebhook = async (message: TiktokWebhookMessageType) => {
+export const resourceTiktokWebhook = async (
+  message: TiktokWebhookMessageType
+) => {
   if (message.shop_id !== process.env.TIKTOK_SHOP_ID) {
     return;
   }
@@ -47,4 +66,4 @@ export const resourceTiktokWebhook = async (message: TiktokWebhookMessageType) =
   } catch (error) {
     logger.error('Error processing webhook', error);
   }
-}
+};

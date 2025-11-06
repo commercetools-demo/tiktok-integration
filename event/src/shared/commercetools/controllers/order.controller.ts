@@ -1,9 +1,15 @@
-import { Order, OrderImportDraft, OrderUpdateAction, Payment, PaymentDraft } from '@commercetools/platform-sdk';
+import {
+  Order,
+  OrderImportDraft,
+  OrderUpdateAction,
+  Payment,
+  PaymentDraft,
+} from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 
 export const createOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  orderDraft: OrderImportDraft,
+  orderDraft: OrderImportDraft
 ): Promise<Order> => {
   const { body } = await apiRoot
     .orders()
@@ -17,7 +23,7 @@ export const createOrder = async (
 
 export const createPayment = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  paymentDraft: PaymentDraft,
+  paymentDraft: PaymentDraft
 ): Promise<Payment> => {
   const { body } = await apiRoot
     .payments()
@@ -30,7 +36,7 @@ export const createPayment = async (
 
 export const queryOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  where: string,
+  where: string
 ): Promise<Order | undefined> => {
   const { body } = await apiRoot
     .orders()
@@ -47,7 +53,7 @@ export const updateOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
   orderId: string,
   version: number,
-  actions: OrderUpdateAction[],
+  actions: OrderUpdateAction[]
 ): Promise<Order> => {
   const { body } = await apiRoot
     .orders()

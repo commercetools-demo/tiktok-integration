@@ -12,8 +12,6 @@ import { resourceMessage, resourceTiktokWebhook } from './message.controller';
  * @returns
  */
 export const post = async (request: Request, response: Response) => {
-  let customerId = undefined;
-
   // Check request body
   if (!request.body) {
     logger.error('Missing request body.');

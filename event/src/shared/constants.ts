@@ -4,7 +4,8 @@ export const SHARED_SHOP_CONFIGURATION_VARIABLE_KEY = 'tiktok_configuration';
 export const SHARED_SHOP_CATEGORY_VARIABLE_KEY = 'tiktok_categories';
 export const SHARED_SHOP_SERVICE_URL_VARIABLE_KEY = 'service_url';
 
-export const FIRESTORE_SHARED_VERIFIED_SHOPS_MAP_DOCUMENT_ID = 'shops_verification_map';
+export const FIRESTORE_SHARED_VERIFIED_SHOPS_MAP_DOCUMENT_ID =
+  'shops_verification_map';
 export const FIRESTORE_SHARED_ACCESS_TOKEN_COLLECTION_NAME = 'access_tokens';
 export const FIRESTORE_CONFIGURATION_COLLECTION_NAME = 'configurations';
 export const FIRESTORE_SHARED_CATEGORY_COLLECTION_NAME = 'categories';

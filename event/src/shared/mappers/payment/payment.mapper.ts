@@ -4,7 +4,7 @@ import { convertPriceToCentAmount } from '../../utils';
 
 export const tiktokOrderToCommercetoolsPaymentDraft = (
   order: Order202507GetOrderDetailResponseDataOrders,
-  options: { locale?: string; shopRegion?: string },
+  options: { locale?: string; shopRegion?: string }
 ): PaymentDraft => {
   return {
     amountPlanned: {

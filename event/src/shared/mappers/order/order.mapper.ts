@@ -6,13 +6,11 @@ import {
 } from '@commercetools/platform-sdk';
 import {
   Order202406AddExternalOrderReferencesRequestBodyOrders,
-  Order202507GetOrderDetailResponse,
   Order202507GetOrderDetailResponseDataOrders,
   Order202507GetOrderDetailResponseDataOrdersLineItems,
   Order202507GetOrderDetailResponseDataOrdersRecipientAddress,
 } from '../../interfaces/tiktok/models';
 import { convertPriceToCentAmount } from '../../utils';
-
 
 /**
  * Map TikTok order status to CommerceTools OrderState
@@ -71,10 +69,10 @@ export const mapPaymentState = (status?: string, paidTime?: number): string => {
  */
 export const extractCountryCode = (
   recipientAddress?: Order202507GetOrderDetailResponseDataOrdersRecipientAddress,
-  options?: { locale?: string; shopRegion?: string },
+  options?: { locale?: string; shopRegion?: string }
 ): string => {
   const countryName = recipientAddress?.districtInfo?.find(
-    (d) => d.addressLevel === 'L0',
+    (d) => d.addressLevel === 'L0'
   )?.addressName;
   if (countryName === 'United States') {
     return options?.shopRegion || 'US';
@@ -88,7 +86,7 @@ export const extractCountryCode = (
 export const mapLineItem = (
   item: Order202507GetOrderDetailResponseDataOrdersLineItems,
   index: number,
-  options: { currency: string; locale?: string; countryCode: string },
+  options: { currency: string; locale?: string; countryCode: string }
 ): LineItemImportDraft => {
   return {
     key: item.id || `line-item-${index}`,
@@ -123,7 +121,7 @@ export const mapLineItem = (
 export const mapAddress = (
   recipientAddress?: Order202507GetOrderDetailResponseDataOrdersRecipientAddress,
   buyerEmail?: string,
-  options?: { locale?: string; shopRegion?: string },
+  options?: { locale?: string; shopRegion?: string }
 ): BaseAddress | undefined => {
   if (!recipientAddress) return undefined;
 
@@ -168,7 +166,7 @@ export const mapShippingInfo = (
   tiktokOrder: Order202507GetOrderDetailResponseDataOrders,
   currency: string,
   lineItems: LineItemImportDraft[],
-  options: { locale?: string; shopRegion?: string },
+  options: { locale?: string; shopRegion?: string }
 ) => {
   return {
     shippingMethodName:
@@ -221,12 +219,11 @@ export const mapShippingInfo = (
  * Create tax portions for the order
  */
 
-
 /**
  * Create custom fields for TikTok order metadata
  */
 export const createCustomFields = (
-  tiktokOrder: Order202507GetOrderDetailResponseDataOrders,
+  tiktokOrder: Order202507GetOrderDetailResponseDataOrders
 ) => {
   return {
     type: {
@@ -252,7 +249,7 @@ export const createCustomFields = (
 export const createTaxPortions = (
   tax?: string,
   subTotal?: string,
-  currency?: string,
+  currency?: string
 ) => {
   if (!tax || !currency) return [];
 
@@ -277,7 +274,7 @@ export const createTaxPortions = (
  */
 export const tiktokOrderToCommercetoolsOrderImportDraft = async (
   tiktokOrderResponse: Order202507GetOrderDetailResponseDataOrders,
-  options: { locale?: string; shopRegion?: string },
+  options: { locale?: string; shopRegion?: string }
 ): Promise<OrderImportDraft> => {
   // Extract the first order from the response
 
@@ -288,9 +285,12 @@ export const tiktokOrderToCommercetoolsOrderImportDraft = async (
   // Extract basic order information
   const currency = tiktokOrderResponse.payment?.currency || 'USD';
   const totalAmount = convertPriceToCentAmount(
-    tiktokOrderResponse.payment?.totalAmount,
+    tiktokOrderResponse.payment?.totalAmount
   );
-  const countryCode = extractCountryCode(tiktokOrderResponse.recipientAddress, options);
+  const countryCode = extractCountryCode(
+    tiktokOrderResponse.recipientAddress,
+    options
+  );
 
   // Map line items
   const lineItems =
@@ -299,14 +299,14 @@ export const tiktokOrderToCommercetoolsOrderImportDraft = async (
         currency,
         countryCode,
         locale: options.locale,
-      }),
+      })
     ) || [];
 
   // Map addresses
   const shippingAddress = mapAddress(
     tiktokOrderResponse.recipientAddress,
     tiktokOrderResponse.buyerEmail,
-    options,
+    options
   );
   const billingAddress = shippingAddress; // Using shipping address as billing address
 
@@ -315,7 +315,7 @@ export const tiktokOrderToCommercetoolsOrderImportDraft = async (
     tiktokOrderResponse,
     currency,
     lineItems,
-    options,
+    options
   );
 
   // Build the OrderImportDraft
@@ -329,7 +329,9 @@ export const tiktokOrderToCommercetoolsOrderImportDraft = async (
     taxedPrice: {
       totalNet: {
         currencyCode: currency,
-        centAmount: convertPriceToCentAmount(tiktokOrderResponse.payment?.subTotal),
+        centAmount: convertPriceToCentAmount(
+          tiktokOrderResponse.payment?.subTotal
+        ),
       },
       totalGross: {
         currencyCode: currency,
@@ -337,8 +339,8 @@ export const tiktokOrderToCommercetoolsOrderImportDraft = async (
       },
       taxPortions: createTaxPortions(
         tiktokOrderResponse.payment?.tax,
-        tiktokOrderResponse .payment?.subTotal,
-        currency,
+        tiktokOrderResponse.payment?.subTotal,
+        currency
       ),
     },
     shippingAddress,
@@ -357,7 +359,7 @@ export const tiktokOrderToCommercetoolsOrderImportDraft = async (
 
 export const mapCommercetoolsOrderToTiktokOrderReference = (
   tiktokOrder: Order202507GetOrderDetailResponseDataOrders,
-  commercetoolsOrder: Order,
+  commercetoolsOrder: Order
 ): Order202406AddExternalOrderReferencesRequestBodyOrders => {
   return {
     id: tiktokOrder.id,
@@ -366,7 +368,9 @@ export const mapCommercetoolsOrderToTiktokOrderReference = (
       platform: 'COMMERCETOOLS',
       lineItems: commercetoolsOrder.lineItems.map((item) => ({
         id: item.id,
-        originId: tiktokOrder.lineItems?.find((li) => li.sellerSku === item.variant.sku)?.id || '',
+        originId:
+          tiktokOrder.lineItems?.find((li) => li.sellerSku === item.variant.sku)
+            ?.id || '',
       })),
     },
   };

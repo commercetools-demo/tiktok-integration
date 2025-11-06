@@ -5,12 +5,12 @@ import { getCategoryVariableKey } from '../../utils';
 import { Product202309GetCategoriesResponseDataCategories } from '../../interfaces/tiktok/models';
 export const storeCategories = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  categories: Product202309GetCategoriesResponseDataCategories[],
+  categories: Product202309GetCategoriesResponseDataCategories[]
 ) => {
   await createOrUpdateCustomObject(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
     getCategoryVariableKey(),
-    categories,
+    categories
   );
 };

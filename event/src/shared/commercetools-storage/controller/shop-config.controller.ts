@@ -10,13 +10,13 @@ import { logger } from '../../utils/logger';
 
 export const storeShopConfiguration = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  data: ShopConfigurationData,
+  data: ShopConfigurationData
 ): Promise<void> => {
   let configData: ShopConfigurationData =
     (await readCustomObject<ShopConfigurationData>(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
-      getConfigurationVariableKey(),
+      getConfigurationVariableKey()
     )) || ({} as ShopConfigurationData);
 
   logger.info('Config data: ${configData}', { configData });
@@ -33,7 +33,7 @@ export const storeShopConfiguration = async (
         }
         return acc;
       },
-      {} as Record<string, any>,
+      {} as Record<string, any>
     ),
   };
 
@@ -43,17 +43,17 @@ export const storeShopConfiguration = async (
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
     getConfigurationVariableKey(),
-    configData,
+    configData
   );
 };
 
 export const getShopConfiguration = async (
-  apiRoot: ByProjectKeyRequestBuilder,
+  apiRoot: ByProjectKeyRequestBuilder
 ): Promise<ShopConfigurationData | null> => {
   return readCustomObject<ShopConfigurationData>(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
-    getConfigurationVariableKey(),
+    getConfigurationVariableKey()
   );
 };
 /**
@@ -62,7 +62,7 @@ export const getShopConfiguration = async (
  * @returns Object with locale and shop_region or null if not found
  */
 export const getLocaleAndShopRegion = async (
-  apiRoot: ByProjectKeyRequestBuilder,
+  apiRoot: ByProjectKeyRequestBuilder
 ): Promise<{ locale?: string; shop_region?: string }> => {
   const configData = await getShopConfiguration(apiRoot);
   if (!configData) {
@@ -81,14 +81,13 @@ export const getLocaleAndShopRegion = async (
  * @returns Shop cipher or null if not found
  */
 export const getShopCipher = async (
-  apiRoot: ByProjectKeyRequestBuilder,
+  apiRoot: ByProjectKeyRequestBuilder
 ): Promise<string | undefined> => {
   const configData = await getShopConfiguration(apiRoot);
   if (!configData) {
     return undefined;
   }
- return configData?.shopCipher;
-
+  return configData?.shopCipher;
 };
 
 /**
@@ -97,7 +96,7 @@ export const getShopCipher = async (
  * @returns True if shop is authorized, false otherwise
  */
 export const isAuthorized = async (
-  apiRoot: ByProjectKeyRequestBuilder,
+  apiRoot: ByProjectKeyRequestBuilder
 ): Promise<boolean> => {
   const configData = await getShopConfiguration(apiRoot);
   logger.info('Config data in isAuthorized: ${configData}', { configData });
@@ -114,7 +113,7 @@ export const isAuthorized = async (
  * @returns True if shop is initialized, false otherwise
  */
 export const isInitialized = async (
-  apiRoot: ByProjectKeyRequestBuilder,
+  apiRoot: ByProjectKeyRequestBuilder
 ): Promise<boolean> => {
   const configData = await getShopConfiguration(apiRoot);
   if (!configData) {

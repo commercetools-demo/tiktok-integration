@@ -11,8 +11,8 @@ import { logger } from '../../utils/logger';
 const getProducts = async (
   apiRoot: ByProjectKeyRequestBuilder,
   shopConfiguration: ShopConfigurationData,
-  limit: number = 100,
-  offset: number = 0,
+  limit = 100,
+  offset = 0
 ): Promise<ProductProjectionPagedQueryResponse> => {
   return apiRoot
     .productProjections()
@@ -31,7 +31,7 @@ const getProducts = async (
 
 export const getAllProducts = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  shopConfiguration?: ShopConfigurationData | null,
+  shopConfiguration?: ShopConfigurationData | null
 ): Promise<ProductProjectionPagedQueryResponse> => {
   if (!shopConfiguration) {
     throw new Error('Shop configuration is required to fetch all products');
@@ -40,15 +40,14 @@ export const getAllProducts = async (
   return fetchAllEntitiesRecusively<ProductProjection>(
     apiRoot,
     shopConfiguration,
-    getProducts,
+    getProducts
   );
 };
 
 export const getUnpublishedProduct = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  productId: string,
+  productId: string
 ): Promise<Product | null> => {
-  console.log('getUnpublishedProduct', productId);
   return apiRoot
     .products()
     .withId({ ID: productId })
@@ -63,7 +62,7 @@ export const getUnpublishedProduct = async (
 export const getProduct = async (
   apiRoot: ByProjectKeyRequestBuilder,
   productId: string,
-  shopConfiguration?: ShopConfigurationData | null,
+  shopConfiguration?: ShopConfigurationData | null
 ): Promise<ProductProjection | null> => {
   if (!shopConfiguration) {
     return apiRoot
@@ -101,18 +100,16 @@ export const getProduct = async (
 
 export const queryProduct = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  query: ProductQuery,
+  query: ProductQuery
 ): Promise<ProductProjection[] | null> => {
   const where = [];
   if (query.skus) {
     where.push(
-      `masterVariant(sku in (${query.skus.map((sku) => `"${sku}"`).join(',')})) OR variants(sku in (${query.skus.map((sku) => `"${sku}"`).join(',')}))`,
+      `masterVariant(sku in (${query.skus.map((sku) => `"${sku}"`).join(',')})) OR variants(sku in (${query.skus.map((sku) => `"${sku}"`).join(',')}))`
     );
   }
   if (query.productIds) {
-    where.push(
-      `id in (${query.productIds.map((id) => `"${id}"`).join(',')})`,
-    );
+    where.push(`id in (${query.productIds.map((id) => `"${id}"`).join(',')})`);
   }
   if (where.length === 0) {
     return [];

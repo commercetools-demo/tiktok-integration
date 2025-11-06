@@ -2,7 +2,7 @@ import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk';
 
 export const findChannel = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  query: string[],
+  query: string[]
 ) => {
   const channels = await apiRoot
     .channels()

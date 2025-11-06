@@ -45,8 +45,9 @@ export const inventoryEntryCreated = async (
       throw new Error(`No product found for sku ${sku}`);
     }
     const product = products[0];
-    
-    const accessToken = await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
+
+    const accessToken =
+      await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
     if (!accessToken || !shopConfiguration.shopCipher) {
       throw new Error('No access token or shop cipher found');
     }
@@ -146,8 +147,9 @@ export const inventoryEntryQuantitySet = async (
       throw new Error(`No product found for sku ${sku}`);
     }
     const product = products[0];
-    
-    const accessToken = await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
+
+    const accessToken =
+      await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
     if (!accessToken || !shopConfiguration.shopCipher) {
       throw new Error('No access token or shop cipher found');
     }
@@ -230,7 +232,8 @@ export const inventoryEntryDeleted = async (
       return inventoryEntityid;
     }
 
-    const accessToken = await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
+    const accessToken =
+      await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
     if (!accessToken || !shopConfiguration.shopCipher) {
       throw new Error('No access token or shop cipher found');
     }

@@ -5,7 +5,7 @@ import { Config } from '../../interfaces';
  * Configure Middleware. Example only. Adapt on your own
  */
 export const httpMiddlewareOptions: (
-  config: Config,
+  config: Config
 ) => HttpMiddlewareOptions = (config: Config) => ({
   host: `https://api.${config.region}.commercetools.com`,
 });

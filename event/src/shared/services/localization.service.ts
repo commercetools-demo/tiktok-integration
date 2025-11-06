@@ -6,11 +6,11 @@ const SUPPORTED_LOCALES_MAP = {
 };
 
 export const getCommercetoolsLocale = async (
-  apiRoot: ByProjectKeyRequestBuilder,
+  apiRoot: ByProjectKeyRequestBuilder
 ) => {
   const { locale } =
     await CommercetoolsStorage.ShopConfigController.getLocaleAndShopRegion(
-      apiRoot,
+      apiRoot
     );
   if (!locale) {
     throw new Error('No locale found');

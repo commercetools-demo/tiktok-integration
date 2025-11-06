@@ -7,6 +7,7 @@ import {
 import { getAccessTokenVariableKey } from '../../utils';
 import { AccessTokenData } from '../../interfaces';
 import { TokenResponse } from '../../interfaces';
+import { logger } from '../../utils/logger';
 /**
  * Store access token and shop information in CommerceTools custom objects
  * @param apiRoot - The CommerceTools API root
@@ -16,7 +17,7 @@ import { TokenResponse } from '../../interfaces';
  */
 export const storeAccessToken = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  data: TokenResponse,
+  data: TokenResponse
 ): Promise<void> => {
   const now = new Date().toISOString();
 
@@ -33,7 +34,7 @@ export const storeAccessToken = async (
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
     getAccessTokenVariableKey(),
-    tokenData,
+    tokenData
   );
 };
 
@@ -43,12 +44,12 @@ export const storeAccessToken = async (
  * @returns The access token or null if not found
  */
 export const getAccessToken = async (
-  apiRoot: ByProjectKeyRequestBuilder,
+  apiRoot: ByProjectKeyRequestBuilder
 ): Promise<string | null> => {
   const tokenData = await readCustomObject<AccessTokenData>(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
-    getAccessTokenVariableKey(),
+    getAccessTokenVariableKey()
   );
 
   if (!tokenData) {
@@ -64,7 +65,7 @@ export const getAccessToken = async (
  * @returns The refresh token if token needs refresh, null otherwise
  */
 export const getTokensNeedingRefresh = async (
-  apiRoot: ByProjectKeyRequestBuilder,
+  apiRoot: ByProjectKeyRequestBuilder
 ): Promise<string | null> => {
   try {
     const now = Math.floor(Date.now() / 1000);
@@ -73,7 +74,7 @@ export const getTokensNeedingRefresh = async (
     const tokenData = await readCustomObject<AccessTokenData>(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
-      getAccessTokenVariableKey(),
+      getAccessTokenVariableKey()
     );
 
     if (!tokenData) {
@@ -90,7 +91,7 @@ export const getTokensNeedingRefresh = async (
 
     return null;
   } catch (error) {
-    console.error('Error querying tokens:', error);
+    logger.error('Error querying tokens:', error);
     throw error;
   }
 };
@@ -102,13 +103,13 @@ export const getTokensNeedingRefresh = async (
  */
 export const updateRefreshedToken = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  newTokenData: TokenResponse,
+  newTokenData: TokenResponse
 ): Promise<void> => {
   // Get existing token data to preserve metadata
   const existingData = await readCustomObject<AccessTokenData>(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
-    getAccessTokenVariableKey(),
+    getAccessTokenVariableKey()
   );
 
   const now = new Date().toISOString();
@@ -125,6 +126,6 @@ export const updateRefreshedToken = async (
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
     getAccessTokenVariableKey(),
-    updatedTokenData,
+    updatedTokenData
   );
 };

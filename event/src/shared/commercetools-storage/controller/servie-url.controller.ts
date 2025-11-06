@@ -7,7 +7,7 @@ import { readCustomObject } from '../../commercetools/controllers/custom-object.
 
 export async function createServiceURLStorageLink(
   apiRoot: ByProjectKeyRequestBuilder,
-  applicationUrl: string,
+  applicationUrl: string
 ): Promise<void> {
   await apiRoot
     .customObjects()
@@ -22,7 +22,7 @@ export async function createServiceURLStorageLink(
 }
 
 export async function getServiceURLStorageLink(
-  apiRoot: ByProjectKeyRequestBuilder,
+  apiRoot: ByProjectKeyRequestBuilder
 ): Promise<string | null> {
   const isDevelopment = process.env.NODE_ENV === 'development';
   if (isDevelopment) {
@@ -31,7 +31,7 @@ export async function getServiceURLStorageLink(
   const response = await readCustomObject<string | null>(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
-    SHARED_SHOP_SERVICE_URL_VARIABLE_KEY,
+    SHARED_SHOP_SERVICE_URL_VARIABLE_KEY
   );
 
   return response;

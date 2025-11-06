@@ -5,4 +5,3 @@ export * as Types from './interfaces';
 export * as RouterService from './router-service';
 export * as Mappers from './mappers';
 export * as Services from './services';
-

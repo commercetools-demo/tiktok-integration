@@ -2,19 +2,15 @@ import {
   ProductCreatedMessage,
   ProductDeletedMessage,
   ProductPublishedMessage,
-  ProductUnpublishedMessage
+  ProductUnpublishedMessage,
 } from '@commercetools/platform-sdk';
-import {
-  CommercetoolsClient,
-  CommercetoolsStorage,
-  Utils
-} from '../../shared';
+import { CommercetoolsClient, CommercetoolsStorage, Utils } from '../../shared';
 import { logger } from '../../utils/logger.utils';
 import { productCreated } from './product-created.controller';
 import {
   productDeleted,
   productPublished,
-  productUnpublished
+  productUnpublished,
 } from './product-state.controller';
 
 export type ProductMessageType =

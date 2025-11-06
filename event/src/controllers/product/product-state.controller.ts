@@ -82,11 +82,9 @@ export const productPublished = async (
           draft: false,
           locale: shopConfiguration.locale,
         }
-      )
+      );
       if (!tiktokProductsData || !tiktokProductsData.length) {
-        throw new Error(
-          `No tiktok product found for product ${product.id}`
-        );
+        throw new Error(`No tiktok product found for product ${product.id}`);
       }
       await Promise.all(
         tiktokProductsData

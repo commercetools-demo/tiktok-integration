@@ -12,11 +12,11 @@ export interface TikTokProductAttributeMapper {
   tiktokAttributeId: string;
   valueNamesFetcher?: (
     attributes: Attribute[],
-    locale: string,
+    locale: string
   ) => { name?: string; id?: string }[];
   valueIdsFetcher?: (
     attributes: Attribute[],
-    locale: string,
+    locale: string
   ) => { name?: string; id?: string }[];
 }
 

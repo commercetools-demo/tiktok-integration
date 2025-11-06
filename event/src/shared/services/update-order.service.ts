@@ -8,11 +8,11 @@ import { Order202507GetOrderDetailResponseDataOrders } from '../interfaces/tikto
 export const updateCommercetoolsOrderFromTiktokOrder = async (
   apiRoot: ByProjectKeyRequestBuilder,
   order: Order202507GetOrderDetailResponseDataOrders,
-  updateActions: OrderUpdateAction[],
+  updateActions: OrderUpdateAction[]
 ) => {
   const commercetoolsOrder = await OrderController.queryOrder(
     apiRoot,
-    `custom(fields(tiktokOrderId="${order.id}"))`,
+    `custom(fields(tiktokOrderId="${order.id}"))`
   );
   if (!commercetoolsOrder) {
     throw new Error(`Order ${order.id} not found`);
@@ -21,7 +21,7 @@ export const updateCommercetoolsOrderFromTiktokOrder = async (
     apiRoot,
     commercetoolsOrder.id,
     commercetoolsOrder.version,
-    updateActions,
+    updateActions
   );
   return updatedOrder;
 };
