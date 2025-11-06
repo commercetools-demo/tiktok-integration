@@ -87,8 +87,7 @@ export const getShopCipher = async (
   if (!configData) {
     return undefined;
   }
- return configData?.shopCipher;
-
+  return configData?.shopCipher;
 };
 
 /**

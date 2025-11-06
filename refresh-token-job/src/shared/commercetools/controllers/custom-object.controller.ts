@@ -1,5 +1,6 @@
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import { CustomObject } from '@commercetools/platform-sdk';
+import { logger } from '../../utils/logger';
 
 export const createOrUpdateCustomObject = async <T = any>(
   apiRoot: ByProjectKeyRequestBuilder,
@@ -21,7 +22,7 @@ export const createOrUpdateCustomObject = async <T = any>(
 
     return response.body;
   } catch (error) {
-    console.error(
+    logger.error(
       `Error creating/updating custom object [${container}/${key}]:`,
       error,
     );
@@ -46,7 +47,7 @@ export const readCustomObject = async <T = any>(
     if (error.statusCode === 404) {
       return null;
     }
-    console.error(`Error reading custom object [${container}/${key}]:`, error);
+    logger.error(`Error reading custom object [${container}/${key}]:`, error);
     throw error;
   }
 };
@@ -80,7 +81,7 @@ export const deleteCustomObject = async (
     if (error.statusCode === 404) {
       return false;
     }
-    console.error(`Error deleting custom object [${container}/${key}]:`, error);
+    logger.error(`Error deleting custom object [${container}/${key}]:`, error);
     throw error;
   }
 };

@@ -2,7 +2,12 @@ import { Request, Response } from 'express';
 
 import CustomError from '../errors/custom.error';
 import { logger } from '../utils/logger.utils';
-import { CommercetoolsClient, Utils, CommercetoolsStorage, RouterService } from '../shared';
+import {
+  CommercetoolsClient,
+  Utils,
+  CommercetoolsStorage,
+  RouterService,
+} from '../shared';
 
 /**
  * Exposed job endpoint.
@@ -13,10 +18,13 @@ import { CommercetoolsClient, Utils, CommercetoolsStorage, RouterService } from 
  */
 export const post = async (_request: Request, res: Response) => {
   try {
-    const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
-    const refreshToken = await CommercetoolsStorage.TokenController.getTokensNeedingRefresh(
-      apiRoot,
+    const apiRoot = CommercetoolsClient.createApiRoot(
+      Utils.readConfiguration(),
     );
+    const refreshToken =
+      await CommercetoolsStorage.TokenController.getTokensNeedingRefresh(
+        apiRoot,
+      );
 
     logger.info('tokens needing refresh');
     if (!refreshToken) {
@@ -32,9 +40,11 @@ export const post = async (_request: Request, res: Response) => {
       );
     }
 
-
     res.status(200).send();
   } catch (error) {
-    throw new CustomError(500, `Internal Server Error - Error retrieving all orders from the commercetools SDK`);
+    throw new CustomError(
+      500,
+      `Internal Server Error - Error retrieving all orders from the commercetools SDK`,
+    );
   }
 };

@@ -15,7 +15,6 @@ export interface AccessTokenData {
   last_refreshed_at: string;
 }
 
-
 export type TokenResponse = {
   access_token: string;
   access_token_expire_in?: number;

@@ -30,13 +30,13 @@ export interface AuthorizeProjectResponse {
  */
 const getRouterServiceUrl = (): string => {
   const url = process.env.ROUTER_SERVICE_URL_ENDPOINT;
-  
+
   if (!url) {
     throw new Error(
       'ROUTER_SERVICE_URL_ENDPOINT environment variable is not set',
     );
   }
-  
+
   return url;
 };
 
@@ -115,7 +115,9 @@ export const refreshAccessToken = async (
 
   if (!response.ok) {
     const error = await response.text();
-    logger.error('Failed to refresh access token via router service', { error });
+    logger.error('Failed to refresh access token via router service', {
+      error,
+    });
     throw new Error(`Token refresh failed: ${error}`);
   }
 
@@ -247,7 +249,9 @@ export const addExternalOrderReference = async (
 
   if (!response.ok) {
     const error = await response.text();
-    logger.error('Failed to add external order reference via router service', { error });
+    logger.error('Failed to add external order reference via router service', {
+      error,
+    });
     throw new Error(`Add external order reference failed: ${error}`);
   }
 
@@ -281,7 +285,7 @@ export const getCategories = async (
   const url = new URL(`${baseUrl}/tiktok/categories`);
   url.searchParams.append('access_token', access_token);
   url.searchParams.append('shop_cipher', shop_cipher);
-  
+
   if (options?.locale) {
     url.searchParams.append('locale', options.locale);
   }
@@ -293,7 +297,10 @@ export const getCategories = async (
     url.searchParams.append('listing_platform', options.listing_platform);
   }
   if (options?.include_prohibited_categories !== undefined) {
-    url.searchParams.append('include_prohibited_categories', options.include_prohibited_categories.toString());
+    url.searchParams.append(
+      'include_prohibited_categories',
+      options.include_prohibited_categories.toString(),
+    );
   }
 
   const response = await fetch(url.toString(), {
@@ -341,7 +348,7 @@ export const getCategoryRules = async (
   const url = new URL(`${baseUrl}/tiktok/categories/${category_id}/rules`);
   url.searchParams.append('access_token', access_token);
   url.searchParams.append('shop_cipher', shop_cipher);
-  
+
   if (options?.category_version) {
     url.searchParams.append('category_version', options.category_version);
   }
@@ -393,7 +400,7 @@ export const getCategoryAttributes = async (
   const url = new URL(`${baseUrl}/tiktok/categories/${category_id}/attributes`);
   url.searchParams.append('access_token', access_token);
   url.searchParams.append('shop_cipher', shop_cipher);
-  
+
   if (options?.locale) {
     url.searchParams.append('locale', options.locale);
   }
@@ -407,7 +414,9 @@ export const getCategoryAttributes = async (
 
   if (!response.ok) {
     const error = await response.text();
-    logger.error('Failed to get category attributes via router service', { error });
+    logger.error('Failed to get category attributes via router service', {
+      error,
+    });
     throw new Error(`Get category attributes failed: ${error}`);
   }
 
@@ -441,7 +450,7 @@ export const productSearch = async (
   const url = new URL(`${baseUrl}/tiktok/products/search`);
   url.searchParams.append('access_token', access_token);
   url.searchParams.append('shop_cipher', shop_cipher);
-  
+
   if (options?.pageSize) {
     url.searchParams.append('page_size', options.pageSize.toString());
   }
@@ -497,7 +506,7 @@ export const getProductsByIds = async (
   const url = new URL(`${baseUrl}/tiktok/products/batch/get`);
   url.searchParams.append('access_token', access_token);
   url.searchParams.append('shop_cipher', shop_cipher);
-  
+
   if (options?.locale) {
     url.searchParams.append('locale', options.locale);
   }
@@ -644,7 +653,9 @@ export const updateSkuInventory = async (
     sku_id,
   });
 
-  const url = new URL(`${baseUrl}/tiktok/inventory/${product_id}/sku/${sku_id}`);
+  const url = new URL(
+    `${baseUrl}/tiktok/inventory/${product_id}/sku/${sku_id}`,
+  );
   url.searchParams.append('access_token', access_token);
   url.searchParams.append('shop_cipher', shop_cipher);
 
@@ -658,7 +669,9 @@ export const updateSkuInventory = async (
 
   if (!response.ok) {
     const error = await response.text();
-    logger.error('Failed to update SKU inventory via router service', { error });
+    logger.error('Failed to update SKU inventory via router service', {
+      error,
+    });
     throw new Error(`SKU inventory update failed: ${error}`);
   }
 
@@ -845,4 +858,3 @@ export const publishWebhook = async (
 
   return data;
 };
-
