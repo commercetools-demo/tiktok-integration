@@ -13,7 +13,6 @@ query FetchStores($limit: Int, $offset: Int, $sort: [String!]) {
         value
       }
       languages
-      countries
       distributionChannels {
         id
         key

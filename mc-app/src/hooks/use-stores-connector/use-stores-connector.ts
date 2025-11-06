@@ -114,7 +114,6 @@ export const useStoresFetcher: TUseStoresFetcher = (variables = {}) => {
 
   return {
     stores: data?.stores?.results,
-    storesResult: data?.stores,
     error,
     loading,
     refetch,
