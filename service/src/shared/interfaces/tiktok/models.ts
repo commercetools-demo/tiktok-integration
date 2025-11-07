@@ -1,38 +1,4 @@
 import localVarRequest from 'request';
-
-export * from './order/V202406/AddExternalOrderReferencesRequestBody';
-export * from './order/V202406/AddExternalOrderReferencesRequestBodyOrders';
-export * from './order/V202406/AddExternalOrderReferencesRequestBodyOrdersExternalOrder';
-export * from './order/V202406/AddExternalOrderReferencesRequestBodyOrdersExternalOrderLineItems';
-export * from './order/V202406/AddExternalOrderReferencesResponse';
-export * from './order/V202406/AddExternalOrderReferencesResponseData';
-export * from './order/V202406/AddExternalOrderReferencesResponseDataErrors';
-export * from './order/V202406/AddExternalOrderReferencesResponseDataErrorsDetail';
-export * from './order/V202406/AddExternalOrderReferencesResponseDataErrorsDetailExternalOrder';
-export * from './order/V202406/GetExternalOrderReferencesResponse';
-export * from './order/V202406/GetExternalOrderReferencesResponseData';
-export * from './order/V202406/GetExternalOrderReferencesResponseDataExternalOrders';
-export * from './order/V202406/GetExternalOrderReferencesResponseDataExternalOrdersLineItems';
-export * from './order/V202406/SearchOrderByExternalOrderReferenceResponse';
-export * from './order/V202406/SearchOrderByExternalOrderReferenceResponseData';
-export * from './order/V202406/SearchOrderByExternalOrderReferenceResponseDataOrders';
-export * from './order/V202406/SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrder';
-export * from './order/V202406/SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrderLineItems';
-export * from './order/V202407/GetPriceDetailResponse';
-export * from './order/V202407/GetPriceDetailResponseData';
-export * from './order/V202407/GetPriceDetailResponseDataLineItems';
-export * from './order/V202507/GetOrderDetailResponse';
-export * from './order/V202507/GetOrderDetailResponseData';
-export * from './order/V202507/GetOrderDetailResponseDataOrders';
-export * from './order/V202507/GetOrderDetailResponseDataOrdersHandlingDuration';
-export * from './order/V202507/GetOrderDetailResponseDataOrdersLineItems';
-export * from './order/V202507/GetOrderDetailResponseDataOrdersLineItemsCombinedListingSkus';
-export * from './order/V202507/GetOrderDetailResponseDataOrdersLineItemsItemTax';
-export * from './order/V202507/GetOrderDetailResponseDataOrdersPackages';
-export * from './order/V202507/GetOrderDetailResponseDataOrdersPayment';
-export * from './order/V202507/GetOrderDetailResponseDataOrdersRecipientAddress';
-export * from './order/V202507/GetOrderDetailResponseDataOrdersRecipientAddressDeliveryPreferences';
-export * from './order/V202507/GetOrderDetailResponseDataOrdersRecipientAddressDistrictInfo';
 export * from './product/V202309/ActivateProductRequestBody';
 export * from './product/V202309/ActivateProductResponse';
 export * from './product/V202309/ActivateProductResponseData';
@@ -439,95 +405,6 @@ export * from './product/V202309/UploadProductFileResponse';
 export * from './product/V202309/UploadProductFileResponseData';
 export * from './product/V202309/UploadProductImageResponse';
 export * from './product/V202309/UploadProductImageResponseData';
-export * from './product/V202502/SearchProductsRequestBody';
-export * from './product/V202502/SearchProductsResponse';
-export * from './product/V202502/SearchProductsResponseData';
-export * from './product/V202502/SearchProductsResponseDataProducts';
-export * from './product/V202502/SearchProductsResponseDataProductsAudit';
-export * from './product/V202502/SearchProductsResponseDataProductsIntegratedPlatformStatuses';
-export * from './product/V202502/SearchProductsResponseDataProductsProductFamilies';
-export * from './product/V202502/SearchProductsResponseDataProductsProductFamiliesProducts';
-export * from './product/V202502/SearchProductsResponseDataProductsRecommendedCategories';
-export * from './product/V202502/SearchProductsResponseDataProductsSkus';
-export * from './product/V202502/SearchProductsResponseDataProductsSkusExternalListPrices';
-export * from './product/V202502/SearchProductsResponseDataProductsSkusInventory';
-export * from './product/V202502/SearchProductsResponseDataProductsSkusListPrice';
-export * from './product/V202502/SearchProductsResponseDataProductsSkusPreSale';
-export * from './product/V202502/SearchProductsResponseDataProductsSkusPreSaleFulfillmentType';
-export * from './product/V202502/SearchProductsResponseDataProductsSkusPrice';
-export * from './product/V202502/SearchProductsResponseDataProductsSkusStatusInfo';
-export * from './product/V202509/EditProductRequestBody';
-export * from './product/V202509/EditProductRequestBodyCertifications';
-export * from './product/V202509/EditProductRequestBodyCertificationsFiles';
-export * from './product/V202509/EditProductRequestBodyCertificationsImages';
-export * from './product/V202509/EditProductRequestBodyMainImages';
-export * from './product/V202509/EditProductRequestBodyPackageDimensions';
-export * from './product/V202509/EditProductRequestBodyPackageWeight';
-export * from './product/V202509/EditProductRequestBodyProductAttributes';
-export * from './product/V202509/EditProductRequestBodyProductAttributesValues';
-export * from './product/V202509/EditProductRequestBodyReplicatedProducts';
-export * from './product/V202509/EditProductRequestBodyReplicatedProductsSkus';
-export * from './product/V202509/EditProductRequestBodyReplicatedProductsSkusInventory';
-export * from './product/V202509/EditProductRequestBodyReplicatedProductsSkusPrice';
-export * from './product/V202509/EditProductRequestBodySizeChart';
-export * from './product/V202509/EditProductRequestBodySizeChartImage';
-export * from './product/V202509/EditProductRequestBodySizeChartTemplate';
-export * from './product/V202509/EditProductRequestBodySkus';
-export * from './product/V202509/EditProductRequestBodySkusCombinedSkus';
-export * from './product/V202509/EditProductRequestBodySkusExternalListPrices';
-export * from './product/V202509/EditProductRequestBodySkusIdentifierCode';
-export * from './product/V202509/EditProductRequestBodySkusInventory';
-export * from './product/V202509/EditProductRequestBodySkusListPrice';
-export * from './product/V202509/EditProductRequestBodySkusPreSale';
-export * from './product/V202509/EditProductRequestBodySkusPreSaleFulfillmentType';
-export * from './product/V202509/EditProductRequestBodySkusPrice';
-export * from './product/V202509/EditProductRequestBodySkusSalesAttributes';
-export * from './product/V202509/EditProductRequestBodySkusSalesAttributesSkuImg';
-export * from './product/V202509/EditProductRequestBodySkusSalesAttributesSupplementarySkuImages';
-export * from './product/V202509/EditProductRequestBodySubscribeInfoEdit';
-export * from './product/V202509/EditProductRequestBodySubscribeInfoEditDiscountDetails';
-export * from './product/V202509/EditProductRequestBodyVideo';
-export * from './product/V202509/EditProductResponse';
-export * from './product/V202509/EditProductResponseData';
-export * from './product/V202509/EditProductResponseDataAudit';
-export * from './product/V202509/EditProductResponseDataSkus';
-export * from './product/V202509/EditProductResponseDataSkusSalesAttributes';
-export * from './product/V202509/EditProductResponseDataWarnings';
-export * from './product/V202509/PartialEditProductRequestBody';
-export * from './product/V202509/PartialEditProductRequestBodyCertifications';
-export * from './product/V202509/PartialEditProductRequestBodyCertificationsFiles';
-export * from './product/V202509/PartialEditProductRequestBodyCertificationsImages';
-export * from './product/V202509/PartialEditProductRequestBodyMainImages';
-export * from './product/V202509/PartialEditProductRequestBodyPackageDimensions';
-export * from './product/V202509/PartialEditProductRequestBodyPackageWeight';
-export * from './product/V202509/PartialEditProductRequestBodyProductAttributes';
-export * from './product/V202509/PartialEditProductRequestBodyProductAttributesValues';
-export * from './product/V202509/PartialEditProductRequestBodyReplicatedProducts';
-export * from './product/V202509/PartialEditProductRequestBodyReplicatedProductsSkus';
-export * from './product/V202509/PartialEditProductRequestBodyReplicatedProductsSkusInventory';
-export * from './product/V202509/PartialEditProductRequestBodyReplicatedProductsSkusPrice';
-export * from './product/V202509/PartialEditProductRequestBodySizeChart';
-export * from './product/V202509/PartialEditProductRequestBodySizeChartImage';
-export * from './product/V202509/PartialEditProductRequestBodySizeChartTemplate';
-export * from './product/V202509/PartialEditProductRequestBodySkus';
-export * from './product/V202509/PartialEditProductRequestBodySkusExternalListPrices';
-export * from './product/V202509/PartialEditProductRequestBodySkusIdentifierCode';
-export * from './product/V202509/PartialEditProductRequestBodySkusInventory';
-export * from './product/V202509/PartialEditProductRequestBodySkusListPrice';
-export * from './product/V202509/PartialEditProductRequestBodySkusPreSale';
-export * from './product/V202509/PartialEditProductRequestBodySkusPreSaleFulfillmentType';
-export * from './product/V202509/PartialEditProductRequestBodySkusPrice';
-export * from './product/V202509/PartialEditProductRequestBodySkusSalesAttributes';
-export * from './product/V202509/PartialEditProductRequestBodySkusSalesAttributesSkuImg';
-export * from './product/V202509/PartialEditProductRequestBodySkusSalesAttributesSupplementarySkuImages';
-export * from './product/V202509/PartialEditProductRequestBodySubscribeInfoEdit';
-export * from './product/V202509/PartialEditProductRequestBodySubscribeInfoEditDiscountDetails';
-export * from './product/V202509/PartialEditProductRequestBodyVideo';
-export * from './product/V202509/PartialEditProductResponse';
-export * from './product/V202509/PartialEditProductResponseData';
-export * from './product/V202509/PartialEditProductResponseDataAudit';
-export * from './product/V202509/PartialEditProductResponseDataSkus';
-export * from './product/V202509/PartialEditProductResponseDataSkusSalesAttributes';
 
 import * as fs from 'fs';
 
@@ -539,41 +416,7 @@ export interface RequestDetailedFile {
     }
 }
 
-export type RequestFile = string | Buffer | fs.ReadStream | RequestDetailedFile;
-import { Order202406AddExternalOrderReferencesRequestBody } from './order/V202406/AddExternalOrderReferencesRequestBody';
-import { Order202406AddExternalOrderReferencesRequestBodyOrders } from './order/V202406/AddExternalOrderReferencesRequestBodyOrders';
-import { Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrder } from './order/V202406/AddExternalOrderReferencesRequestBodyOrdersExternalOrder';
-import { Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrderLineItems } from './order/V202406/AddExternalOrderReferencesRequestBodyOrdersExternalOrderLineItems';
-import { Order202406AddExternalOrderReferencesResponse } from './order/V202406/AddExternalOrderReferencesResponse';
-import { Order202406AddExternalOrderReferencesResponseData } from './order/V202406/AddExternalOrderReferencesResponseData';
-import { Order202406AddExternalOrderReferencesResponseDataErrors } from './order/V202406/AddExternalOrderReferencesResponseDataErrors';
-import { Order202406AddExternalOrderReferencesResponseDataErrorsDetail } from './order/V202406/AddExternalOrderReferencesResponseDataErrorsDetail';
-import { Order202406AddExternalOrderReferencesResponseDataErrorsDetailExternalOrder } from './order/V202406/AddExternalOrderReferencesResponseDataErrorsDetailExternalOrder';
-import { Order202406GetExternalOrderReferencesResponse } from './order/V202406/GetExternalOrderReferencesResponse';
-import { Order202406GetExternalOrderReferencesResponseData } from './order/V202406/GetExternalOrderReferencesResponseData';
-import { Order202406GetExternalOrderReferencesResponseDataExternalOrders } from './order/V202406/GetExternalOrderReferencesResponseDataExternalOrders';
-import { Order202406GetExternalOrderReferencesResponseDataExternalOrdersLineItems } from './order/V202406/GetExternalOrderReferencesResponseDataExternalOrdersLineItems';
-import { Order202406SearchOrderByExternalOrderReferenceResponse } from './order/V202406/SearchOrderByExternalOrderReferenceResponse';
-import { Order202406SearchOrderByExternalOrderReferenceResponseData } from './order/V202406/SearchOrderByExternalOrderReferenceResponseData';
-import { Order202406SearchOrderByExternalOrderReferenceResponseDataOrders } from './order/V202406/SearchOrderByExternalOrderReferenceResponseDataOrders';
-import { Order202406SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrder } from './order/V202406/SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrder';
-import { Order202406SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrderLineItems } from './order/V202406/SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrderLineItems';
-import { Order202407GetPriceDetailResponse } from './order/V202407/GetPriceDetailResponse';
-import { Order202407GetPriceDetailResponseData } from './order/V202407/GetPriceDetailResponseData';
-import { Order202407GetPriceDetailResponseDataLineItems } from './order/V202407/GetPriceDetailResponseDataLineItems';
-import { Order202507GetOrderDetailResponse } from './order/V202507/GetOrderDetailResponse';
-import { Order202507GetOrderDetailResponseData } from './order/V202507/GetOrderDetailResponseData';
-import { Order202507GetOrderDetailResponseDataOrders } from './order/V202507/GetOrderDetailResponseDataOrders';
-import { Order202507GetOrderDetailResponseDataOrdersHandlingDuration } from './order/V202507/GetOrderDetailResponseDataOrdersHandlingDuration';
-import { Order202507GetOrderDetailResponseDataOrdersLineItems } from './order/V202507/GetOrderDetailResponseDataOrdersLineItems';
-import { Order202507GetOrderDetailResponseDataOrdersLineItemsCombinedListingSkus } from './order/V202507/GetOrderDetailResponseDataOrdersLineItemsCombinedListingSkus';
-import { Order202507GetOrderDetailResponseDataOrdersLineItemsItemTax } from './order/V202507/GetOrderDetailResponseDataOrdersLineItemsItemTax';
-import { Order202507GetOrderDetailResponseDataOrdersPackages } from './order/V202507/GetOrderDetailResponseDataOrdersPackages';
-import { Order202507GetOrderDetailResponseDataOrdersPayment } from './order/V202507/GetOrderDetailResponseDataOrdersPayment';
-import { Order202507GetOrderDetailResponseDataOrdersRecipientAddress } from './order/V202507/GetOrderDetailResponseDataOrdersRecipientAddress';
-import { Order202507GetOrderDetailResponseDataOrdersRecipientAddressDeliveryPreferences } from './order/V202507/GetOrderDetailResponseDataOrdersRecipientAddressDeliveryPreferences';
-import { Order202507GetOrderDetailResponseDataOrdersRecipientAddressDistrictInfo } from './order/V202507/GetOrderDetailResponseDataOrdersRecipientAddressDistrictInfo';
-import { Product202309ActivateProductRequestBody } from './product/V202309/ActivateProductRequestBody';
+export type RequestFile = string | Buffer | fs.ReadStream | RequestDetailedFile;import { Product202309ActivateProductRequestBody } from './product/V202309/ActivateProductRequestBody';
 import { Product202309ActivateProductResponse } from './product/V202309/ActivateProductResponse';
 import { Product202309ActivateProductResponseData } from './product/V202309/ActivateProductResponseData';
 import { Product202309ActivateProductResponseDataErrors } from './product/V202309/ActivateProductResponseDataErrors';
@@ -978,95 +821,7 @@ import { Product202309UpdatePriceResponse } from './product/V202309/UpdatePriceR
 import { Product202309UploadProductFileResponse } from './product/V202309/UploadProductFileResponse';
 import { Product202309UploadProductFileResponseData } from './product/V202309/UploadProductFileResponseData';
 import { Product202309UploadProductImageResponse } from './product/V202309/UploadProductImageResponse';
-import { Product202309UploadProductImageResponseData } from './product/V202309/UploadProductImageResponseData';import { Product202502SearchProductsRequestBody } from './product/V202502/SearchProductsRequestBody';
-import { Product202502SearchProductsResponse } from './product/V202502/SearchProductsResponse';
-import { Product202502SearchProductsResponseData } from './product/V202502/SearchProductsResponseData';
-import { Product202502SearchProductsResponseDataProducts } from './product/V202502/SearchProductsResponseDataProducts';
-import { Product202502SearchProductsResponseDataProductsAudit } from './product/V202502/SearchProductsResponseDataProductsAudit';
-import { Product202502SearchProductsResponseDataProductsIntegratedPlatformStatuses } from './product/V202502/SearchProductsResponseDataProductsIntegratedPlatformStatuses';
-import { Product202502SearchProductsResponseDataProductsProductFamilies } from './product/V202502/SearchProductsResponseDataProductsProductFamilies';
-import { Product202502SearchProductsResponseDataProductsProductFamiliesProducts } from './product/V202502/SearchProductsResponseDataProductsProductFamiliesProducts';
-import { Product202502SearchProductsResponseDataProductsRecommendedCategories } from './product/V202502/SearchProductsResponseDataProductsRecommendedCategories';
-import { Product202502SearchProductsResponseDataProductsSkus } from './product/V202502/SearchProductsResponseDataProductsSkus';
-import { Product202502SearchProductsResponseDataProductsSkusExternalListPrices } from './product/V202502/SearchProductsResponseDataProductsSkusExternalListPrices';
-import { Product202502SearchProductsResponseDataProductsSkusInventory } from './product/V202502/SearchProductsResponseDataProductsSkusInventory';
-import { Product202502SearchProductsResponseDataProductsSkusListPrice } from './product/V202502/SearchProductsResponseDataProductsSkusListPrice';
-import { Product202502SearchProductsResponseDataProductsSkusPreSale } from './product/V202502/SearchProductsResponseDataProductsSkusPreSale';
-import { Product202502SearchProductsResponseDataProductsSkusPreSaleFulfillmentType } from './product/V202502/SearchProductsResponseDataProductsSkusPreSaleFulfillmentType';
-import { Product202502SearchProductsResponseDataProductsSkusPrice } from './product/V202502/SearchProductsResponseDataProductsSkusPrice';
-import { Product202502SearchProductsResponseDataProductsSkusStatusInfo } from './product/V202502/SearchProductsResponseDataProductsSkusStatusInfo';
-import { Product202509EditProductRequestBody } from './product/V202509/EditProductRequestBody';
-import { Product202509EditProductRequestBodyCertifications } from './product/V202509/EditProductRequestBodyCertifications';
-import { Product202509EditProductRequestBodyCertificationsFiles } from './product/V202509/EditProductRequestBodyCertificationsFiles';
-import { Product202509EditProductRequestBodyCertificationsImages } from './product/V202509/EditProductRequestBodyCertificationsImages';
-import { Product202509EditProductRequestBodyMainImages } from './product/V202509/EditProductRequestBodyMainImages';
-import { Product202509EditProductRequestBodyPackageDimensions } from './product/V202509/EditProductRequestBodyPackageDimensions';
-import { Product202509EditProductRequestBodyPackageWeight } from './product/V202509/EditProductRequestBodyPackageWeight';
-import { Product202509EditProductRequestBodyProductAttributes } from './product/V202509/EditProductRequestBodyProductAttributes';
-import { Product202509EditProductRequestBodyProductAttributesValues } from './product/V202509/EditProductRequestBodyProductAttributesValues';
-import { Product202509EditProductRequestBodyReplicatedProducts } from './product/V202509/EditProductRequestBodyReplicatedProducts';
-import { Product202509EditProductRequestBodyReplicatedProductsSkus } from './product/V202509/EditProductRequestBodyReplicatedProductsSkus';
-import { Product202509EditProductRequestBodyReplicatedProductsSkusInventory } from './product/V202509/EditProductRequestBodyReplicatedProductsSkusInventory';
-import { Product202509EditProductRequestBodyReplicatedProductsSkusPrice } from './product/V202509/EditProductRequestBodyReplicatedProductsSkusPrice';
-import { Product202509EditProductRequestBodySizeChart } from './product/V202509/EditProductRequestBodySizeChart';
-import { Product202509EditProductRequestBodySizeChartImage } from './product/V202509/EditProductRequestBodySizeChartImage';
-import { Product202509EditProductRequestBodySizeChartTemplate } from './product/V202509/EditProductRequestBodySizeChartTemplate';
-import { Product202509EditProductRequestBodySkus } from './product/V202509/EditProductRequestBodySkus';
-import { Product202509EditProductRequestBodySkusCombinedSkus } from './product/V202509/EditProductRequestBodySkusCombinedSkus';
-import { Product202509EditProductRequestBodySkusExternalListPrices } from './product/V202509/EditProductRequestBodySkusExternalListPrices';
-import { Product202509EditProductRequestBodySkusIdentifierCode } from './product/V202509/EditProductRequestBodySkusIdentifierCode';
-import { Product202509EditProductRequestBodySkusInventory } from './product/V202509/EditProductRequestBodySkusInventory';
-import { Product202509EditProductRequestBodySkusListPrice } from './product/V202509/EditProductRequestBodySkusListPrice';
-import { Product202509EditProductRequestBodySkusPreSale } from './product/V202509/EditProductRequestBodySkusPreSale';
-import { Product202509EditProductRequestBodySkusPreSaleFulfillmentType } from './product/V202509/EditProductRequestBodySkusPreSaleFulfillmentType';
-import { Product202509EditProductRequestBodySkusPrice } from './product/V202509/EditProductRequestBodySkusPrice';
-import { Product202509EditProductRequestBodySkusSalesAttributes } from './product/V202509/EditProductRequestBodySkusSalesAttributes';
-import { Product202509EditProductRequestBodySkusSalesAttributesSkuImg } from './product/V202509/EditProductRequestBodySkusSalesAttributesSkuImg';
-import { Product202509EditProductRequestBodySkusSalesAttributesSupplementarySkuImages } from './product/V202509/EditProductRequestBodySkusSalesAttributesSupplementarySkuImages';
-import { Product202509EditProductRequestBodySubscribeInfoEdit } from './product/V202509/EditProductRequestBodySubscribeInfoEdit';
-import { Product202509EditProductRequestBodySubscribeInfoEditDiscountDetails } from './product/V202509/EditProductRequestBodySubscribeInfoEditDiscountDetails';
-import { Product202509EditProductRequestBodyVideo } from './product/V202509/EditProductRequestBodyVideo';
-import { Product202509EditProductResponse } from './product/V202509/EditProductResponse';
-import { Product202509EditProductResponseData } from './product/V202509/EditProductResponseData';
-import { Product202509EditProductResponseDataAudit } from './product/V202509/EditProductResponseDataAudit';
-import { Product202509EditProductResponseDataSkus } from './product/V202509/EditProductResponseDataSkus';
-import { Product202509EditProductResponseDataSkusSalesAttributes } from './product/V202509/EditProductResponseDataSkusSalesAttributes';
-import { Product202509EditProductResponseDataWarnings } from './product/V202509/EditProductResponseDataWarnings';
-import { Product202509PartialEditProductRequestBody } from './product/V202509/PartialEditProductRequestBody';
-import { Product202509PartialEditProductRequestBodyCertifications } from './product/V202509/PartialEditProductRequestBodyCertifications';
-import { Product202509PartialEditProductRequestBodyCertificationsFiles } from './product/V202509/PartialEditProductRequestBodyCertificationsFiles';
-import { Product202509PartialEditProductRequestBodyCertificationsImages } from './product/V202509/PartialEditProductRequestBodyCertificationsImages';
-import { Product202509PartialEditProductRequestBodyMainImages } from './product/V202509/PartialEditProductRequestBodyMainImages';
-import { Product202509PartialEditProductRequestBodyPackageDimensions } from './product/V202509/PartialEditProductRequestBodyPackageDimensions';
-import { Product202509PartialEditProductRequestBodyPackageWeight } from './product/V202509/PartialEditProductRequestBodyPackageWeight';
-import { Product202509PartialEditProductRequestBodyProductAttributes } from './product/V202509/PartialEditProductRequestBodyProductAttributes';
-import { Product202509PartialEditProductRequestBodyProductAttributesValues } from './product/V202509/PartialEditProductRequestBodyProductAttributesValues';
-import { Product202509PartialEditProductRequestBodyReplicatedProducts } from './product/V202509/PartialEditProductRequestBodyReplicatedProducts';
-import { Product202509PartialEditProductRequestBodyReplicatedProductsSkus } from './product/V202509/PartialEditProductRequestBodyReplicatedProductsSkus';
-import { Product202509PartialEditProductRequestBodyReplicatedProductsSkusInventory } from './product/V202509/PartialEditProductRequestBodyReplicatedProductsSkusInventory';
-import { Product202509PartialEditProductRequestBodyReplicatedProductsSkusPrice } from './product/V202509/PartialEditProductRequestBodyReplicatedProductsSkusPrice';
-import { Product202509PartialEditProductRequestBodySizeChart } from './product/V202509/PartialEditProductRequestBodySizeChart';
-import { Product202509PartialEditProductRequestBodySizeChartImage } from './product/V202509/PartialEditProductRequestBodySizeChartImage';
-import { Product202509PartialEditProductRequestBodySizeChartTemplate } from './product/V202509/PartialEditProductRequestBodySizeChartTemplate';
-import { Product202509PartialEditProductRequestBodySkus } from './product/V202509/PartialEditProductRequestBodySkus';
-import { Product202509PartialEditProductRequestBodySkusExternalListPrices } from './product/V202509/PartialEditProductRequestBodySkusExternalListPrices';
-import { Product202509PartialEditProductRequestBodySkusIdentifierCode } from './product/V202509/PartialEditProductRequestBodySkusIdentifierCode';
-import { Product202509PartialEditProductRequestBodySkusInventory } from './product/V202509/PartialEditProductRequestBodySkusInventory';
-import { Product202509PartialEditProductRequestBodySkusListPrice } from './product/V202509/PartialEditProductRequestBodySkusListPrice';
-import { Product202509PartialEditProductRequestBodySkusPreSale } from './product/V202509/PartialEditProductRequestBodySkusPreSale';
-import { Product202509PartialEditProductRequestBodySkusPreSaleFulfillmentType } from './product/V202509/PartialEditProductRequestBodySkusPreSaleFulfillmentType';
-import { Product202509PartialEditProductRequestBodySkusPrice } from './product/V202509/PartialEditProductRequestBodySkusPrice';
-import { Product202509PartialEditProductRequestBodySkusSalesAttributes } from './product/V202509/PartialEditProductRequestBodySkusSalesAttributes';
-import { Product202509PartialEditProductRequestBodySkusSalesAttributesSkuImg } from './product/V202509/PartialEditProductRequestBodySkusSalesAttributesSkuImg';
-import { Product202509PartialEditProductRequestBodySkusSalesAttributesSupplementarySkuImages } from './product/V202509/PartialEditProductRequestBodySkusSalesAttributesSupplementarySkuImages';
-import { Product202509PartialEditProductRequestBodySubscribeInfoEdit } from './product/V202509/PartialEditProductRequestBodySubscribeInfoEdit';
-import { Product202509PartialEditProductRequestBodySubscribeInfoEditDiscountDetails } from './product/V202509/PartialEditProductRequestBodySubscribeInfoEditDiscountDetails';
-import { Product202509PartialEditProductRequestBodyVideo } from './product/V202509/PartialEditProductRequestBodyVideo';
-import { Product202509PartialEditProductResponse } from './product/V202509/PartialEditProductResponse';
-import { Product202509PartialEditProductResponseData } from './product/V202509/PartialEditProductResponseData';
-import { Product202509PartialEditProductResponseDataAudit } from './product/V202509/PartialEditProductResponseDataAudit';
-import { Product202509PartialEditProductResponseDataSkus } from './product/V202509/PartialEditProductResponseDataSkus';
-import { Product202509PartialEditProductResponseDataSkusSalesAttributes } from './product/V202509/PartialEditProductResponseDataSkusSalesAttributes';
+import { Product202309UploadProductImageResponseData } from './product/V202309/UploadProductImageResponseData';
 
 /* tslint:disable:no-unused-variable */
 let primitives = [
@@ -1084,39 +839,6 @@ let enumsMap: {[index: string]: any} = {
 }
 
 let typeMap: {[index: string]: any} = {
-    "Order202406AddExternalOrderReferencesRequestBody": Order202406AddExternalOrderReferencesRequestBody,
-    "Order202406AddExternalOrderReferencesRequestBodyOrders": Order202406AddExternalOrderReferencesRequestBodyOrders,
-    "Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrder": Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrder,
-    "Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrderLineItems": Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrderLineItems,
-    "Order202406AddExternalOrderReferencesResponse": Order202406AddExternalOrderReferencesResponse,
-    "Order202406AddExternalOrderReferencesResponseData": Order202406AddExternalOrderReferencesResponseData,
-    "Order202406AddExternalOrderReferencesResponseDataErrors": Order202406AddExternalOrderReferencesResponseDataErrors,
-    "Order202406AddExternalOrderReferencesResponseDataErrorsDetail": Order202406AddExternalOrderReferencesResponseDataErrorsDetail,
-    "Order202406AddExternalOrderReferencesResponseDataErrorsDetailExternalOrder": Order202406AddExternalOrderReferencesResponseDataErrorsDetailExternalOrder,
-    "Order202406GetExternalOrderReferencesResponse": Order202406GetExternalOrderReferencesResponse,
-    "Order202406GetExternalOrderReferencesResponseData": Order202406GetExternalOrderReferencesResponseData,
-    "Order202406GetExternalOrderReferencesResponseDataExternalOrders": Order202406GetExternalOrderReferencesResponseDataExternalOrders,
-    "Order202406GetExternalOrderReferencesResponseDataExternalOrdersLineItems": Order202406GetExternalOrderReferencesResponseDataExternalOrdersLineItems,
-    "Order202406SearchOrderByExternalOrderReferenceResponse": Order202406SearchOrderByExternalOrderReferenceResponse,
-    "Order202406SearchOrderByExternalOrderReferenceResponseData": Order202406SearchOrderByExternalOrderReferenceResponseData,
-    "Order202406SearchOrderByExternalOrderReferenceResponseDataOrders": Order202406SearchOrderByExternalOrderReferenceResponseDataOrders,
-    "Order202406SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrder": Order202406SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrder,
-    "Order202406SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrderLineItems": Order202406SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrderLineItems,
-    "Order202407GetPriceDetailResponse": Order202407GetPriceDetailResponse,
-    "Order202407GetPriceDetailResponseData": Order202407GetPriceDetailResponseData,
-    "Order202407GetPriceDetailResponseDataLineItems": Order202407GetPriceDetailResponseDataLineItems,
-    "Order202507GetOrderDetailResponse": Order202507GetOrderDetailResponse,
-    "Order202507GetOrderDetailResponseData": Order202507GetOrderDetailResponseData,
-    "Order202507GetOrderDetailResponseDataOrders": Order202507GetOrderDetailResponseDataOrders,
-    "Order202507GetOrderDetailResponseDataOrdersHandlingDuration": Order202507GetOrderDetailResponseDataOrdersHandlingDuration,
-    "Order202507GetOrderDetailResponseDataOrdersLineItems": Order202507GetOrderDetailResponseDataOrdersLineItems,
-    "Order202507GetOrderDetailResponseDataOrdersLineItemsCombinedListingSkus": Order202507GetOrderDetailResponseDataOrdersLineItemsCombinedListingSkus,
-    "Order202507GetOrderDetailResponseDataOrdersLineItemsItemTax": Order202507GetOrderDetailResponseDataOrdersLineItemsItemTax,
-    "Order202507GetOrderDetailResponseDataOrdersPackages": Order202507GetOrderDetailResponseDataOrdersPackages,
-    "Order202507GetOrderDetailResponseDataOrdersPayment": Order202507GetOrderDetailResponseDataOrdersPayment,
-    "Order202507GetOrderDetailResponseDataOrdersRecipientAddress": Order202507GetOrderDetailResponseDataOrdersRecipientAddress,
-    "Order202507GetOrderDetailResponseDataOrdersRecipientAddressDeliveryPreferences": Order202507GetOrderDetailResponseDataOrdersRecipientAddressDeliveryPreferences,
-    "Order202507GetOrderDetailResponseDataOrdersRecipientAddressDistrictInfo": Order202507GetOrderDetailResponseDataOrdersRecipientAddressDistrictInfo,
     "Product202309ActivateProductRequestBody": Product202309ActivateProductRequestBody,
     "Product202309ActivateProductResponse": Product202309ActivateProductResponse,
     "Product202309ActivateProductResponseData": Product202309ActivateProductResponseData,
@@ -1523,95 +1245,6 @@ let typeMap: {[index: string]: any} = {
     "Product202309UploadProductFileResponseData": Product202309UploadProductFileResponseData,
     "Product202309UploadProductImageResponse": Product202309UploadProductImageResponse,
     "Product202309UploadProductImageResponseData": Product202309UploadProductImageResponseData,
-    "Product202502SearchProductsRequestBody": Product202502SearchProductsRequestBody,
-    "Product202502SearchProductsResponse": Product202502SearchProductsResponse,
-    "Product202502SearchProductsResponseData": Product202502SearchProductsResponseData,
-    "Product202502SearchProductsResponseDataProducts": Product202502SearchProductsResponseDataProducts,
-    "Product202502SearchProductsResponseDataProductsAudit": Product202502SearchProductsResponseDataProductsAudit,
-    "Product202502SearchProductsResponseDataProductsIntegratedPlatformStatuses": Product202502SearchProductsResponseDataProductsIntegratedPlatformStatuses,
-    "Product202502SearchProductsResponseDataProductsProductFamilies": Product202502SearchProductsResponseDataProductsProductFamilies,
-    "Product202502SearchProductsResponseDataProductsProductFamiliesProducts": Product202502SearchProductsResponseDataProductsProductFamiliesProducts,
-    "Product202502SearchProductsResponseDataProductsRecommendedCategories": Product202502SearchProductsResponseDataProductsRecommendedCategories,
-    "Product202502SearchProductsResponseDataProductsSkus": Product202502SearchProductsResponseDataProductsSkus,
-    "Product202502SearchProductsResponseDataProductsSkusExternalListPrices": Product202502SearchProductsResponseDataProductsSkusExternalListPrices,
-    "Product202502SearchProductsResponseDataProductsSkusInventory": Product202502SearchProductsResponseDataProductsSkusInventory,
-    "Product202502SearchProductsResponseDataProductsSkusListPrice": Product202502SearchProductsResponseDataProductsSkusListPrice,
-    "Product202502SearchProductsResponseDataProductsSkusPreSale": Product202502SearchProductsResponseDataProductsSkusPreSale,
-    "Product202502SearchProductsResponseDataProductsSkusPreSaleFulfillmentType": Product202502SearchProductsResponseDataProductsSkusPreSaleFulfillmentType,
-    "Product202502SearchProductsResponseDataProductsSkusPrice": Product202502SearchProductsResponseDataProductsSkusPrice,
-    "Product202502SearchProductsResponseDataProductsSkusStatusInfo": Product202502SearchProductsResponseDataProductsSkusStatusInfo,
-    "Product202509EditProductRequestBody": Product202509EditProductRequestBody,
-    "Product202509EditProductRequestBodyCertifications": Product202509EditProductRequestBodyCertifications,
-    "Product202509EditProductRequestBodyCertificationsFiles": Product202509EditProductRequestBodyCertificationsFiles,
-    "Product202509EditProductRequestBodyCertificationsImages": Product202509EditProductRequestBodyCertificationsImages,
-    "Product202509EditProductRequestBodyMainImages": Product202509EditProductRequestBodyMainImages,
-    "Product202509EditProductRequestBodyPackageDimensions": Product202509EditProductRequestBodyPackageDimensions,
-    "Product202509EditProductRequestBodyPackageWeight": Product202509EditProductRequestBodyPackageWeight,
-    "Product202509EditProductRequestBodyProductAttributes": Product202509EditProductRequestBodyProductAttributes,
-    "Product202509EditProductRequestBodyProductAttributesValues": Product202509EditProductRequestBodyProductAttributesValues,
-    "Product202509EditProductRequestBodyReplicatedProducts": Product202509EditProductRequestBodyReplicatedProducts,
-    "Product202509EditProductRequestBodyReplicatedProductsSkus": Product202509EditProductRequestBodyReplicatedProductsSkus,
-    "Product202509EditProductRequestBodyReplicatedProductsSkusInventory": Product202509EditProductRequestBodyReplicatedProductsSkusInventory,
-    "Product202509EditProductRequestBodyReplicatedProductsSkusPrice": Product202509EditProductRequestBodyReplicatedProductsSkusPrice,
-    "Product202509EditProductRequestBodySizeChart": Product202509EditProductRequestBodySizeChart,
-    "Product202509EditProductRequestBodySizeChartImage": Product202509EditProductRequestBodySizeChartImage,
-    "Product202509EditProductRequestBodySizeChartTemplate": Product202509EditProductRequestBodySizeChartTemplate,
-    "Product202509EditProductRequestBodySkus": Product202509EditProductRequestBodySkus,
-    "Product202509EditProductRequestBodySkusCombinedSkus": Product202509EditProductRequestBodySkusCombinedSkus,
-    "Product202509EditProductRequestBodySkusExternalListPrices": Product202509EditProductRequestBodySkusExternalListPrices,
-    "Product202509EditProductRequestBodySkusIdentifierCode": Product202509EditProductRequestBodySkusIdentifierCode,
-    "Product202509EditProductRequestBodySkusInventory": Product202509EditProductRequestBodySkusInventory,
-    "Product202509EditProductRequestBodySkusListPrice": Product202509EditProductRequestBodySkusListPrice,
-    "Product202509EditProductRequestBodySkusPreSale": Product202509EditProductRequestBodySkusPreSale,
-    "Product202509EditProductRequestBodySkusPreSaleFulfillmentType": Product202509EditProductRequestBodySkusPreSaleFulfillmentType,
-    "Product202509EditProductRequestBodySkusPrice": Product202509EditProductRequestBodySkusPrice,
-    "Product202509EditProductRequestBodySkusSalesAttributes": Product202509EditProductRequestBodySkusSalesAttributes,
-    "Product202509EditProductRequestBodySkusSalesAttributesSkuImg": Product202509EditProductRequestBodySkusSalesAttributesSkuImg,
-    "Product202509EditProductRequestBodySkusSalesAttributesSupplementarySkuImages": Product202509EditProductRequestBodySkusSalesAttributesSupplementarySkuImages,
-    "Product202509EditProductRequestBodySubscribeInfoEdit": Product202509EditProductRequestBodySubscribeInfoEdit,
-    "Product202509EditProductRequestBodySubscribeInfoEditDiscountDetails": Product202509EditProductRequestBodySubscribeInfoEditDiscountDetails,
-    "Product202509EditProductRequestBodyVideo": Product202509EditProductRequestBodyVideo,
-    "Product202509EditProductResponse": Product202509EditProductResponse,
-    "Product202509EditProductResponseData": Product202509EditProductResponseData,
-    "Product202509EditProductResponseDataAudit": Product202509EditProductResponseDataAudit,
-    "Product202509EditProductResponseDataSkus": Product202509EditProductResponseDataSkus,
-    "Product202509EditProductResponseDataSkusSalesAttributes": Product202509EditProductResponseDataSkusSalesAttributes,
-    "Product202509EditProductResponseDataWarnings": Product202509EditProductResponseDataWarnings,
-    "Product202509PartialEditProductRequestBody": Product202509PartialEditProductRequestBody,
-    "Product202509PartialEditProductRequestBodyCertifications": Product202509PartialEditProductRequestBodyCertifications,
-    "Product202509PartialEditProductRequestBodyCertificationsFiles": Product202509PartialEditProductRequestBodyCertificationsFiles,
-    "Product202509PartialEditProductRequestBodyCertificationsImages": Product202509PartialEditProductRequestBodyCertificationsImages,
-    "Product202509PartialEditProductRequestBodyMainImages": Product202509PartialEditProductRequestBodyMainImages,
-    "Product202509PartialEditProductRequestBodyPackageDimensions": Product202509PartialEditProductRequestBodyPackageDimensions,
-    "Product202509PartialEditProductRequestBodyPackageWeight": Product202509PartialEditProductRequestBodyPackageWeight,
-    "Product202509PartialEditProductRequestBodyProductAttributes": Product202509PartialEditProductRequestBodyProductAttributes,
-    "Product202509PartialEditProductRequestBodyProductAttributesValues": Product202509PartialEditProductRequestBodyProductAttributesValues,
-    "Product202509PartialEditProductRequestBodyReplicatedProducts": Product202509PartialEditProductRequestBodyReplicatedProducts,
-    "Product202509PartialEditProductRequestBodyReplicatedProductsSkus": Product202509PartialEditProductRequestBodyReplicatedProductsSkus,
-    "Product202509PartialEditProductRequestBodyReplicatedProductsSkusInventory": Product202509PartialEditProductRequestBodyReplicatedProductsSkusInventory,
-    "Product202509PartialEditProductRequestBodyReplicatedProductsSkusPrice": Product202509PartialEditProductRequestBodyReplicatedProductsSkusPrice,
-    "Product202509PartialEditProductRequestBodySizeChart": Product202509PartialEditProductRequestBodySizeChart,
-    "Product202509PartialEditProductRequestBodySizeChartImage": Product202509PartialEditProductRequestBodySizeChartImage,
-    "Product202509PartialEditProductRequestBodySizeChartTemplate": Product202509PartialEditProductRequestBodySizeChartTemplate,
-    "Product202509PartialEditProductRequestBodySkus": Product202509PartialEditProductRequestBodySkus,
-    "Product202509PartialEditProductRequestBodySkusExternalListPrices": Product202509PartialEditProductRequestBodySkusExternalListPrices,
-    "Product202509PartialEditProductRequestBodySkusIdentifierCode": Product202509PartialEditProductRequestBodySkusIdentifierCode,
-    "Product202509PartialEditProductRequestBodySkusInventory": Product202509PartialEditProductRequestBodySkusInventory,
-    "Product202509PartialEditProductRequestBodySkusListPrice": Product202509PartialEditProductRequestBodySkusListPrice,
-    "Product202509PartialEditProductRequestBodySkusPreSale": Product202509PartialEditProductRequestBodySkusPreSale,
-    "Product202509PartialEditProductRequestBodySkusPreSaleFulfillmentType": Product202509PartialEditProductRequestBodySkusPreSaleFulfillmentType,
-    "Product202509PartialEditProductRequestBodySkusPrice": Product202509PartialEditProductRequestBodySkusPrice,
-    "Product202509PartialEditProductRequestBodySkusSalesAttributes": Product202509PartialEditProductRequestBodySkusSalesAttributes,
-    "Product202509PartialEditProductRequestBodySkusSalesAttributesSkuImg": Product202509PartialEditProductRequestBodySkusSalesAttributesSkuImg,
-    "Product202509PartialEditProductRequestBodySkusSalesAttributesSupplementarySkuImages": Product202509PartialEditProductRequestBodySkusSalesAttributesSupplementarySkuImages,
-    "Product202509PartialEditProductRequestBodySubscribeInfoEdit": Product202509PartialEditProductRequestBodySubscribeInfoEdit,
-    "Product202509PartialEditProductRequestBodySubscribeInfoEditDiscountDetails": Product202509PartialEditProductRequestBodySubscribeInfoEditDiscountDetails,
-    "Product202509PartialEditProductRequestBodyVideo": Product202509PartialEditProductRequestBodyVideo,
-    "Product202509PartialEditProductResponse": Product202509PartialEditProductResponse,
-    "Product202509PartialEditProductResponseData": Product202509PartialEditProductResponseData,
-    "Product202509PartialEditProductResponseDataAudit": Product202509PartialEditProductResponseDataAudit,
-    "Product202509PartialEditProductResponseDataSkus": Product202509PartialEditProductResponseDataSkus,
-    "Product202509PartialEditProductResponseDataSkusSalesAttributes": Product202509PartialEditProductResponseDataSkusSalesAttributes,
 }
 
 export class ObjectSerializer {
