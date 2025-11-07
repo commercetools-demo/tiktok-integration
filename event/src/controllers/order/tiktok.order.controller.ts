@@ -10,10 +10,10 @@ import {
 import { logger } from '../../utils/logger.utils';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk';
 import type { Types } from '../../shared';
-import { TiktokWebhookMessageType } from '../message.controller';
+import { TiktokWebhookOrderStatusChangeMessageType } from '../message.controller';
 
 export const orderStatusChange = async (
-  webhookBody: TiktokWebhookMessageType
+  webhookBody: TiktokWebhookOrderStatusChangeMessageType
 ) => {
   const orderId = webhookBody.data.order_id;
   const apiRoot = CommercetoolsClient.createApiRoot(Utils.readConfiguration());
@@ -88,7 +88,7 @@ export const orderStatusChange = async (
 };
 
 export const reverseStatusUpdate = async (
-  webhookBody: TiktokWebhookMessageType
+  webhookBody: TiktokWebhookOrderStatusChangeMessageType
 ) => {
   logger.info('Reverse status update', JSON.stringify(webhookBody, null, 2));
 };

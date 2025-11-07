@@ -12,7 +12,7 @@ import {
   productMessageHandler,
 } from './product/product-message.router';
 
-export type TiktokWebhookMessageType = {
+export type TiktokWebhookOrderStatusChangeMessageType = {
   type: number;
   notificationType: string;
   tts_notification_id: string;
@@ -48,11 +48,12 @@ export const resourceMessage = async (
 };
 
 export const resourceTiktokWebhook = async (
-  message: TiktokWebhookMessageType
+  message: TiktokWebhookOrderStatusChangeMessageType
 ) => {
   if (message.shop_id !== process.env.TIKTOK_SHOP_ID) {
     return;
   }
+  console.log('message', message);
 
   try {
     switch (message.type) {
