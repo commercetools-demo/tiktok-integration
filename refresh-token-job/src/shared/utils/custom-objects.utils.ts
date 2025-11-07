@@ -2,6 +2,7 @@ import {
   SHARED_SHOP_ACCESS_TOKEN_VARIABLE_KEY,
   SHARED_SHOP_CATEGORY_VARIABLE_KEY,
   SHARED_SHOP_CONFIGURATION_VARIABLE_KEY,
+  SHARED_SHOP_JWT_TOKEN_VARIABLE_KEY,
 } from '../constants';
 
 export const getAccessTokenVariableKey = () => {
@@ -14,6 +15,10 @@ export const getConfigurationVariableKey = () => {
 
 export const getCategoryVariableKey = () => {
   return SHARED_SHOP_CATEGORY_VARIABLE_KEY;
+};
+
+export const getJwtTokenVariableKey = () => {
+  return SHARED_SHOP_JWT_TOKEN_VARIABLE_KEY;
 };
 
 export const getVerifiedShopKey = (app_key: string, seller_name?: string) => {

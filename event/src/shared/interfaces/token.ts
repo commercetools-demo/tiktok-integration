@@ -56,3 +56,13 @@ export interface AppProjectMapping {
   createdAt?: string;
   updatedAt?: string;
 }
+
+/**
+ * Interface for JWT token data stored in CommerceTools
+ */
+export interface JwtTokenData {
+  jwt_token: string;
+  expires_at: number;
+  created_at: string;
+  updated_at: string;
+}

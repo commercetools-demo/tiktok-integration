@@ -3,9 +3,13 @@ export const SHARED_SHOP_ACCESS_TOKEN_VARIABLE_KEY = 'tiktok_access_token';
 export const SHARED_SHOP_CONFIGURATION_VARIABLE_KEY = 'tiktok_configuration';
 export const SHARED_SHOP_CATEGORY_VARIABLE_KEY = 'tiktok_categories';
 export const SHARED_SHOP_SERVICE_URL_VARIABLE_KEY = 'service_url';
+<<<<<<< HEAD
 export const SHARED_SHOP_PRODUCT_TYPE_TO_CATEGORY_KEY = 'product_type_to_category_map';
 export const SHARED_SHOP_PRODUCT_TYPE_TO_SKU_ATTRIBUTE_KEY = 'product_type_to_sku_attribute_map';
 export const SHARED_SHOP_PRODUCT_TYPE_TO_PRODUCT_ATTRIBUTE_KEY = 'product_type_to_product_attribute_map';
+=======
+export const SHARED_SHOP_JWT_TOKEN_VARIABLE_KEY = 'router_jwt_token';
+>>>>>>> b36a46c (Add JWT token management to service and event modules)
 
 export const FIRESTORE_SHARED_VERIFIED_SHOPS_MAP_DOCUMENT_ID =
   'shops_verification_map';

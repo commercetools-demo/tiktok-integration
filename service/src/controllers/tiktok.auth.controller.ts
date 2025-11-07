@@ -10,7 +10,7 @@ import {
 import { logger } from '../utils/logger.utils';
 
 export const connectProject = async (req: Request, res: Response) => {
-  const { shop_doc_id } = req.query;
+  const { shop_doc_id, ct_client_id, ct_client_secret, ct_region } = req.query;
 
   if (!shop_doc_id) {
     return res.status(401).send('Unauthorized');
@@ -27,6 +27,9 @@ export const connectProject = async (req: Request, res: Response) => {
     data = await RouterService.authorizeProject(
       shop_doc_id as string,
       serviceUrl || '',
+      ct_client_id as string,
+      ct_client_secret as string,
+      ct_region as string,
     );
   } catch (error) {
     logger.error('Failed to authorize project', error);
@@ -40,6 +43,18 @@ export const connectProject = async (req: Request, res: Response) => {
     data.access_token_data,
   );
   logger.info('Token stored successfully for seller');
+
+  // Store JWT token
+  if (data.jwt_token && data.jwt_expires_at) {
+    await CommercetoolsStorage.TokenController.storeJwtToken(
+      apiRoot,
+      data.jwt_token,
+      data.jwt_expires_at,
+    );
+    logger.info('JWT token stored successfully');
+  } else {
+    logger.warn('No JWT token received from router service');
+  }
   await CommercetoolsStorage.ShopConfigController.storeShopConfiguration(
     apiRoot,
     {

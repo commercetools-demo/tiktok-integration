@@ -77,11 +77,14 @@ type TUseConnectProject = () => {
 export const useConnectProject: TUseConnectProject = () => {
   const [loading, setLoading] = useState(false);
 
+  // TODO: create a API client
+  const { ct_client_id, ct_client_secret, ct_region } = {};
+
   const connectProject = async (serviceUrl: string, token: string) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${serviceUrl}/connect-project?shop_doc_id=${token}`,
+        `${serviceUrl}/connect-project?shop_doc_id=${token}&ct_client_id=${ct_client_id}&ct_client_secret=${ct_client_secret}&ct_region=${ct_region}`,
         {
           method: 'GET',
           headers: {

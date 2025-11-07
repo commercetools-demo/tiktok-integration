@@ -15,6 +15,16 @@ export interface AccessTokenData {
   last_refreshed_at: string;
 }
 
+/**
+ * Interface for JWT token data stored in CommerceTools
+ */
+export interface JwtTokenData {
+  jwt_token: string;
+  expires_at: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export type TokenResponse = {
   access_token: string;
   access_token_expire_in?: number;
