@@ -24,3 +24,11 @@ declare module '*/update-channel-details.ctp.graphql' {
 
   export default defaultDocument;
 }
+
+declare module '*/create-api-client.ctp.graphql' {
+  import { DocumentNode } from 'graphql';
+  const defaultDocument: DocumentNode;
+  export const CreateApiClient: DocumentNode;
+
+  export default defaultDocument;
+}
