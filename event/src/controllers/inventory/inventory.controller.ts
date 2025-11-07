@@ -13,6 +13,8 @@ import {
   Types,
 } from '../../shared';
 import { logger } from '../../utils/logger.utils';
+import { createTiktokProduct } from '../../service/create-tiktok-product';
+import { updateTiktokProducts } from '../../service/update-tiktok-product';
 
 export const inventoryEntryCreated = async (
   apiRoot: ByProjectKeyRequestBuilder,
@@ -45,6 +47,7 @@ export const inventoryEntryCreated = async (
       throw new Error(`No product found for sku ${sku}`);
     }
     const product = products[0];
+    const allVariants = [product.masterVariant, ...product.variants];
 
     const accessToken =
       await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
@@ -57,32 +60,39 @@ export const inventoryEntryCreated = async (
       shopConfiguration.shopCipher,
       { pageSize: 1 },
       {
-        sellerSkus: [sku],
+        sellerSkus: allVariants.map((variant) => variant.sku),
       }
     );
 
+    const isSkuAlreadyExists = tiktokProducts?.products?.some((product) =>
+      product?.skus?.some((sku) => sku?.sellerSku === sku)
+    );
+
     if (!tiktokProducts || !tiktokProducts.products?.length) {
-      try {
-        const productDraft =
-          await Mappers.Product.commercetoolsProductToTiktokProduct(
-            apiRoot,
-            product
-          );
-        const allVariants = [product.masterVariant, ...product.variants];
-        const productImages = allVariants
-          .map((variant) => variant.images?.map((image) => image.url) ?? [])
-          .flat();
-        await RouterService.createProduct(
-          accessToken,
-          shopConfiguration.shopCipher,
-          productDraft,
-          productImages
-        );
-      } catch (error) {
-        logger.error(`Error creating product draft for product ${product.id}`);
-        return inventoryEntityid;
-      }
+      await createTiktokProduct(
+        apiRoot,
+        accessToken,
+        shopConfiguration,
+        product
+      );
       return inventoryEntityid;
+    } else if (!isSkuAlreadyExists) {
+      const tiktokProductIds = tiktokProducts.products!.map(
+        (tiktokProduct) => tiktokProduct.id!
+      );
+
+      logger.info(
+        `Found ${tiktokProductIds.length} tiktok products for product ${product.id}`
+      );
+
+      const result = await updateTiktokProducts(
+        apiRoot,
+        accessToken,
+        shopConfiguration,
+        tiktokProductIds,
+        product
+      );
+      return result;
     } else {
       for await (const tiktokProduct of tiktokProducts.products) {
         if (!tiktokProduct) {
@@ -147,6 +157,7 @@ export const inventoryEntryQuantitySet = async (
       throw new Error(`No product found for sku ${sku}`);
     }
     const product = products[0];
+    const allVariants = [product.masterVariant, ...product.variants];
 
     const accessToken =
       await CommercetoolsStorage.TokenController.getAccessToken(apiRoot);
@@ -159,32 +170,39 @@ export const inventoryEntryQuantitySet = async (
       shopConfiguration.shopCipher,
       { pageSize: 1 },
       {
-        sellerSkus: [sku],
+        sellerSkus: allVariants.map((variant) => variant.sku),
       }
     );
 
+    const isSkuAlreadyExists = tiktokProducts?.products?.some((product) =>
+      product?.skus?.some((sku) => sku?.sellerSku === sku)
+    );
+
     if (!tiktokProducts || !tiktokProducts.products?.length) {
-      try {
-        const productDraft =
-          await Mappers.Product.commercetoolsProductToTiktokProduct(
-            apiRoot,
-            product
-          );
-        const allVariants = [product.masterVariant, ...product.variants];
-        const productImages = allVariants
-          .map((variant) => variant.images?.map((image) => image.url) ?? [])
-          .flat();
-        await RouterService.createProduct(
-          accessToken,
-          shopConfiguration.shopCipher,
-          productDraft,
-          productImages
-        );
-      } catch (error) {
-        logger.error(`Error creating product draft for product ${product.id}`);
-        return inventoryEntityid;
-      }
+      await createTiktokProduct(
+        apiRoot,
+        accessToken,
+        shopConfiguration,
+        product
+      );
       return inventoryEntityid;
+    } else if (!isSkuAlreadyExists) {
+      const tiktokProductIds = tiktokProducts.products!.map(
+        (tiktokProduct) => tiktokProduct.id!
+      );
+
+      logger.info(
+        `Found ${tiktokProductIds.length} tiktok products for product ${product.id}`
+      );
+
+      const result = await updateTiktokProducts(
+        apiRoot,
+        accessToken,
+        shopConfiguration,
+        tiktokProductIds,
+        product
+      );
+      return result;
     } else {
       for await (const tiktokProduct of tiktokProducts.products) {
         if (!tiktokProduct) {

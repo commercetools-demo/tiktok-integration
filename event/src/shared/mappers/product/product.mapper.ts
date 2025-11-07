@@ -469,31 +469,31 @@ export const tiktokProductToTiktokProductEdit = (
 export const mergeTiktokProductAndCommercetoolsProductToTiktokProductEdit =
   async (
     apiRoot: ByProjectKeyRequestBuilder,
-    product: Product202309GetProductResponseData,
+    currentProduct: Product202309GetProductResponseData,
     commercetoolsProduct?: ProductProjection
   ): Promise<Product202309EditProductRequestBody> => {
     if (!commercetoolsProduct) {
       throw new Error('Commercetools product is required');
     }
-    const originalProductData = await commercetoolsProductToTiktokProduct(
+    const mappedProductData = await commercetoolsProductToTiktokProduct(
       apiRoot,
       commercetoolsProduct
     );
 
     const editProductData: Product202309EditProductRequestBody = {
-      title: product.title,
-      description: product.description,
+      title: currentProduct.title,
+      description: currentProduct.description,
       categoryVersion: 'v2',
-      mainImages: product.mainImages?.map((image) => ({
+      mainImages: currentProduct.mainImages?.map((image) => ({
         uri: image.uri,
       })),
-      packageWeight: product.packageWeight,
-      skus: product.skus?.map((sku) => ({
+      packageWeight: currentProduct.packageWeight,
+      skus: currentProduct.skus?.map((sku) => ({
         id: sku.id,
         price: sku.price,
         listPrice: sku.listPrice,
       })),
-      ...originalProductData,
+      ...mappedProductData,
     };
     return editProductData;
   };

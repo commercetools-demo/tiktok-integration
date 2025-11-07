@@ -7,11 +7,12 @@ import {
 import type { Types } from '../../shared';
 import {
   CommercetoolsStorage,
-  Mappers,
   ProductController,
   RouterService,
 } from '../../shared';
 import { logger } from '../../utils/logger.utils';
+import { createTiktokProduct } from '../../service/create-tiktok-product';
+import { updateTiktokProducts } from '../../service/update-tiktok-product';
 
 export const productPublished = async (
   apiRoot: ByProjectKeyRequestBuilder,
@@ -45,71 +46,30 @@ export const productPublished = async (
     );
 
     if (!tiktokProducts || !tiktokProducts.products?.length) {
-      try {
-        const productDraft =
-          await Mappers.Product.commercetoolsProductToTiktokProduct(
-            apiRoot,
-            product
-          );
-        const allVariants = [product.masterVariant, ...product.variants];
-        const productImages = allVariants
-          .map((variant) => variant.images?.map((image) => image.url) ?? [])
-          .flat();
-        await RouterService.createProduct(
-          accessToken,
-          shopConfiguration.shopCipher,
-          productDraft,
-          productImages
-        );
-      } catch (error) {
-        logger.error(`Error creating product draft for product ${product.id}`);
-        return productId;
-      }
+      await createTiktokProduct(
+        apiRoot,
+        accessToken,
+        shopConfiguration,
+        product
+      );
       return productId;
     } else {
-      const tiktokProductIds: string[] = [];
-      tiktokProductIds.push(
-        ...tiktokProducts.products!.map((tiktokProduct) => tiktokProduct.id!)
+      const tiktokProductIds = tiktokProducts.products!.map(
+        (tiktokProduct) => tiktokProduct.id!
       );
+
       logger.info(
-        `Found ${tiktokProductIds} tiktok products for product ${product.id}`
+        `Found ${tiktokProductIds.length} tiktok products for product ${product.id}`
       );
-      const tiktokProductsData = await RouterService.getProductsByIds(
+
+      const result = await updateTiktokProducts(
+        apiRoot,
         accessToken,
-        shopConfiguration.shopCipher,
+        shopConfiguration,
         tiktokProductIds,
-        {
-          draft: false,
-          locale: shopConfiguration.locale,
-        }
+        product
       );
-      if (!tiktokProductsData || !tiktokProductsData.length) {
-        throw new Error(`No tiktok product found for product ${product.id}`);
-      }
-      await Promise.all(
-        tiktokProductsData
-          .filter(
-            (tiktokProductData) => typeof tiktokProductData !== 'undefined'
-          )
-          .map(async (tiktokProductData) => {
-            const merged =
-              await Mappers.Product.mergeTiktokProductAndCommercetoolsProductToTiktokProductEdit(
-                apiRoot,
-                tiktokProductData,
-                product
-              );
-            return RouterService.publishProduct(
-              accessToken,
-              shopConfiguration.shopCipher!,
-              tiktokProductData.id!,
-              merged
-            );
-          })
-      );
-      logger.info(
-        `Merged and updated ${tiktokProducts.products?.length} tiktok products for product ${product.id}`
-      );
-      return productId;
+      return result;
     }
   } catch (error: any) {
     logger.error(`Error publishing product ${productId}`, error);
