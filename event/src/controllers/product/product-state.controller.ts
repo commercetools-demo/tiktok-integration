@@ -2,6 +2,8 @@ import {
   ByProjectKeyRequestBuilder,
   ProductDeletedMessage,
   ProductPublishedMessage,
+  ProductTailoringDeletedMessage,
+  ProductTailoringUnpublishedMessage,
   ProductUnpublishedMessage,
 } from '@commercetools/platform-sdk';
 import type { Types } from '../../shared';
@@ -80,7 +82,7 @@ export const productPublished = async (
 export const productUnpublished = async (
   apiRoot: ByProjectKeyRequestBuilder,
   shopConfiguration: Types.ShopConfigurationData,
-  message: ProductUnpublishedMessage,
+  message: ProductUnpublishedMessage | ProductTailoringUnpublishedMessage | ProductTailoringDeletedMessage,
   productId: string
 ): Promise<string> => {
   try {

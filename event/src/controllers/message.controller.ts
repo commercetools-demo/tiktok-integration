@@ -7,6 +7,7 @@ import {
   orderStatusChange,
   reverseStatusUpdate,
 } from './order/tiktok.order.controller';
+import { productTailoringMessageHandler, ProductTailoringMessageType } from './product-tailoring/product-tailoring-message.router';
 import {
   ProductMessageType,
   productMessageHandler,
@@ -27,7 +28,7 @@ export type TiktokWebhookOrderStatusChangeMessageType = {
 };
 
 export const resourceMessage = async (
-  message: ProductMessageType | InventoryEntryMessageType
+  message: ProductMessageType | InventoryEntryMessageType | ProductTailoringMessageType
 ) => {
   const { resource } = message;
   const { typeId, id } = resource;
@@ -45,6 +46,13 @@ export const resourceMessage = async (
     );
     logger.info(inventoryEntityid);
   }
+  if (typeId === 'product-tailoring') {
+    const productTailoringId = await productTailoringMessageHandler(
+      message as ProductTailoringMessageType,
+      id
+    );
+    logger.info(productTailoringId);
+  }
 };
 
 export const resourceTiktokWebhook = async (
@@ -53,8 +61,6 @@ export const resourceTiktokWebhook = async (
   if (message.shop_id !== process.env.TIKTOK_SHOP_ID) {
     return;
   }
-  console.log('message', message);
-
   try {
     switch (message.type) {
       case 1:
