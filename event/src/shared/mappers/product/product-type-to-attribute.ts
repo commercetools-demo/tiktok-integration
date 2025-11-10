@@ -1,26 +1,8 @@
 import { Attribute } from '@commercetools/platform-sdk';
+import { TikTokProductAttributeMapper, TikTokSkuAttributeMapper } from '../../interfaces';
 
-export interface TikTokSkuAttributeMapper {
-  name: string;
-  tiktokAttributeId: string;
-  valueNameFetcher?: (attributes: Attribute[], locale: string) => string;
-  valueIdFetcher?: (attributes: Attribute[], locale: string) => string;
-}
 
-export interface TikTokProductAttributeMapper {
-  name: string;
-  tiktokAttributeId: string;
-  valueNamesFetcher?: (
-    attributes: Attribute[],
-    locale: string
-  ) => { name?: string; id?: string }[];
-  valueIdsFetcher?: (
-    attributes: Attribute[],
-    locale: string
-  ) => { name?: string; id?: string }[];
-}
-
-export const PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE: Record<
+export const FALLBACK_PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE: Record<
   string,
   TikTokSkuAttributeMapper[]
 > = {
@@ -36,7 +18,7 @@ export const PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE: Record<
   ],
 };
 
-export const PRODUCT_TYPE_TO_TIKTOK_PRODUCT_ATTRIBUTE: Record<
+export const FALLBACK_PRODUCT_TYPE_TO_TIKTOK_PRODUCT_ATTRIBUTE: Record<
   string,
   TikTokProductAttributeMapper[]
 > = {

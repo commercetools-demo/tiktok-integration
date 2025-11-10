@@ -19,10 +19,10 @@ import {
   Product202309GetProductResponseData,
 } from '../../interfaces/tiktok/models';
 import { CommercetoolsStorage, Services } from '../..';
-import { PRODUCT_TYPE_TO_TIKTOK_CATEGORY } from './product-type-to-category';
+import { FALLBACK_PRODUCT_TYPE_TO_TIKTOK_CATEGORY } from './product-type-to-category';
 import {
-  PRODUCT_TYPE_TO_TIKTOK_PRODUCT_ATTRIBUTE,
-  PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE,
+  FALLBACK_PRODUCT_TYPE_TO_TIKTOK_PRODUCT_ATTRIBUTE,
+  FALLBACK_PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE,
 } from './product-type-to-attribute';
 import {
   ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_HEIGHT,
@@ -41,7 +41,98 @@ import {
   USE_NO_CHANNEL_FOR_LIST_PRICE,
   USE_NO_CHANNEL_FOR_MAIN_PRICE,
 } from './product-contants';
-import { ShopConfigurationData } from '../../interfaces';
+import {
+  ShopConfigurationData,
+  ProductTypeToCategoryMap,
+  ProductTypeToSkuAttributeMap,
+  ProductTypeToProductAttributeMap,
+} from '../../interfaces';
+
+// Cache for mapper data to avoid repeated custom object reads
+let categoryMapCache: ProductTypeToCategoryMap | null = null;
+let skuAttributeMapCache: ProductTypeToSkuAttributeMap | null = null;
+let productAttributeMapCache: ProductTypeToProductAttributeMap | null = null;
+
+/**
+ * Get product type to category mapping from custom objects with caching
+ */
+const getCategoryMap = async (
+  apiRoot: ByProjectKeyRequestBuilder
+): Promise<ProductTypeToCategoryMap> => {
+  if (categoryMapCache !== null) {
+    return categoryMapCache;
+  }
+  
+  const map = await CommercetoolsStorage.ProductMapperController.getProductTypeToCategoryMap(
+    apiRoot
+  );
+  
+  // If custom object map is empty, use hard-coded fallback
+  if (Object.keys(map).length !== 0) {
+    categoryMapCache = map;
+  } else {
+    categoryMapCache = FALLBACK_PRODUCT_TYPE_TO_TIKTOK_CATEGORY;
+  }
+  
+  return categoryMapCache;
+};
+
+/**
+ * Get product type to SKU attribute mapping from custom objects with caching
+ */
+const getSkuAttributeMap = async (
+  apiRoot: ByProjectKeyRequestBuilder
+): Promise<ProductTypeToSkuAttributeMap> => {
+  if (skuAttributeMapCache !== null) {
+    return skuAttributeMapCache;
+  }
+  
+  const map = await CommercetoolsStorage.ProductMapperController.getProductTypeToSkuAttributeMap(
+    apiRoot
+  );
+  
+  // If custom object map is empty, use hard-coded fallback
+  if (Object.keys(map).length !== 0) {
+    skuAttributeMapCache = map;
+  } else {
+    skuAttributeMapCache = FALLBACK_PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE;
+  }
+  
+  return skuAttributeMapCache;
+};
+
+/**
+ * Get product type to product attribute mapping from custom objects with caching
+ */
+const getProductAttributeMap = async (
+  apiRoot: ByProjectKeyRequestBuilder
+): Promise<ProductTypeToProductAttributeMap> => {
+  if (productAttributeMapCache !== null) {
+    return productAttributeMapCache;
+  }
+  
+  const map = await CommercetoolsStorage.ProductMapperController.getProductTypeToProductAttributeMap(
+    apiRoot
+  );
+  
+  // If custom object map is empty, use hard-coded fallback
+  if (Object.keys(map).length !== 0) {
+    productAttributeMapCache = map;
+  } else {
+    productAttributeMapCache = FALLBACK_PRODUCT_TYPE_TO_TIKTOK_PRODUCT_ATTRIBUTE;
+  }
+  
+  return productAttributeMapCache;
+};
+
+/**
+ * Clear mapper caches (useful for testing or when mappers are updated)
+ */
+export const clearMapperCaches = (): void => {
+  categoryMapCache = null;
+  skuAttributeMapCache = null;
+  productAttributeMapCache = null;
+};
 
 export const commercetoolsProductToTiktokProduct = async (
   apiRoot: ByProjectKeyRequestBuilder,
@@ -58,30 +149,39 @@ export const commercetoolsProductToTiktokProduct = async (
 
   const allVariants = [product.masterVariant, ...product.variants];
 
+  const categoryId = await commercetoolsProductTypeToTiktokCategory(
+    apiRoot,
+    product.productType.id
+  );
+  
+  const skus = await Promise.all(
+    allVariants.map((variant) =>
+      commercetoolsVariantToTiktokSKU(
+        apiRoot,
+        product.productType.id,
+        variant,
+        shopConfig,
+        locale
+      )
+    )
+  );
+  
+  const productAttributes = await commercetoolsProductTypeToTiktokProductAttributeList(
+    apiRoot,
+    product.productType.id,
+    product.masterVariant.attributes,
+    locale
+  );
+
   const productDraft: Product202309CreateProductRequestBody = {
     saveMode: commercetoolsProductStateToSaveMode(product),
     externalProductId: product.id,
     title: product.name?.[locale],
     description: product.description?.[locale],
     categoryVersion: 'v2',
-    categoryId: commercetoolsProductTypeToTiktokCategory(
-      product.productType.id
-    ),
-    skus: allVariants
-      .map((variant) =>
-        commercetoolsVariantToTiktokSKU(
-          product.productType.id,
-          variant,
-          shopConfig,
-          locale
-        )
-      )
-      .filter((sku) => sku !== undefined),
-    productAttributes: commercetoolsProductTypeToTiktokProductAttributeList(
-      product.productType.id,
-      product.masterVariant.attributes,
-      locale
-    ),
+    categoryId,
+    skus: skus.filter((sku) => sku !== undefined),
+    productAttributes,
     packageWeight: commercetoolsProductTypeToTiktokProductPackageWeight(
       product.masterVariant.attributes
     ),
@@ -114,29 +214,38 @@ export const commercetoolsProductToTiktokProductCheck = async (
 
   const allVariants = [product.masterVariant, ...product.variants];
 
+  const categoryId = await commercetoolsProductTypeToTiktokCategory(
+    apiRoot,
+    product.productType.id
+  );
+  
+  const skus = await Promise.all(
+    allVariants.map((variant) =>
+      commercetoolsVariantToTiktokSKU(
+        apiRoot,
+        product.productType.id,
+        variant,
+        shopConfig,
+        locale
+      )
+    )
+  );
+  
+  const productAttributes = await commercetoolsProductTypeToTiktokProductAttributeList(
+    apiRoot,
+    product.productType.id,
+    product.masterVariant.attributes,
+    locale
+  );
+
   const productDraft: Product202309CreateProductRequestBody = {
     saveMode: commercetoolsProductStateToSaveMode(product),
     title: product.name?.[locale],
     description: product.description?.[locale],
     categoryVersion: 'v2',
-    categoryId: commercetoolsProductTypeToTiktokCategory(
-      product.productType.id
-    ),
-    skus: allVariants
-      .map((variant) =>
-        commercetoolsVariantToTiktokSKU(
-          product.productType.id,
-          variant,
-          shopConfig,
-          locale
-        )
-      )
-      .filter((sku) => sku !== undefined),
-    productAttributes: commercetoolsProductTypeToTiktokProductAttributeList(
-      product.productType.id,
-      product.masterVariant.attributes,
-      locale
-    ),
+    categoryId,
+    skus: skus.filter((sku) => sku !== undefined),
+    productAttributes,
     packageWeight: commercetoolsProductTypeToTiktokProductPackageWeight(
       product.masterVariant.attributes
     ),
@@ -166,12 +275,13 @@ const commercetoolsProductStateToSaveMode = (
   return 'LISTING';
 };
 
-const commercetoolsVariantToTiktokSKU = (
+const commercetoolsVariantToTiktokSKU = async (
+  apiRoot: ByProjectKeyRequestBuilder,
   productTypeId: string,
   variant: ProductVariant,
   shopConfig: ShopConfigurationData,
   locale: string
-): Product202309CreateProductRequestBodySkus | undefined => {
+): Promise<Product202309CreateProductRequestBodySkus | undefined> => {
   const listPrice = commercetoolsVariantToListPrice(
     variant,
     shopConfig.shop_region
@@ -184,22 +294,30 @@ const commercetoolsVariantToTiktokSKU = (
   if (inventory.length === 0 || !price) {
     return undefined;
   }
+  
+  const salesAttributes = await commercetoolsProductTypeToTiktokSKUAttributeList(
+    apiRoot,
+    productTypeId,
+    variant.attributes,
+    locale
+  );
+  
   return {
     inventory: inventory,
     externalSkuId: variant.sku,
     sellerSku: variant.sku,
     ...(listPrice && { listPrice }),
     ...(price && { price }),
-    salesAttributes: commercetoolsProductTypeToTiktokSKUAttributeList(
-      productTypeId,
-      variant.attributes,
-      locale
-    ),
+    salesAttributes,
   };
 };
 
-const commercetoolsProductTypeToTiktokCategory = (productTypeId: string) => {
-  return PRODUCT_TYPE_TO_TIKTOK_CATEGORY[productTypeId];
+const commercetoolsProductTypeToTiktokCategory = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+  productTypeId: string
+): Promise<string | undefined> => {
+  const categoryMap = await getCategoryMap(apiRoot);
+  return categoryMap[productTypeId];
 };
 
 const commercetoolsVariantToTiktokSKUInventory = (
@@ -307,14 +425,17 @@ export const commercetoolsVariantToListPrice = (
   return undefined;
 };
 
-const commercetoolsProductTypeToTiktokSKUAttributeList = (
+const commercetoolsProductTypeToTiktokSKUAttributeList = async (
+  apiRoot: ByProjectKeyRequestBuilder,
   productTypeId: string,
   attributes: Attribute[] | undefined,
   locale: string
-): Product202309CreateProductRequestBodySkusSalesAttributes[] => {
+): Promise<Product202309CreateProductRequestBodySkusSalesAttributes[]> => {
   if (!attributes) return [];
+  
+  const skuAttributeMap = await getSkuAttributeMap(apiRoot);
   const skuAttributes =
-    PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE[productTypeId]?.map((attributeMap) => {
+    skuAttributeMap[productTypeId]?.map((attributeMap) => {
       if (attributeMap.valueNameFetcher) {
         return {
           id: attributeMap.tiktokAttributeId,
@@ -337,14 +458,17 @@ const commercetoolsProductTypeToTiktokSKUAttributeList = (
   );
 };
 
-const commercetoolsProductTypeToTiktokProductAttributeList = (
+const commercetoolsProductTypeToTiktokProductAttributeList = async (
+  apiRoot: ByProjectKeyRequestBuilder,
   productTypeId: string,
   attributes: Attribute[] | undefined,
   locale: string
-): Product202309CreateProductRequestBodyProductAttributes[] => {
+): Promise<Product202309CreateProductRequestBodyProductAttributes[]> => {
   if (!attributes) return [];
+  
+  const productAttributeMap = await getProductAttributeMap(apiRoot);
   const productAttributes =
-    PRODUCT_TYPE_TO_TIKTOK_PRODUCT_ATTRIBUTE[productTypeId]?.map(
+    productAttributeMap[productTypeId]?.map(
       (attributeMap) => {
         if (attributeMap.valueNamesFetcher) {
           return {

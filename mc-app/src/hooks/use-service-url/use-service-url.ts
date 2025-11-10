@@ -5,7 +5,10 @@ import { useState } from 'react';
 import type { ApolloError } from '@apollo/client';
 import { useMcQuery } from '@commercetools-frontend/application-shell';
 import { GRAPHQL_TARGETS } from '@commercetools-frontend/constants';
-import { SHARED_SHOP_CONTAINER_KEY, SHARED_SHOP_SERVICE_URL_VARIABLE_KEY } from '../../constants';
+import {
+  SHARED_SHOP_CONTAINER_KEY,
+  SHARED_SHOP_SERVICE_URL_VARIABLE_KEY,
+} from '../../constants';
 import FetchServiceUrlQuery from './fetch-service-url.ctp.graphql';
 
 type TFetchServiceUrlQuery = {
@@ -102,4 +105,3 @@ export const useConnectProject: TUseConnectProject = () => {
     loading,
   };
 };
-

@@ -126,7 +126,9 @@ export const useChannelByIdFetcher: TUseChannelByIdFetcher = () => {
     TFetchChannelByIdQueryVariables
   >(FetchChannelByIdQuery);
 
-  const getChannelById = async (channelId: string): Promise<TChannel | undefined> => {
+  const getChannelById = async (
+    channelId: string
+  ): Promise<TChannel | undefined> => {
     const result = await fetchChannel({
       variables: { channelId },
       context: {
@@ -171,7 +173,7 @@ export const useChannelCustomUpdater: TUseChannelCustomUpdater = () => {
   }) => {
     // Fetch the latest version first
     const channel = await getChannelById(channelId);
-    
+
     if (!channel) {
       throw new Error(`Channel with id ${channelId} not found`);
     }
@@ -221,4 +223,3 @@ export const useChannelCustomUpdater: TUseChannelCustomUpdater = () => {
     loading,
   };
 };
-

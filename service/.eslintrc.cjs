@@ -11,6 +11,7 @@ module.exports = {
     'no-undef': 'error',
     'no-console': 'error',
     'no-const-assign': 'error',
+    '@typescript-eslint/ban-types': 'warn',
   },
   env: {
     es6: true,

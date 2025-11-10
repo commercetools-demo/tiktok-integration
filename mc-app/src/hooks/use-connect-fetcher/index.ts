@@ -16,9 +16,7 @@ type FetcherMethods = {
   [key: string]: (...args: any[]) => Promise<any>;
 };
 
-const createFetcher = (
-  serviceUrl: string | undefined
-): FetcherMethods => {
+const createFetcher = (serviceUrl: string | undefined): FetcherMethods => {
   const makeRequest = async <T>(
     endpoint: string,
     options: RequestInit = {}
@@ -66,18 +64,21 @@ const createFetcher = (
           requestConfig.method = options.method;
         }
 
-        const data = await executeHttpClientRequest(async (requestOptions: any) => {
-          const res = await fetch(
-            buildApiUrl('/proxy/forward-to'),
-            requestOptions
-          );
-          const responseData = await res.json();
-          return {
-            data: responseData,
-            statusCode: res.status,
-            getHeader: (key: string) => res.headers.get(key),
-          };
-        }, requestConfig);
+        const data = await executeHttpClientRequest(
+          async (requestOptions: any) => {
+            const res = await fetch(
+              buildApiUrl('/proxy/forward-to'),
+              requestOptions
+            );
+            const responseData = await res.json();
+            return {
+              data: responseData,
+              statusCode: res.status,
+              getHeader: (key: string) => res.headers.get(key),
+            };
+          },
+          requestConfig
+        );
         return data as T;
       }
     } catch (error) {
@@ -93,17 +94,14 @@ const createFetcher = (
   };
 
   return {
-    getCategories: async (
-    ): Promise<any> => {
+    getCategories: async (): Promise<any> => {
       console.log('getCategories', serviceUrl);
-      
+
       return makeRequest<any>('tiktok/categories', {
         method: 'GET',
       });
     },
-    getCategoryAttributes: async (
-      categoryId: string
-    ): Promise<any> => {
+    getCategoryAttributes: async (categoryId: string): Promise<any> => {
       return makeRequest<any>(`tiktok/categories/${categoryId}/attributes`, {
         method: 'GET',
       });
@@ -117,16 +115,13 @@ const createFetcher = (
  */
 export const useServiceFetcher = () => {
   const { serviceUrl } = useServiceUrl();
-  
+
   const fetcher = createFetcher(serviceUrl);
 
   // Create session connector
-  const getCategories = useCallback(
-    async () => {
-      return await fetcher.getCategories();
-    },
-    [fetcher]
-  );
+  const getCategories = useCallback(async () => {
+    return await fetcher.getCategories();
+  }, [fetcher]);
 
   const getCategoryAttributes = useCallback(
     async (categoryId: string) => {

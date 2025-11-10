@@ -19,10 +19,10 @@ import {
   Product202309GetProductResponseData,
 } from '../../interfaces/tiktok/models';
 import { CommercetoolsStorage, Services } from '../..';
-import { PRODUCT_TYPE_TO_TIKTOK_CATEGORY } from './product-type-to-category';
+import { FALLBACK_PRODUCT_TYPE_TO_TIKTOK_CATEGORY } from './product-type-to-category';
 import {
-  PRODUCT_TYPE_TO_TIKTOK_PRODUCT_ATTRIBUTE,
-  PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE,
+  FALLBACK_PRODUCT_TYPE_TO_TIKTOK_PRODUCT_ATTRIBUTE,
+  FALLBACK_PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE,
 } from './product-type-to-attribute';
 import {
   ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_HEIGHT,
@@ -41,16 +41,107 @@ import {
   USE_NO_CHANNEL_FOR_LIST_PRICE,
   USE_NO_CHANNEL_FOR_MAIN_PRICE,
 } from './product-contants';
-import { ShopConfigurationData } from '../../interfaces';
+import {
+  ShopConfigurationData,
+  ProductTypeToCategoryMap,
+  ProductTypeToSkuAttributeMap,
+  ProductTypeToProductAttributeMap,
+} from '../../interfaces';
+
+// Cache for mapper data to avoid repeated custom object reads
+let categoryMapCache: ProductTypeToCategoryMap | null = null;
+let skuAttributeMapCache: ProductTypeToSkuAttributeMap | null = null;
+let productAttributeMapCache: ProductTypeToProductAttributeMap | null = null;
+
+/**
+ * Get product type to category mapping from custom objects with caching
+ */
+const getCategoryMap = async (
+  apiRoot: ByProjectKeyRequestBuilder
+): Promise<ProductTypeToCategoryMap> => {
+  if (categoryMapCache !== null) {
+    return categoryMapCache;
+  } 
+  
+  const map = await CommercetoolsStorage.ProductMapperController.getProductTypeToCategoryMap(
+    apiRoot
+  );
+  
+  // If custom object map is empty, use hard-coded fallback
+  if (Object.keys(map).length !== 0) {
+    categoryMapCache = map;
+  } else {
+    categoryMapCache = FALLBACK_PRODUCT_TYPE_TO_TIKTOK_CATEGORY;
+  }
+  
+  return categoryMapCache;
+};
+
+/**
+ * Get product type to SKU attribute mapping from custom objects with caching
+ */
+const getSkuAttributeMap = async (
+  apiRoot: ByProjectKeyRequestBuilder
+): Promise<ProductTypeToSkuAttributeMap> => {
+  if (skuAttributeMapCache !== null) {
+    return skuAttributeMapCache;
+  }
+  
+  const map = await CommercetoolsStorage.ProductMapperController.getProductTypeToSkuAttributeMap(
+    apiRoot
+  );
+  
+  // If custom object map is empty, use hard-coded fallback
+  if (Object.keys(map).length !== 0) {
+    skuAttributeMapCache = map;
+  } else {
+    skuAttributeMapCache = FALLBACK_PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE;
+  }
+  
+  return skuAttributeMapCache;
+};
+
+/**
+ * Get product type to product attribute mapping from custom objects with caching
+ */
+const getProductAttributeMap = async (
+  apiRoot: ByProjectKeyRequestBuilder
+): Promise<ProductTypeToProductAttributeMap> => {
+  if (productAttributeMapCache !== null) {
+    return productAttributeMapCache;
+  }
+  
+  const map = await CommercetoolsStorage.ProductMapperController.getProductTypeToProductAttributeMap(
+    apiRoot
+  );
+  
+  // If custom object map is empty, use hard-coded fallback
+  if (Object.keys(map).length !== 0) {
+    productAttributeMapCache = map;
+  } else {
+    productAttributeMapCache = FALLBACK_PRODUCT_TYPE_TO_TIKTOK_PRODUCT_ATTRIBUTE;
+  }
+  
+  return productAttributeMapCache;
+};
+
+/**
+ * Clear mapper caches (useful for testing or when mappers are updated)
+ */
+export const clearMapperCaches = (): void => {
+  categoryMapCache = null;
+  skuAttributeMapCache = null;
+  productAttributeMapCache = null;
+};
 
 export const commercetoolsProductToTiktokProduct = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  product: ProductProjection,
+  product: ProductProjection
 ): Promise<Product202309CreateProductRequestBody> => {
   const locale = await Services.getCommercetoolsLocale(apiRoot);
   const shopConfig =
     await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
-      apiRoot,
+      apiRoot
     );
   if (!shopConfig) {
     throw new Error('Shop configuration not found');
@@ -58,35 +149,44 @@ export const commercetoolsProductToTiktokProduct = async (
 
   const allVariants = [product.masterVariant, ...product.variants];
 
+  const categoryId = await commercetoolsProductTypeToTiktokCategory(
+    apiRoot,
+    product.productType.id
+  );
+  
+  const skus = await Promise.all(
+    allVariants.map((variant) =>
+      commercetoolsVariantToTiktokSKU(
+        apiRoot,
+        product.productType.id,
+        variant,
+        shopConfig,
+        locale
+      )
+    )
+  );
+  
+  const productAttributes = await commercetoolsProductTypeToTiktokProductAttributeList(
+    apiRoot,
+    product.productType.id,
+    product.masterVariant.attributes,
+    locale
+  );
+
   const productDraft: Product202309CreateProductRequestBody = {
     saveMode: commercetoolsProductStateToSaveMode(product),
     externalProductId: product.id,
     title: product.name?.[locale],
     description: product.description?.[locale],
     categoryVersion: 'v2',
-    categoryId: commercetoolsProductTypeToTiktokCategory(
-      product.productType.id,
-    ),
-    skus: allVariants
-      .map((variant) =>
-        commercetoolsVariantToTiktokSKU(
-          product.productType.id,
-          variant,
-          shopConfig,
-          locale,
-        ),
-      )
-      .filter((sku) => sku !== undefined),
-    productAttributes: commercetoolsProductTypeToTiktokProductAttributeList(
-      product.productType.id,
-      product.masterVariant.attributes,
-      locale,
-    ),
+    categoryId,
+    skus: skus.filter((sku) => sku !== undefined),
+    productAttributes,
     packageWeight: commercetoolsProductTypeToTiktokProductPackageWeight(
-      product.masterVariant.attributes,
+      product.masterVariant.attributes
     ),
     packageDimensions: commercetoolsProductTypeToTiktokProductPackageDimensions(
-      product.masterVariant.attributes,
+      product.masterVariant.attributes
     ),
   };
   if (!productDraft.categoryId || !productDraft.skus?.length) {
@@ -101,12 +201,12 @@ export const commercetoolsProductToTiktokProduct = async (
  */
 export const commercetoolsProductToTiktokProductCheck = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  product: ProductProjection,
+  product: ProductProjection
 ): Promise<Product202309CreateProductRequestBody> => {
   const locale = await Services.getCommercetoolsLocale(apiRoot);
   const shopConfig =
     await CommercetoolsStorage.ShopConfigController.getShopConfiguration(
-      apiRoot,
+      apiRoot
     );
   if (!shopConfig) {
     throw new Error('Shop configuration not found');
@@ -114,51 +214,60 @@ export const commercetoolsProductToTiktokProductCheck = async (
 
   const allVariants = [product.masterVariant, ...product.variants];
 
+  const categoryId = await commercetoolsProductTypeToTiktokCategory(
+    apiRoot,
+    product.productType.id
+  );
+  const skus = await Promise.all(
+    allVariants.map((variant) =>
+      commercetoolsVariantToTiktokSKU(
+        apiRoot,
+        product.productType.id,
+        variant,
+        shopConfig,
+        locale
+      )
+    )
+  );
+  
+  const productAttributes = await commercetoolsProductTypeToTiktokProductAttributeList(
+    apiRoot,
+    product.productType.id,
+    product.masterVariant.attributes,
+    locale
+  );
+
   const productDraft: Product202309CreateProductRequestBody = {
     saveMode: commercetoolsProductStateToSaveMode(product),
     title: product.name?.[locale],
     description: product.description?.[locale],
     categoryVersion: 'v2',
-    categoryId: commercetoolsProductTypeToTiktokCategory(
-      product.productType.id,
-    ),
-    skus: allVariants
-      .map((variant) =>
-        commercetoolsVariantToTiktokSKU(
-          product.productType.id,
-          variant,
-          shopConfig,
-          locale,
-        ),
-      )
-      .filter((sku) => sku !== undefined),
-    productAttributes: commercetoolsProductTypeToTiktokProductAttributeList(
-      product.productType.id,
-      product.masterVariant.attributes,
-      locale,
-    ),
+    categoryId,
+    skus: skus.filter((sku) => sku !== undefined),
+    productAttributes,
     packageWeight: commercetoolsProductTypeToTiktokProductPackageWeight(
-      product.masterVariant.attributes,
+      product.masterVariant.attributes
     ),
     packageDimensions: commercetoolsProductTypeToTiktokProductPackageDimensions(
-      product.masterVariant.attributes,
+      product.masterVariant.attributes
     ),
   };
   if (!productDraft.categoryId) {
     throw new Error(
-      `Product draft is invalid for product ${product.id}. Category ID is required.`,
+      `Product draft is invalid for product ${product.id}. Category ID is required.`
     );
   }
   if (!productDraft.skus?.length) {
     throw new Error(
-      `Product draft is invalid for product ${product.id}. SKUs are required.`,
+      `Product draft is invalid for product ${product.id}. SKUs are required.`
     );
   }
+  
   return productDraft;
 };
 
 const commercetoolsProductStateToSaveMode = (
-  product: ProductProjection,
+  product: ProductProjection
 ): string => {
   if (product.published === false) {
     return 'AS_DRAFT';
@@ -166,49 +275,58 @@ const commercetoolsProductStateToSaveMode = (
   return 'LISTING';
 };
 
-const commercetoolsVariantToTiktokSKU = (
+const commercetoolsVariantToTiktokSKU = async (
+  apiRoot: ByProjectKeyRequestBuilder,
   productTypeId: string,
   variant: ProductVariant,
   shopConfig: ShopConfigurationData,
-  locale: string,
-): Product202309CreateProductRequestBodySkus | undefined => {
+  locale: string
+): Promise<Product202309CreateProductRequestBodySkus | undefined> => {
   const listPrice = commercetoolsVariantToListPrice(
     variant,
-    shopConfig.shop_region,
+    shopConfig.shop_region
   );
   const price = commercetoolsVariantToPrice(variant, shopConfig);
   const inventory = commercetoolsVariantToTiktokSKUInventory(
     variant,
-    shopConfig,
+    shopConfig
   );
   if (inventory.length === 0 || !price) {
     return undefined;
   }
+  
+  const salesAttributes = await commercetoolsProductTypeToTiktokSKUAttributeList(
+    apiRoot,
+    productTypeId,
+    variant.attributes,
+    locale
+  );
+  
   return {
     inventory: inventory,
     externalSkuId: variant.sku,
     sellerSku: variant.sku,
     ...(listPrice && { listPrice }),
     ...(price && { price }),
-    salesAttributes: commercetoolsProductTypeToTiktokSKUAttributeList(
-      productTypeId,
-      variant.attributes,
-      locale,
-    ),
+    salesAttributes,
   };
 };
 
-const commercetoolsProductTypeToTiktokCategory = (productTypeId: string) => {
-  return PRODUCT_TYPE_TO_TIKTOK_CATEGORY[productTypeId];
+const commercetoolsProductTypeToTiktokCategory = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+  productTypeId: string
+): Promise<string | undefined> => {
+  const categoryMap = await getCategoryMap(apiRoot);
+  return categoryMap[productTypeId];
 };
 
 const commercetoolsVariantToTiktokSKUInventory = (
   variant: ProductVariant,
-  shopConfig: ShopConfigurationData,
+  shopConfig: ShopConfigurationData
 ): Product202309CreateProductRequestBodySkusInventory[] => {
   let quantity = undefined;
   const inventory = Object.keys(variant.availability?.channels ?? {}).find(
-    (channel) => channel === shopConfig.ctSupplyChannelId,
+    (channel) => channel === shopConfig.ctSupplyChannelId
   );
   if (inventory) {
     quantity = variant.availability?.channels?.[inventory]?.availableQuantity;
@@ -228,7 +346,7 @@ const commercetoolsVariantToTiktokSKUInventory = (
 };
 
 export const commercetoolsPriceToTiktokPrice = (
-  price: Price,
+  price: Price
 ): Product202309CreateProductRequestBodySkusPrice | undefined => {
   if (!price) {
     return undefined;
@@ -237,24 +355,24 @@ export const commercetoolsPriceToTiktokPrice = (
   return {
     amount: priceCentAmountToAmount(
       price.value.centAmount,
-      price.value.fractionDigits,
+      price.value.fractionDigits
     ),
     currency: price.value.currencyCode,
     salePrice: discounted
       ? priceCentAmountToAmount(
           discounted.centAmount,
-          discounted.fractionDigits,
+          discounted.fractionDigits
         )
       : priceCentAmountToAmount(
           price.value.centAmount,
-          price.value.fractionDigits,
+          price.value.fractionDigits
         ),
   };
 };
 
 export const commercetoolsVariantToPrice = (
   variant: ProductVariant,
-  shopConfig: ShopConfigurationData,
+  shopConfig: ShopConfigurationData
 ): Product202309CreateProductRequestBodySkusPrice | undefined => {
   if (!shopConfig || !shopConfig.shop_region) {
     return undefined;
@@ -263,7 +381,7 @@ export const commercetoolsVariantToPrice = (
     (price) =>
       typeof price.channel !== 'undefined' &&
       price.country?.toLowerCase() === shopConfig.shop_region?.toLowerCase() &&
-      price.channel?.id === shopConfig.ctDistributionChannelId,
+      price.channel?.id === shopConfig.ctDistributionChannelId
   );
   if (price) {
     return commercetoolsPriceToTiktokPrice(price);
@@ -271,7 +389,7 @@ export const commercetoolsVariantToPrice = (
     price = variant.prices?.find(
       (price) =>
         typeof price.channel === 'undefined' &&
-        price.country?.toLowerCase() === shopConfig.shop_region?.toLowerCase(),
+        price.country?.toLowerCase() === shopConfig.shop_region?.toLowerCase()
     );
 
     if (price) {
@@ -283,7 +401,7 @@ export const commercetoolsVariantToPrice = (
 
 export const commercetoolsVariantToListPrice = (
   variant: ProductVariant,
-  shopRegion?: string,
+  shopRegion?: string
 ): Product202309CreateProductRequestBodySkusListPrice | undefined => {
   if (!shopRegion) {
     return undefined;
@@ -292,13 +410,13 @@ export const commercetoolsVariantToListPrice = (
     const noChannelPrice = variant.prices?.find(
       (price) =>
         typeof price.channel === 'undefined' &&
-        price.country?.toLowerCase() === shopRegion.toLowerCase(),
+        price.country?.toLowerCase() === shopRegion.toLowerCase()
     );
     if (noChannelPrice) {
       return {
         amount: priceCentAmountToAmount(
           noChannelPrice.value.centAmount,
-          noChannelPrice.value.fractionDigits,
+          noChannelPrice.value.fractionDigits
         ),
         currency: noChannelPrice.value.currencyCode,
       };
@@ -307,14 +425,17 @@ export const commercetoolsVariantToListPrice = (
   return undefined;
 };
 
-const commercetoolsProductTypeToTiktokSKUAttributeList = (
+const commercetoolsProductTypeToTiktokSKUAttributeList = async (
+  apiRoot: ByProjectKeyRequestBuilder,
   productTypeId: string,
   attributes: Attribute[] | undefined,
-  locale: string,
-): Product202309CreateProductRequestBodySkusSalesAttributes[] => {
+  locale: string
+): Promise<Product202309CreateProductRequestBodySkusSalesAttributes[]> => {
   if (!attributes) return [];
+  
+  const skuAttributeMap = await getSkuAttributeMap(apiRoot);
   const skuAttributes =
-    PRODUCT_TYPE_TO_TIKTOK_SKU_ATTRIBUTE[productTypeId]?.map((attributeMap) => {
+    skuAttributeMap[productTypeId]?.map((attributeMap) => {
       if (attributeMap.valueNameFetcher) {
         return {
           id: attributeMap.tiktokAttributeId,
@@ -333,18 +454,21 @@ const commercetoolsProductTypeToTiktokSKUAttributeList = (
     (attribute) =>
       (typeof attribute.valueName !== 'undefined' &&
         attribute.valueName !== '') ||
-      (typeof attribute.valueId !== 'undefined' && attribute.valueId !== ''),
+      (typeof attribute.valueId !== 'undefined' && attribute.valueId !== '')
   );
 };
 
-const commercetoolsProductTypeToTiktokProductAttributeList = (
+const commercetoolsProductTypeToTiktokProductAttributeList = async (
+  apiRoot: ByProjectKeyRequestBuilder,
   productTypeId: string,
   attributes: Attribute[] | undefined,
-  locale: string,
-): Product202309CreateProductRequestBodyProductAttributes[] => {
+  locale: string
+): Promise<Product202309CreateProductRequestBodyProductAttributes[]> => {
   if (!attributes) return [];
+  
+  const productAttributeMap = await getProductAttributeMap(apiRoot);
   const productAttributes =
-    PRODUCT_TYPE_TO_TIKTOK_PRODUCT_ATTRIBUTE[productTypeId]?.map(
+    productAttributeMap[productTypeId]?.map(
       (attributeMap) => {
         if (attributeMap.valueNamesFetcher) {
           return {
@@ -359,18 +483,18 @@ const commercetoolsProductTypeToTiktokProductAttributeList = (
           };
         }
         return {} as Product202309CreateProductRequestBodyProductAttributes;
-      },
+      }
     ) ?? [];
 
   const filteredProductAttributes = productAttributes.filter(
     (attribute) =>
-      typeof attribute.values !== 'undefined' && attribute.values.length !== 0,
+      typeof attribute.values !== 'undefined' && attribute.values.length !== 0
   );
   return filteredProductAttributes;
 };
 
 const commercetoolsProductTypeToTiktokProductPackageWeight = (
-  attributes: Attribute[] | undefined,
+  attributes: Attribute[] | undefined
 ): Product202309CreateProductRequestBodyPackageWeight => {
   if (!attributes)
     return {
@@ -378,7 +502,7 @@ const commercetoolsProductTypeToTiktokProductPackageWeight = (
       unit: FALLBACK_PACKAGE_WEIGHT_UNIT,
     };
   const packageWeightUnit = attributes.find(
-    (attribute) => attribute.name === ATTRIBUTE_KEY_PACKAGE_WEIGHT_UNIT,
+    (attribute) => attribute.name === ATTRIBUTE_KEY_PACKAGE_WEIGHT_UNIT
   )?.value?.key;
   let toFixedValue = 2;
   if (!packageWeightUnit) {
@@ -394,8 +518,8 @@ const commercetoolsProductTypeToTiktokProductPackageWeight = (
   }
   const packageWeightValue = Number(
     attributes.find(
-      (attribute) => attribute.name === ATTRIBUTE_KEY_PACKAGE_WEIGHT_VALUE,
-    )?.value,
+      (attribute) => attribute.name === ATTRIBUTE_KEY_PACKAGE_WEIGHT_VALUE
+    )?.value
   ).toFixed(toFixedValue);
   return {
     value: packageWeightValue,
@@ -404,7 +528,7 @@ const commercetoolsProductTypeToTiktokProductPackageWeight = (
 };
 
 const commercetoolsProductTypeToTiktokProductPackageDimensions = (
-  attributes: Attribute[] | undefined,
+  attributes: Attribute[] | undefined
 ): Product202309CreateProductRequestBodyPackageDimensions => {
   if (!attributes)
     return {
@@ -414,16 +538,16 @@ const commercetoolsProductTypeToTiktokProductPackageDimensions = (
       width: FALLBACK_PACKAGE_DIMENSIONS_WIDTH,
     };
   const packageDimensionsHeight = attributes.find(
-    (attribute) => attribute.name === ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_HEIGHT,
+    (attribute) => attribute.name === ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_HEIGHT
   )?.value;
   const packageDimensionsLength = attributes.find(
-    (attribute) => attribute.name === ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_LENGTH,
+    (attribute) => attribute.name === ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_LENGTH
   )?.value;
   const packageDimensionsWidth = attributes.find(
-    (attribute) => attribute.name === ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_WIDTH,
+    (attribute) => attribute.name === ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_WIDTH
   )?.value;
   const packageDimensionsUnit = attributes.find(
-    (attribute) => attribute.name === ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_UNIT,
+    (attribute) => attribute.name === ATTRIBUTE_KEY_PACKAGE_DIMENSIONS_UNIT
   )?.value?.key;
   return {
     height: packageDimensionsHeight,
@@ -435,7 +559,7 @@ const commercetoolsProductTypeToTiktokProductPackageDimensions = (
 
 const priceCentAmountToAmount = (
   price: number,
-  fractionDigits: number,
+  fractionDigits: number
 ): string => {
   if (typeof price !== 'number' || price === 0) {
     return '0';
@@ -444,7 +568,7 @@ const priceCentAmountToAmount = (
 };
 
 export const tiktokProductToTiktokProductEdit = (
-  product: Product202309GetProductResponseData,
+  product: Product202309GetProductResponseData
 ): Product202309EditProductRequestBody => {
   const categoryId = product.categoryChains?.find((cat) => cat.isLeaf)?.id;
 
@@ -469,31 +593,31 @@ export const tiktokProductToTiktokProductEdit = (
 export const mergeTiktokProductAndCommercetoolsProductToTiktokProductEdit =
   async (
     apiRoot: ByProjectKeyRequestBuilder,
-    product: Product202309GetProductResponseData,
-    commercetoolsProduct?: ProductProjection,
+    currentProduct: Product202309GetProductResponseData,
+    commercetoolsProduct?: ProductProjection
   ): Promise<Product202309EditProductRequestBody> => {
     if (!commercetoolsProduct) {
       throw new Error('Commercetools product is required');
     }
-    const originalProductData = await commercetoolsProductToTiktokProduct(
+    const mappedProductData = await commercetoolsProductToTiktokProduct(
       apiRoot,
-      commercetoolsProduct,
+      commercetoolsProduct
     );
 
     const editProductData: Product202309EditProductRequestBody = {
-      title: product.title,
-      description: product.description,
+      title: currentProduct.title,
+      description: currentProduct.description,
       categoryVersion: 'v2',
-      mainImages: product.mainImages?.map((image) => ({
+      mainImages: currentProduct.mainImages?.map((image) => ({
         uri: image.uri,
       })),
-      packageWeight: product.packageWeight,
-      skus: product.skus?.map((sku) => ({
+      packageWeight: currentProduct.packageWeight,
+      skus: currentProduct.skus?.map((sku) => ({
         id: sku.id,
         price: sku.price,
         listPrice: sku.listPrice,
       })),
-      ...originalProductData,
+      ...mappedProductData,
     };
     return editProductData;
   };

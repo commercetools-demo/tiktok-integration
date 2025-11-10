@@ -36,7 +36,9 @@ const ConnectProject = () => {
       await connectProject(serviceUrl, token);
       setSuccess(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to connect project');
+      setError(
+        err instanceof Error ? err.message : 'Failed to connect project'
+      );
     }
   };
 
@@ -61,20 +63,20 @@ const ConnectProject = () => {
     <Constraints.Horizontal max={16}>
       <Spacings.Stack scale="xl">
         <Text.Headline as="h1">Connect Project</Text.Headline>
-        
+
         <Card theme="light" type="raised">
           <Spacings.Stack scale="m">
-            <Text.Body fontWeight="bold">
-              Token:
-            </Text.Body>
-            <div style={{ 
-              padding: '16px', 
-              backgroundColor: '#f5f5f5', 
-              borderRadius: '4px',
-              wordBreak: 'break-all',
-              fontFamily: 'monospace',
-              fontSize: '14px'
-            }}>
+            <Text.Body fontWeight="bold">Token:</Text.Body>
+            <div
+              style={{
+                padding: '16px',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '4px',
+                wordBreak: 'break-all',
+                fontFamily: 'monospace',
+                fontSize: '14px',
+              }}
+            >
               {token}
             </div>
           </Spacings.Stack>
@@ -88,7 +90,9 @@ const ConnectProject = () => {
 
         {success && (
           <Card theme="light" type="flat">
-            <Text.Body tone="positive">Successfully connected project!</Text.Body>
+            <Text.Body tone="positive">
+              Successfully connected project!
+            </Text.Body>
           </Card>
         )}
         <Spacings.Inline scale="m">
@@ -99,7 +103,6 @@ const ConnectProject = () => {
             isDisabled={loading || success}
           />
         </Spacings.Inline>
-
       </Spacings.Stack>
     </Constraints.Horizontal>
   );
@@ -108,4 +111,3 @@ const ConnectProject = () => {
 ConnectProject.displayName = 'ConnectProject';
 
 export default ConnectProject;
-
