@@ -11,6 +11,10 @@ import { errorMiddleware } from './middleware/error.middleware';
 import ServiceRoutes from './routes/service.route';
 import TiktokRoutes from './routes/tiktok.route';
 import { logger } from './utils/logger.utils';
+import cors from 'cors';
+import { extractMainDomain } from './utils/domain';
+
+const corsAllowedOrigins = process.env.CORS_ALLOWED_ORIGINS?.split(',') || ['localhost:3001','commercetools.app','commercetools.com'];
 
 // Read env variables
 Utils.readConfiguration();
@@ -21,6 +25,22 @@ const featureFlagEnableTiktokRoutes =
 // Create the express app
 const app: Express = express();
 app.disable('x-powered-by');
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const domain = extractMainDomain(origin);
+      logger.info(`Checking origin: ${origin} with domain: ${domain}`);
+      if (corsAllowedOrigins.includes(domain)) {
+        return callback(null, true);
+      }
+      return callback(new Error('Not allowed by CORS'));
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 // Define configurations
 app.use(bodyParser.json());
