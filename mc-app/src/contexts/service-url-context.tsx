@@ -68,7 +68,6 @@ export const ServiceUrlProvider = ({ children }: ServiceUrlProviderProps) => {
         const isTikTokStore = !!getCustomFieldValue(store.custom?.customFieldsRaw, 'isTikTokShop');
         return isTikTokStore === true;
       });
-      console.log('tiktokStore', tiktokStore);
       
       if (tiktokStore) {
         setMcTiktokStore(tiktokStore.id);

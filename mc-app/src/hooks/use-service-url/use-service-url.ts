@@ -30,6 +30,7 @@ type TUseServiceUrlFetcher = () => {
 };
 
 export const useServiceUrlFetcher: TUseServiceUrlFetcher = () => {
+  const isDevelopment = process.env.NODE_ENV === 'development';
   const { data, error, loading } = useMcQuery<
     TFetchServiceUrlQuery,
     TFetchServiceUrlQueryVariables
@@ -54,6 +55,8 @@ export const useServiceUrlFetcher: TUseServiceUrlFetcher = () => {
       // If parsing fails, use the value directly
       serviceUrl = data.customObject.value;
     }
+  } else if (isDevelopment) {
+    serviceUrl = 'http://localhost:8080/service';
   }
 
   return {

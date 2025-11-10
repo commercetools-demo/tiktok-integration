@@ -16,10 +16,6 @@ type FetcherMethods = {
   [key: string]: (...args: any[]) => Promise<any>;
 };
 
-/**
- * Custom HTTP client for chat service based on commercetools documentation
- * https://docs.commercetools.com/merchant-center-customizations/development/data-fetching#custom-http-client
- */
 const createFetcher = (
   serviceUrl: string | undefined
 ): FetcherMethods => {
@@ -85,7 +81,6 @@ const createFetcher = (
         return data as T;
       }
     } catch (error) {
-      console.error('Chat service request failed:', error);
       if (error && typeof error === 'object' && 'success' in error) {
         throw error;
       }
