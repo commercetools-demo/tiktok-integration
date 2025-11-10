@@ -70,17 +70,28 @@ export const useServiceUrlFetcher: TUseServiceUrlFetcher = () => {
 };
 
 type TUseConnectProject = () => {
-  connectProject: (serviceUrl: string, token: string) => Promise<void>;
+  connectProject: (
+    token: string,
+    ct_client_id: string,
+    ct_client_secret: string,
+    ct_region: string
+  ) => Promise<void>;
   loading: boolean;
 };
 
 export const useConnectProject: TUseConnectProject = () => {
   const [loading, setLoading] = useState(false);
 
-  // TODO: create a API client
-  const { ct_client_id, ct_client_secret, ct_region } = {};
-
-  const connectProject = async (serviceUrl: string, token: string) => {
+  const connectProject = async (
+    token: string,
+    ct_client_id: string,
+    ct_client_secret: string,
+    ct_region: string
+  ) => {
+    const { serviceUrl } = useServiceUrlFetcher();
+    if (!serviceUrl) {
+      throw new Error('Service URL is not available');
+    }
     setLoading(true);
     try {
       const response = await fetch(

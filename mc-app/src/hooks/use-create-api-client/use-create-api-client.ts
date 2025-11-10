@@ -66,8 +66,8 @@ export const useCreateApiClient: TUseCreateApiClient = (projectKey: string) => {
       const { data, errors } = await mutate({
         variables: {
           draft: {
-            name: `TikTok Integration API Client - ${projectKey}`,
-            scope: 'view_project_settings',
+            name: `TikTok authentication API client`,
+            scope: `view_project_settings:${projectKey}`,
             accessTokenValiditySeconds: 3600,
             deleteDaysAfterCreation: 1,
           },

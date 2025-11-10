@@ -22,6 +22,7 @@ type ServiceUrlContextValue = {
   mcDistributionTiktokChannel?: string;
   mcSupplyTiktokChannel?: string;
   showConfigWizard: boolean;
+  showConnectProject: boolean;
   loading: boolean;
   error?: ApolloError;
 };
@@ -53,6 +54,7 @@ export const ServiceUrlProvider = ({ children }: ServiceUrlProviderProps) => {
     string | undefined
   >();
   const [showConfigWizard, setShowConfigWizard] = useState(false);
+  const [showConnectProject, setShowConnectProject] = useState(false);
 
   // Helper function to get custom field value
   const getCustomFieldValue = (
@@ -69,6 +71,14 @@ export const ServiceUrlProvider = ({ children }: ServiceUrlProviderProps) => {
       return field.value;
     }
   };
+
+  useEffect(() => {
+    if (!configuration?.isInitialized) {
+      setShowConnectProject(true);
+    } else {
+      setShowConnectProject(false);
+    }
+  }, [configuration]);
 
   useEffect(() => {
     // Check if configuration is not initialized
@@ -161,6 +171,7 @@ export const ServiceUrlProvider = ({ children }: ServiceUrlProviderProps) => {
         mcDistributionTiktokChannel,
         mcSupplyTiktokChannel,
         showConfigWizard,
+        showConnectProject,
         loading,
         error: serviceUrlError,
       }}

@@ -154,7 +154,7 @@ const ConfigWizard = () => {
               value={selectedStoreId}
               options={storeOptions}
               onChange={(event) => {
-                setSelectedStoreId(event.target.value);
+                setSelectedStoreId(event.target.value as string || '');
                 setSuccess(false);
                 setError('');
               }}
@@ -183,7 +183,7 @@ const ConfigWizard = () => {
                   </Card>
                 ) : (
                   <Card theme="light" type="flat">
-                    <Text.Body tone="warning">
+                    <Text.Body tone="critical">
                       No distribution channel found for this store
                     </Text.Body>
                   </Card>
@@ -204,7 +204,7 @@ const ConfigWizard = () => {
                   </Card>
                 ) : (
                   <Card theme="light" type="flat">
-                    <Text.Body tone="warning">
+                    <Text.Body tone="critical">
                       No supply channel found for this store
                     </Text.Body>
                   </Card>
