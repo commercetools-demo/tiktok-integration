@@ -4,7 +4,10 @@
 import type { ApolloError } from '@apollo/client';
 import { useMcQuery } from '@commercetools-frontend/application-shell';
 import { GRAPHQL_TARGETS } from '@commercetools-frontend/constants';
-import { SHARED_SHOP_CONTAINER_KEY, SHARED_SHOP_CONFIGURATION_VARIABLE_KEY } from '../../constants';
+import {
+  SHARED_SHOP_CONTAINER_KEY,
+  SHARED_SHOP_CONFIGURATION_VARIABLE_KEY,
+} from '../../constants';
 import FetchTikTokConfigQuery from './fetch-tiktok-config.ctp.graphql';
 
 export type TTikTokConfiguration = {
@@ -57,8 +60,8 @@ export const useTikTokConfigFetcher: TUseTikTokConfigFetcher = () => {
   });
 
   // Parse the value from the custom object
-  const configuration: TTikTokConfiguration | undefined = data?.customObject?.value;
-  
+  const configuration: TTikTokConfiguration | undefined =
+    data?.customObject?.value;
 
   return {
     configuration,
@@ -66,4 +69,3 @@ export const useTikTokConfigFetcher: TUseTikTokConfigFetcher = () => {
     loading,
   };
 };
-

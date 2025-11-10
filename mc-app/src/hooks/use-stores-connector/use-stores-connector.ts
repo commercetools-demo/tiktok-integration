@@ -176,7 +176,7 @@ export const useStoreCustomUpdater: TUseStoreCustomUpdater = () => {
   }) => {
     // Fetch the latest version first
     const store = await getStoreById(storeId);
-    
+
     if (!store) {
       throw new Error(`Store with id ${storeId} not found`);
     }
@@ -197,7 +197,7 @@ export const useStoreCustomUpdater: TUseStoreCustomUpdater = () => {
           })),
         },
       });
-    } 
+    }
 
     try {
       const result = await updateStoreMutation({
@@ -226,4 +226,3 @@ export const useStoreCustomUpdater: TUseStoreCustomUpdater = () => {
     loading,
   };
 };
-

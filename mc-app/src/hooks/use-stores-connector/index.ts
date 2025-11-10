@@ -3,4 +3,3 @@ export {
   useStoreByIdFetcher,
   useStoreCustomUpdater,
 } from './use-stores-connector';
-

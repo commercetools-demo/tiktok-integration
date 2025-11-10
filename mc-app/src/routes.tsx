@@ -4,6 +4,10 @@ import Spacings from '@commercetools-uikit/spacings';
 import Welcome from './components/welcome';
 import ConnectProject from './components/connect-project';
 import ConfigWizard from './components/config-wizard';
+import MappersList from './components/mappers/mappers-list';
+import AttributeMappersList from './components/mappers/attribute-mappers-list';
+import AttributeMapperNew from './components/mappers/attribute-mapper-new';
+import AttributeMapperDetails from './components/mappers/attribute-mapper-details';
 import { ServiceUrlProvider, useServiceUrl } from './contexts';
 
 type ApplicationRoutesProps = {
@@ -31,9 +35,19 @@ const RoutesContent = () => {
         <Route path={`${match.path}/connect`} exact>
           <ConnectProject />
         </Route>
-        <Route>
-          {showConfigWizard ? <ConfigWizard /> : <Welcome />}
+        <Route path={`${match.path}/mappers/attributes/new`} exact>
+          <AttributeMapperNew />
         </Route>
+        <Route path={`${match.path}/mappers/attributes/:productTypeId`} exact>
+          <AttributeMapperDetails />
+        </Route>
+        <Route path={`${match.path}/mappers/attributes`} exact>
+          <AttributeMappersList />
+        </Route>
+        <Route path={`${match.path}/mappers`} exact>
+          <MappersList />
+        </Route>
+        <Route>{showConfigWizard ? <ConfigWizard /> : <Welcome />}</Route>
       </Switch>
     </Spacings.Inset>
   );

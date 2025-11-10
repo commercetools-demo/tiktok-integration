@@ -10,30 +10,12 @@ export default defineMessages({
     defaultMessage:
       'Welcome to Custom Applications! To get started, inspect the source code to get familiar with the setup, the folder structure, the development tools, etc. and read the README file for additional information.',
   },
-  cardDocumentationTitle: {
-    id: 'Welcome.cardDocumentationTitle',
-    defaultMessage: 'Documentation',
+  cardMapperTitle: {
+    id: 'Welcome.cardMapperTitle',
+    defaultMessage: 'Mapper',
   },
-  cardDocumentationContent: {
-    id: 'Welcome.cardDocumentationContent',
-    defaultMessage: 'Learn more about Custom Applications.',
-  },
-  cardDesignSystemTitle: {
-    id: 'Welcome.cardDesignSystemTitle',
-    defaultMessage: 'Design System',
-  },
-  cardDesignSystemContent: {
-    id: 'Welcome.cardDesignSystemContent',
-    defaultMessage:
-      'Explore the UI components to develop Custom Applications and learn more about the Design System.',
-  },
-  cardChannelsTitle: {
-    id: 'Welcome.cardChannelsTitle',
-    defaultMessage: 'Fetching channels',
-  },
-  cardChannelsContent: {
-    id: 'Welcome.cardChannelsContent',
-    defaultMessage:
-      'Demo example to fetch some data using GraphQL and displaying it in a paginated table.',
+  cardMapperContent: {
+    id: 'Welcome.cardMapperContent',
+    defaultMessage: 'Learn more about the mapper.',
   },
 });

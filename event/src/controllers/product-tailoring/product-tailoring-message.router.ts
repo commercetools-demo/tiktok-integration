@@ -39,7 +39,6 @@ export const productTailoringMessageHandler = async (
     return productTailoringId;
   }
   logger.info(`Getting product ${productId} from commercetools`);
-  console.log(message);
 
   switch (message.type) {
     case 'ProductTailoringCreated':

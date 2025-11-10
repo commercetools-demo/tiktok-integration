@@ -14,7 +14,6 @@ import {
 } from '../../shared';
 import { logger } from '../../utils/logger.utils';
 import {
-  productPublished,
   productUnpublished,
 } from '../product/product-state.controller';
 

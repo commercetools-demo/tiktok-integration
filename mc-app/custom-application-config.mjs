@@ -18,8 +18,8 @@ const config = {
   },
   headers:{
     csp:{
-      "connect-src": ["commercetools.app"],
-      "script-src": ["commercetools.app"],
+      "connect-src": ["commercetools.app","localhost"],
+      "script-src": ["commercetools.app","localhost"],
     }
   },
   oAuthScopes: {

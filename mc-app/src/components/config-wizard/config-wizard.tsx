@@ -8,8 +8,14 @@ import Card from '@commercetools-uikit/card';
 import PrimaryButton from '@commercetools-uikit/primary-button';
 import LoadingSpinner from '@commercetools-uikit/loading-spinner';
 import { useServiceUrl } from '../../contexts';
-import { useStoresFetcher, useStoreCustomUpdater } from '../../hooks/use-stores-connector';
-import { useChannelsFetcher, useChannelCustomUpdater } from '../../hooks/use-channels-connector';
+import {
+  useStoresFetcher,
+  useStoreCustomUpdater,
+} from '../../hooks/use-stores-connector';
+import {
+  useChannelsFetcher,
+  useChannelCustomUpdater,
+} from '../../hooks/use-channels-connector';
 
 const ConfigWizard = () => {
   const { dataLocale } = useApplicationContext((context) => ({
@@ -18,10 +24,14 @@ const ConfigWizard = () => {
   const { mcTiktokStore } = useServiceUrl();
   const { stores, loading: storesLoading } = useStoresFetcher();
   const { channels, loading: channelsLoading } = useChannelsFetcher();
-  const { updateStoreCustom, loading: storeUpdateLoading } = useStoreCustomUpdater();
-  const { updateChannelCustom, loading: channelUpdateLoading } = useChannelCustomUpdater();
+  const { updateStoreCustom, loading: storeUpdateLoading } =
+    useStoreCustomUpdater();
+  const { updateChannelCustom, loading: channelUpdateLoading } =
+    useChannelCustomUpdater();
 
-  const [selectedStoreId, setSelectedStoreId] = useState<string>(mcTiktokStore || '');
+  const [selectedStoreId, setSelectedStoreId] = useState<string>(
+    mcTiktokStore || ''
+  );
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<boolean>(false);
 
@@ -86,7 +96,9 @@ const ConfigWizard = () => {
           typeKey: 'tiktok-channel-type',
           fields: {
             isTikTokPrice: true,
-            ...(supplyChannelId === distributionChannelId && { isTikTokWarehouse: true }),
+            ...(supplyChannelId === distributionChannelId && {
+              isTikTokWarehouse: true,
+            }),
           },
         });
       }
@@ -107,7 +119,9 @@ const ConfigWizard = () => {
         window.location.reload();
       }, 1500);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update configuration');
+      setError(
+        err instanceof Error ? err.message : 'Failed to update configuration'
+      );
     }
   };
 
@@ -128,7 +142,8 @@ const ConfigWizard = () => {
       <Spacings.Stack scale="xl">
         <Text.Headline as="h1">Configuration Wizard</Text.Headline>
         <Text.Body>
-          Configure your TikTok integration by selecting a store and its channels.
+          Configure your TikTok integration by selecting a store and its
+          channels.
         </Text.Body>
 
         <Card theme="light" type="raised">
@@ -151,10 +166,13 @@ const ConfigWizard = () => {
               <Spacings.Stack scale="m">
                 <Text.Subheadline as="h4">Channels</Text.Subheadline>
 
-                {selectedStore.distributionChannels && selectedStore.distributionChannels.length > 0 ? (
+                {selectedStore.distributionChannels &&
+                selectedStore.distributionChannels.length > 0 ? (
                   <Card theme="light" type="flat">
                     <Spacings.Stack scale="s">
-                      <Text.Body fontWeight="bold">Distribution Channel</Text.Body>
+                      <Text.Body fontWeight="bold">
+                        Distribution Channel
+                      </Text.Body>
                       <Text.Body>
                         Key: {selectedStore.distributionChannels[0].key}
                       </Text.Body>
@@ -171,7 +189,8 @@ const ConfigWizard = () => {
                   </Card>
                 )}
 
-                {selectedStore.supplyChannels && selectedStore.supplyChannels.length > 0 ? (
+                {selectedStore.supplyChannels &&
+                selectedStore.supplyChannels.length > 0 ? (
                   <Card theme="light" type="flat">
                     <Spacings.Stack scale="s">
                       <Text.Body fontWeight="bold">Supply Channel</Text.Body>
@@ -212,7 +231,7 @@ const ConfigWizard = () => {
         <PrimaryButton
           label="Submit"
           onClick={handleSubmit}
-          isDisabled={ isSubmitting || !selectedStoreId}
+          isDisabled={isSubmitting || !selectedStoreId}
           iconRight={isSubmitting ? <LoadingSpinner /> : undefined}
         />
       </Spacings.Stack>
@@ -223,4 +242,3 @@ const ConfigWizard = () => {
 ConfigWizard.displayName = 'ConfigWizard';
 
 export default ConfigWizard;
-
