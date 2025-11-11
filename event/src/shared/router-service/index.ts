@@ -11,6 +11,9 @@ import type {
   Product202509EditProductResponse
 } from '../interfaces/tiktok/models';
 import { logger } from '../utils/logger';
+import { createApiRoot } from '../commercetools/client/create.client';
+import { readConfiguration } from '../utils/config.utils';
+import { getJwtToken } from '../commercetools-storage/controller/token.controller';
 
 /**
  * Response type from router service authorize-project endpoint
@@ -37,6 +40,28 @@ const getRouterServiceUrl = (): string => {
 };
 
 /**
+ * Get JWT token for authenticating with router service
+ * @returns The JWT token
+ * @throws Error if JWT token is not available
+ */
+const getAuthToken = async (): Promise<string> => {
+  try {
+    const config = readConfiguration();
+    const apiRoot = createApiRoot(config);
+    const token = await getJwtToken(apiRoot);
+
+    if (!token) {
+      throw new Error('JWT token not available. Please authorize the project first.');
+    }
+
+    return token;
+  } catch (error) {
+    logger.error('Failed to get JWT token', error);
+    throw new Error('Failed to authenticate with router service: ' + (error as Error).message);
+  }
+};
+
+/**
  * Create a product via router service
  * @param access_token - The TikTok access token
  * @param shop_cipher - The TikTok shop cipher
@@ -51,6 +76,7 @@ export const createProduct = async (
   productImages: string[]
 ): Promise<Product202309CreateProductResponse> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Creating product via router service', {
     access_token: access_token.substring(0, 10) + '...',
@@ -65,12 +91,17 @@ export const createProduct = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
     body: JSON.stringify({ productData, productImages }),
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to create product via router service', { error });
     throw new Error(`Product creation failed: ${error}`);
   }
@@ -94,6 +125,7 @@ export const getOrders = async (
   orderIds: string[]
 ): Promise<Order202507GetOrderDetailResponseDataOrders[]> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Getting orders via router service', {
     access_token: access_token.substring(0, 10) + '...',
@@ -109,12 +141,17 @@ export const getOrders = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
     body: JSON.stringify({ orderIds }),
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to get orders via router service', { error });
     throw new Error(`Get orders failed: ${error}`);
   }
@@ -138,6 +175,7 @@ export const addExternalOrderReference = async (
   requestBody: any
 ): Promise<Order202406AddExternalOrderReferencesRequestBody> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Adding external order reference via router service', {
     access_token: access_token.substring(0, 10) + '...',
@@ -152,12 +190,17 @@ export const addExternalOrderReference = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
     body: JSON.stringify(requestBody),
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to add external order reference via router service', {
       error,
     });
@@ -188,6 +231,7 @@ export const productSearch = async (
   searchQuery?: any
 ): Promise<Product202502SearchProductsResponseData | undefined> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Searching products via router service');
 
@@ -206,12 +250,17 @@ export const productSearch = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
     body: searchQuery ? JSON.stringify(searchQuery) : undefined,
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to search products via router service', { error });
     throw new Error(`Product search failed: ${error}`);
   }
@@ -240,6 +289,7 @@ export const getProductsByIds = async (
   }
 ): Promise<(Product202309GetProductResponseData | undefined)[]> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Getting products by IDs via router service', {
     access_token: access_token.substring(0, 10) + '...',
@@ -262,12 +312,17 @@ export const getProductsByIds = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
     body: JSON.stringify({ product_ids }),
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to get products by IDs via router service', { error });
     throw new Error(`Get products by IDs failed: ${error}`);
   }
@@ -296,6 +351,7 @@ export const updateInventory = async (
   inventoryData: any
 ): Promise<Product202309UpdateInventoryResponse> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Updating inventory via router service', {
     access_token: access_token.substring(0, 10) + '...',
@@ -311,12 +367,17 @@ export const updateInventory = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
     body: JSON.stringify(inventoryData),
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to update inventory via router service', { error });
     throw new Error(`Inventory update failed: ${error}`);
   }
@@ -343,6 +404,7 @@ export const publishProduct = async (
   productData: any
 ): Promise<Product202509EditProductResponse> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Publishing product via router service', {
     access_token: access_token.substring(0, 10) + '...',
@@ -358,12 +420,17 @@ export const publishProduct = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
     body: JSON.stringify(productData),
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to publish product via router service', { error });
     throw new Error(`Product publish failed: ${error}`);
   }
@@ -387,6 +454,7 @@ export const deactivateProducts = async (
   product_ids: string[]
 ): Promise<Product202309DeactivateProductsResponse> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Deactivating products via router service', {
     access_token: access_token.substring(0, 10) + '...',
@@ -402,12 +470,17 @@ export const deactivateProducts = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
     body: JSON.stringify({ product_ids }),
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to deactivate products via router service', { error });
     throw new Error(`Products deactivation failed: ${error}`);
   }
@@ -431,6 +504,7 @@ export const deleteProducts = async (
   product_ids: string[]
 ): Promise<Product202309DeleteProductsResponse> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Deleting products via router service', {
     access_token: access_token.substring(0, 10) + '...',
@@ -446,12 +520,17 @@ export const deleteProducts = async (
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
     body: JSON.stringify({ product_ids }),
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to delete products via router service', { error });
     throw new Error(`Products deletion failed: ${error}`);
   }

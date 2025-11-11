@@ -6,6 +6,7 @@ export const SHARED_SHOP_SERVICE_URL_VARIABLE_KEY = 'service_url';
 export const SHARED_SHOP_PRODUCT_TYPE_TO_CATEGORY_KEY = 'product_type_to_category_map';
 export const SHARED_SHOP_PRODUCT_TYPE_TO_SKU_ATTRIBUTE_KEY = 'product_type_to_sku_attribute_map';
 export const SHARED_SHOP_PRODUCT_TYPE_TO_PRODUCT_ATTRIBUTE_KEY = 'product_type_to_product_attribute_map';
+export const SHARED_SHOP_JWT_TOKEN_VARIABLE_KEY = 'router_jwt_token';
 
 export const FIRESTORE_SHARED_VERIFIED_SHOPS_MAP_DOCUMENT_ID =
   'shops_verification_map';

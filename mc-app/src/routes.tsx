@@ -16,7 +16,7 @@ type ApplicationRoutesProps = {
 
 const RoutesContent = () => {
   const match = useRouteMatch();
-  const { showConfigWizard } = useServiceUrl();
+  const { showConfigWizard, showConnectProject } = useServiceUrl();
 
   /**
    * When using routes, there is a good chance that you might want to
@@ -32,9 +32,6 @@ const RoutesContent = () => {
   return (
     <Spacings.Inset scale="l">
       <Switch>
-        <Route path={`${match.path}/connect`} exact>
-          <ConnectProject />
-        </Route>
         <Route path={`${match.path}/mappers/attributes/new`} exact>
           <AttributeMapperNew />
         </Route>
@@ -47,7 +44,15 @@ const RoutesContent = () => {
         <Route path={`${match.path}/mappers`} exact>
           <MappersList />
         </Route>
-        <Route>{showConfigWizard ? <ConfigWizard /> : <Welcome />}</Route>
+        <Route>
+          {showConfigWizard ? (
+            <ConfigWizard />
+          ) : showConnectProject ? (
+            <ConnectProject />
+          ) : (
+            <Welcome />
+          )}
+        </Route>
       </Switch>
     </Spacings.Inset>
   );

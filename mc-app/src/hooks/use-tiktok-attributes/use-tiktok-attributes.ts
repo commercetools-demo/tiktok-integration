@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useServiceUrl } from '../../contexts';
 import { useServiceFetcher } from '../use-connect-fetcher';
 
 /**

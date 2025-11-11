@@ -6,6 +6,9 @@ import type {
   Product202309GetCategoryRulesResponse
 } from '../interfaces/tiktok/models';
 import { logger } from '../utils/logger';
+import { createApiRoot } from '../commercetools/client/create.client';
+import { readConfiguration } from '../utils/config.utils';
+import { getJwtToken } from '../commercetools-storage/controller/token.controller';
 
 /**
  * Response type from router service authorize-project endpoint
@@ -13,6 +16,8 @@ import { logger } from '../utils/logger';
 export interface AuthorizeProjectResponse {
   access_token_data: TokenResponse;
   app_map_data: AppProjectMapping;
+  jwt_token: string;
+  jwt_expires_at: number;
 }
 
 /**
@@ -32,6 +37,28 @@ const getRouterServiceUrl = (): string => {
 };
 
 /**
+ * Get JWT token for authenticating with router service
+ * @returns The JWT token
+ * @throws Error if JWT token is not available
+ */
+const getAuthToken = async (): Promise<string> => {
+  try {
+    const config = readConfiguration();
+    const apiRoot = createApiRoot(config);
+    const token = await getJwtToken(apiRoot);
+
+    if (!token) {
+      throw new Error('JWT token not available. Please authorize the project first.');
+    }
+
+    return token;
+  } catch (error) {
+    logger.error('Failed to get JWT token', error);
+    throw new Error('Failed to authenticate with router service: ' + (error as Error).message);
+  }
+};
+
+/**
  * Authorize a project with the router service
  * @param shop_doc_id - The shop document ID from Firestore
  * @param service_url - The service URL for callbacks
@@ -40,6 +67,9 @@ const getRouterServiceUrl = (): string => {
 export const authorizeProject = async (
   shop_doc_id: string,
   service_url: string,
+  ct_client_id: string,
+  ct_client_secret: string,
+  ct_region: string,
 ): Promise<AuthorizeProjectResponse> => {
   const url = getRouterServiceUrl();
 
@@ -60,6 +90,9 @@ export const authorizeProject = async (
       project_key: process.env.CTP_PROJECT_KEY as string,
       service_url,
       shop_id: process.env.TIKTOK_SHOP_ID as string,
+      ct_client_id,
+      ct_client_secret,
+      ct_region,
     }),
   });
 
@@ -98,6 +131,7 @@ export const createProduct = async (
   productImages: string[],
 ): Promise<Product202309CreateProductResponse> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Creating product via router service', {
     access_token: access_token.substring(0, 10) + '...',
@@ -112,12 +146,17 @@ export const createProduct = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
     body: JSON.stringify({ productData, productImages }),
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to create product via router service', { error });
     throw new Error(`Product creation failed: ${error}`);
   }
@@ -146,6 +185,7 @@ export const getCategories = async (
   },
 ): Promise<Product202309GetCategoriesResponseDataCategories[]> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Getting categories via router service');
 
@@ -174,11 +214,16 @@ export const getCategories = async (
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to get categories via router service', { error });
     throw new Error(`Get categories failed: ${error}`);
   }
@@ -207,6 +252,7 @@ export const getCategoryRules = async (
   },
 ): Promise<Product202309GetCategoryRulesResponse> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Getting category rules via router service', {
     category_id,
@@ -227,11 +273,16 @@ export const getCategoryRules = async (
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to get category rules via router service', { error });
     throw new Error(`Get category rules failed: ${error}`);
   }
@@ -259,6 +310,7 @@ export const getCategoryAttributes = async (
   },
 ): Promise<Product202309GetAttributesResponse> => {
   const baseUrl = getRouterServiceUrl();
+  const jwtToken = await getAuthToken();
 
   logger.info('Getting category attributes via router service', {
     category_id,
@@ -276,11 +328,16 @@ export const getCategoryAttributes = async (
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
     },
   });
 
   if (!response.ok) {
     const error = await response.text();
+    if (response.status === 401) {
+      logger.error('Authentication failed with router service', { error });
+      throw new Error('Authentication failed. Please re-authorize the project.');
+    }
     logger.error('Failed to get category attributes via router service', {
       error,
     });

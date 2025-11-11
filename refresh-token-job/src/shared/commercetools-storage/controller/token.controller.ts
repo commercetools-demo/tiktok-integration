@@ -4,8 +4,8 @@ import {
   createOrUpdateCustomObject,
   readCustomObject,
 } from '../../commercetools/controllers/custom-object.controller';
-import { getAccessTokenVariableKey } from '../../utils';
-import { AccessTokenData } from '../../interfaces';
+import { getAccessTokenVariableKey, getJwtTokenVariableKey } from '../../utils';
+import { AccessTokenData, JwtTokenData } from '../../interfaces';
 import { TokenResponse } from '../../interfaces';
 import { logger } from '../../utils/logger';
 /**
@@ -128,4 +128,137 @@ export const updateRefreshedToken = async (
     getAccessTokenVariableKey(),
     updatedTokenData,
   );
+};
+
+/**
+ * Store JWT token in CommerceTools custom objects
+ * @param apiRoot - The CommerceTools API root
+ * @param jwtToken - The JWT token string
+ * @param expiresAt - Unix timestamp when the token expires
+ */
+export const storeJwtToken = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+  jwtToken: string,
+  expiresAt: number,
+): Promise<void> => {
+  const now = new Date().toISOString();
+
+  const tokenData: JwtTokenData = {
+    jwt_token: jwtToken,
+    expires_at: expiresAt,
+    created_at: now,
+    updated_at: now,
+  };
+
+  await createOrUpdateCustomObject(
+    apiRoot,
+    SHARED_SHOP_CONTAINER_KEY,
+    getJwtTokenVariableKey(),
+    tokenData,
+  );
+
+  logger.info('JWT token stored successfully');
+};
+
+/**
+ * Get JWT token from CommerceTools custom objects
+ * @param apiRoot - The CommerceTools API root
+ * @returns The JWT token or null if not found or expired
+ */
+export const getJwtToken = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+): Promise<string | null> => {
+  try {
+    const tokenData = await readCustomObject<JwtTokenData>(
+      apiRoot,
+      SHARED_SHOP_CONTAINER_KEY,
+      getJwtTokenVariableKey(),
+    );
+
+    if (!tokenData) {
+      logger.warn('JWT token not found in custom objects');
+      return null;
+    }
+
+    // Check if token is expired
+    const now = Math.floor(Date.now() / 1000);
+    if (tokenData.expires_at && tokenData.expires_at <= now) {
+      logger.warn('JWT token is expired');
+      return null;
+    }
+
+    return tokenData.jwt_token;
+  } catch (error) {
+    logger.error('Error retrieving JWT token', error);
+    return null;
+  }
+};
+
+/**
+ * Get JWT token from CommerceTools custom objects (even if expired)
+ * This is used for token refresh where we need the old token
+ * @param apiRoot - The CommerceTools API root
+ * @returns The JWT token or null if not found
+ */
+export const getJwtTokenForRefresh = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+): Promise<string | null> => {
+  try {
+    const tokenData = await readCustomObject<JwtTokenData>(
+      apiRoot,
+      SHARED_SHOP_CONTAINER_KEY,
+      getJwtTokenVariableKey(),
+    );
+
+    if (!tokenData) {
+      logger.warn('JWT token not found in custom objects');
+      return null;
+    }
+
+    return tokenData.jwt_token;
+  } catch (error) {
+    logger.error('Error retrieving JWT token for refresh', error);
+    return null;
+  }
+};
+
+/**
+ * Get JWT token if it needs refresh (expires in 24 hours)
+ * @param apiRoot - The CommerceTools API root
+ * @returns true if token needs refresh, false otherwise
+ */
+export const getJwtTokenNeedingRefresh = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+): Promise<boolean> => {
+  try {
+    const now = Math.floor(Date.now() / 1000);
+    const expiringIn24Hours = now + 86400; // 24 hours from now
+
+    const tokenData = await readCustomObject<JwtTokenData>(
+      apiRoot,
+      SHARED_SHOP_CONTAINER_KEY,
+      getJwtTokenVariableKey(),
+    );
+
+    if (!tokenData) {
+      logger.info('No JWT token found, needs refresh');
+      return true;
+    }
+
+    // Check if token is expired or expiring soon
+    if (
+      tokenData.expires_at &&
+      tokenData.expires_at <= expiringIn24Hours
+    ) {
+      logger.info('JWT token expiring soon, needs refresh', {
+        expiresAt: new Date(tokenData.expires_at * 1000).toISOString(),
+      });
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    logger.error('Error checking JWT token expiration', error);
+    return true; // Refresh on error to be safe
+  }
 };

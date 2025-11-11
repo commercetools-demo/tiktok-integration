@@ -4,8 +4,8 @@ import {
   createOrUpdateCustomObject,
   readCustomObject,
 } from '../../commercetools/controllers/custom-object.controller';
-import { getAccessTokenVariableKey } from '../../utils';
-import { AccessTokenData } from '../../interfaces';
+import { getAccessTokenVariableKey, getJwtTokenVariableKey } from '../../utils';
+import { AccessTokenData, JwtTokenData } from '../../interfaces';
 import { TokenResponse } from '../../interfaces';
 import { logger } from '../../utils/logger';
 /**
@@ -129,3 +129,39 @@ export const updateRefreshedToken = async (
     updatedTokenData
   );
 };
+
+
+/**
+ * Get JWT token from CommerceTools custom objects
+ * @param apiRoot - The CommerceTools API root
+ * @returns The JWT token or null if not found or expired
+ */
+export const getJwtToken = async (
+  apiRoot: ByProjectKeyRequestBuilder,
+): Promise<string | null> => {
+  try {
+    const tokenData = await readCustomObject<JwtTokenData>(
+      apiRoot,
+      SHARED_SHOP_CONTAINER_KEY,
+      getJwtTokenVariableKey(),
+    );
+
+    if (!tokenData) {
+      logger.warn('JWT token not found in custom objects');
+      return null;
+    }
+
+    // Check if token is expired
+    const now = Math.floor(Date.now() / 1000);
+    if (tokenData.expires_at && tokenData.expires_at <= now) {
+      logger.warn('JWT token is expired');
+      return null;
+    }
+
+    return tokenData.jwt_token;
+  } catch (error) {
+    logger.error('Error retrieving JWT token', error);
+    return null;
+  }
+};
+

@@ -1,28 +1,50 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useApplicationContext } from '@commercetools-frontend/application-shell-connectors';
 import Constraints from '@commercetools-uikit/constraints';
 import Spacings from '@commercetools-uikit/spacings';
 import Text from '@commercetools-uikit/text';
 import PrimaryButton from '@commercetools-uikit/primary-button';
+import SecondaryButton from '@commercetools-uikit/secondary-button';
 import Card from '@commercetools-uikit/card';
+import TextField from '@commercetools-uikit/text-field';
 import { useServiceUrl } from '../../contexts';
 import { useConnectProject } from '../../hooks/use-service-url';
+import { useCreateApiClient } from '../../hooks/use-create-api-client';
 import LoadingSpinner from '@commercetools-uikit/loading-spinner';
 
 const ConnectProject = () => {
-  const location = useLocation();
+  const { project } = useApplicationContext((context) => ({
+    project: context.project,
+    environment: context.environment,
+  }));
   const { serviceUrl } = useServiceUrl();
   const { connectProject, loading } = useConnectProject();
+  const { createApiClient, loading: creatingApiClient } = useCreateApiClient(project?.key || '');
+  
+  const [token, setToken] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<boolean>(false);
+  const [apiClientError, setApiClientError] = useState<string>('');
+  const [apiClientResult, setApiClientResult] = useState<{
+    clientId: string;
+    clientSecret: string;
+    name: string;
+    scope: string;
+  } | null>(null);
 
-  // Parse query params
-  const searchParams = new URLSearchParams(location.search);
-  const token = searchParams.get('token');
+  const handleCreateApiClient = async () => {
+    try {
+      setApiClientError('');
+      const result = await createApiClient();
+      setApiClientResult(result);
+    } catch (err) {
+      setApiClientError(err instanceof Error ? err.message : 'Failed to create API client');
+    }
+  };
 
   const handleConnect = async () => {
-    if (!token) {
-      setError('Token is missing');
+    if (!token.trim()) {
+      setError('Token is required');
       return;
     }
 
@@ -31,33 +53,24 @@ const ConnectProject = () => {
       return;
     }
 
+    if (!apiClientResult) {
+      setError('API client must be created first');
+      return;
+    }
+
     try {
       setError('');
-      await connectProject(serviceUrl, token);
+      await connectProject(
+        token,
+        apiClientResult.clientId,
+        apiClientResult.clientSecret,
+        'us-central1.gcp' // TODO: get region from environment
+      );
       setSuccess(true);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to connect project'
-      );
+      setError(err instanceof Error ? err.message : 'Failed to connect project');
     }
   };
-
-  if (!token) {
-    return (
-      <Constraints.Horizontal max={16}>
-        <Spacings.Stack scale="xl">
-          <Text.Headline as="h1">Connect Project</Text.Headline>
-          <Card theme="light" type="flat">
-            <Spacings.Stack scale="m">
-              <Text.Body tone="critical">
-                Error: Token is missing from URL query parameters
-              </Text.Body>
-            </Spacings.Stack>
-          </Card>
-        </Spacings.Stack>
-      </Constraints.Horizontal>
-    );
-  }
 
   return (
     <Constraints.Horizontal max={16}>
@@ -66,19 +79,66 @@ const ConnectProject = () => {
 
         <Card theme="light" type="raised">
           <Spacings.Stack scale="m">
-            <Text.Body fontWeight="bold">Token:</Text.Body>
-            <div
-              style={{
-                padding: '16px',
-                backgroundColor: '#f5f5f5',
-                borderRadius: '4px',
-                wordBreak: 'break-all',
-                fontFamily: 'monospace',
-                fontSize: '14px',
-              }}
-            >
-              {token}
-            </div>
+            <TextField
+              title="Token"
+              name="token"
+              value={token}
+              hint="Enter your token you got from TikTok authorization api"
+              onChange={(event) => setToken(event.target.value)}
+              isRequired
+              isDisabled={loading || success}
+              placeholder="Enter your token"
+            />
+          </Spacings.Stack>
+        </Card>
+
+        <Card theme="light" type="raised">
+          <Spacings.Stack scale="m">
+            <Text.Subheadline as="h4">Create an API client for connection</Text.Subheadline>
+            
+            {!apiClientResult ? (
+              <Spacings.Stack scale="s">
+                <Text.Body>
+                  Create a new API client to use for connecting your project.
+                </Text.Body>
+                <Spacings.Inline scale="s" justifyContent='flex-start'>
+                <SecondaryButton
+                  label="Create API Client"
+                  onClick={handleCreateApiClient}
+                  iconRight={creatingApiClient ? <LoadingSpinner /> : undefined}
+                  isDisabled={creatingApiClient || !token}
+                />
+                </Spacings.Inline>
+              </Spacings.Stack>
+            ) : (
+              <Spacings.Stack scale="s">
+                <Text.Body tone="positive">API Client created successfully!</Text.Body>
+                <div style={{ 
+                  padding: '12px', 
+                  backgroundColor: '#f5f5f5', 
+                  borderRadius: '4px',
+                  fontFamily: 'monospace',
+                  fontSize: '13px'
+                }}>
+                  <div style={{ marginBottom: '8px' }}>
+                    <strong>Client ID:</strong> {apiClientResult.clientId}
+                  </div>
+                  <div style={{ marginBottom: '8px' }}>
+                    <strong>Client Secret:</strong> ••••••••••••••••
+                  </div>
+                  <div style={{ marginBottom: '8px' }}>
+                    <strong>Name:</strong> {apiClientResult.name}
+                  </div>
+                  <div>
+                    <strong>Scope:</strong> {apiClientResult.scope}
+                  </div>
+                </div>
+              </Spacings.Stack>
+            )}
+
+            {apiClientError && (
+              <Text.Body tone="critical">{apiClientError}</Text.Body>
+            )}
           </Spacings.Stack>
         </Card>
 
@@ -100,7 +160,7 @@ const ConnectProject = () => {
             label="Connect"
             onClick={handleConnect}
             iconRight={loading ? <LoadingSpinner /> : undefined}
-            isDisabled={loading || success}
+            isDisabled={loading || success || !token.trim() || !apiClientResult}
           />
         </Spacings.Inline>
       </Spacings.Stack>
