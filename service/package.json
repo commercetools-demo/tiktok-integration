@@ -5,6 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "gcp-build": "tsc",
     "start": "node build/index.js",
     "start:dev": "NODE_ENV=development ts-node-dev src/index.ts",
     "build": "rimraf ./build && tsc",
