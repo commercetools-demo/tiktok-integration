@@ -75,12 +75,13 @@ type TUseConnectProject = () => {
     ct_client_id: string,
     ct_client_secret: string,
     ct_region: string
-  ) => Promise<void>;
+  ) => Promise<string>;
   loading: boolean;
 };
 
 export const useConnectProject: TUseConnectProject = () => {
   const [loading, setLoading] = useState(false);
+  const { serviceUrl } = useServiceUrlFetcher();
 
   const connectProject = async (
     token: string,
@@ -88,7 +89,6 @@ export const useConnectProject: TUseConnectProject = () => {
     ct_client_secret: string,
     ct_region: string
   ) => {
-    const { serviceUrl } = useServiceUrlFetcher();
     if (!serviceUrl) {
       throw new Error('Service URL is not available');
     }
@@ -99,7 +99,7 @@ export const useConnectProject: TUseConnectProject = () => {
         {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'text/plain',
           },
         }
       );
@@ -108,7 +108,7 @@ export const useConnectProject: TUseConnectProject = () => {
         throw new Error(`Failed to connect project: ${response.statusText}`);
       }
 
-      return await response.json();
+      return await response.text();
     } finally {
       setLoading(false);
     }
