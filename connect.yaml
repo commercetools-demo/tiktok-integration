@@ -15,6 +15,8 @@ deployAs:
   - name: service
     applicationType: service
     endpoint: /service
+    scripts:
+      postDeploy: yarn install && yarn run build && yarn run connector:post-deploy
     configuration:
       standardConfiguration:
         - key: FEATURE_FLAG_ENABLE_TEST_TIKTOK_ROUTES
