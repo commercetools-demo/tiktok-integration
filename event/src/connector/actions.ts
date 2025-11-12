@@ -14,7 +14,25 @@ export async function announcePubsubTopic(
   topicName: string,
   projectId: string
 ): Promise<void> {
-  await RouterService.publishWebhook(projectKey, topicName, projectId);
+  const maxRetries = 5;
+  let lastError: Error | undefined;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await RouterService.publishWebhook(projectKey, topicName, projectId);
+      return; // Success, exit the function
+    } catch (error) {
+      lastError = error as Error;
+      if (attempt < maxRetries) {
+        await new Promise((resolve) => setTimeout(resolve, 30 * 1000));
+      }
+    }
+  }
+
+  // If we've exhausted all retries, throw the last error
+  throw new Error(
+    `Failed to publish webhook after ${maxRetries} attempts: ${lastError?.message}`
+  );
 }
 
 export async function createGcpPubSubCustomerCreateSubscription(
@@ -56,27 +74,27 @@ async function createSubscription(
           {
             resourceTypeId: 'product',
             types: [
-              'productCreated',
-              'ProductPublished',
+              'ProductCreated',
               'ProductUnpublished',
               'ProductDeleted',
+              'ProductPublished',
             ],
           },
           {
             resourceTypeId: 'inventory-entry',
             types: [
               'InventoryEntryCreated',
-              'inventoryEntryQuantitySet',
-              'inventoryEntryDeleted',
+              'InventoryEntryDeleted',
+              'InventoryEntryQuantitySet',
             ],
           },
           {
             resourceTypeId: 'product-tailoring',
             types: [
-              'ProductTailoringCreated',
-              'ProductTailoringDeleted',
-              'ProductTailoringPublished',
               'ProductTailoringUnpublished',
+              'ProductTailoringCreated',
+              'ProductTailoringPublished',
+              'ProductTailoringDeleted',
             ],
           },
         ],
