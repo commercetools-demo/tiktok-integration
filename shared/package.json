@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@commercetools-backend/loggers": "22.3.0",
+    "@commercetools-backend/loggers": "24.9.0",
     "rimraf": "^5.0.1"
   },
   "devDependencies": {
