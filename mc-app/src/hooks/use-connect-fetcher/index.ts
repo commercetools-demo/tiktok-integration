@@ -22,65 +22,42 @@ const createFetcher = (serviceUrl: string | undefined): FetcherMethods => {
     options: RequestInit = {}
   ): Promise<T> => {
     try {
-      // For external API calls, we use the commercetools pattern with forwardToConfig
-      if (process.env.NODE_ENV === 'development') {
-        // In development, call the service directly
-        const response = await fetch(`${serviceUrl}/${endpoint}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            ...options.headers,
-          },
-          ...options,
-        });
+      // In production, use the commercetools proxy pattern
+      const requestConfig: any = {
+        userAgent,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.headers || {}),
+        } as Record<string, string>,
+        forwardToConfig: {
+          uri: `${serviceUrl}${endpoint}`,
+        },
+      };
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({
-            success: false,
-            error: 'Network error',
-            details: `HTTP ${response.status} ${response.statusText}`,
-          }));
-          throw errorData;
-        }
-
-        return await response.json();
-      } else {
-        // In production, use the commercetools proxy pattern
-        const requestConfig: any = {
-          userAgent,
-          headers: {
-            'Content-Type': 'application/json',
-            ...(options.headers || {}),
-          } as Record<string, string>,
-          forwardToConfig: {
-            uri: `${serviceUrl}${endpoint}`,
-          },
-        };
-
-        if (options.body) {
-          requestConfig.body = options.body;
-        }
-
-        if (options.method) {
-          requestConfig.method = options.method;
-        }
-
-        const data = await executeHttpClientRequest(
-          async (requestOptions: any) => {
-            const res = await fetch(
-              buildApiUrl('/proxy/forward-to'),
-              requestOptions
-            );
-            const responseData = await res.json();
-            return {
-              data: responseData,
-              statusCode: res.status,
-              getHeader: (key: string) => res.headers.get(key),
-            };
-          },
-          requestConfig
-        );
-        return data as T;
+      if (options.body) {
+        requestConfig.body = options.body;
       }
+
+      if (options.method) {
+        requestConfig.method = options.method;
+      }
+
+      const data = await executeHttpClientRequest(
+        async (requestOptions: any) => {
+          const res = await fetch(
+            buildApiUrl('/proxy/forward-to'),
+            requestOptions
+          );
+          const responseData = await res.json();
+          return {
+            data: responseData,
+            statusCode: res.status,
+            getHeader: (key: string) => res.headers.get(key),
+          };
+        },
+        requestConfig
+      );
+      return data as T;
     } catch (error) {
       if (error && typeof error === 'object' && 'success' in error) {
         throw error;
