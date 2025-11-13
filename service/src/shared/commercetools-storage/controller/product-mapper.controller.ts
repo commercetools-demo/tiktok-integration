@@ -17,9 +17,8 @@ import {
   StoredTikTokProductAttributeMapper,
 } from '../../interfaces';
 import {
-  createOrUpdateCustomObject,
-  readCustomObject,
-} from '../../commercetools/controllers/custom-object.controller';
+  CustomObjectController
+} from 'common-tiktok';
 import { logger } from '../../utils/logger';
 
 /**
@@ -161,7 +160,7 @@ export const getProductTypeToCategoryMap = async (
   apiRoot: ByProjectKeyRequestBuilder
 ): Promise<ProductTypeToCategoryMap> => {
   try {
-    const map = await readCustomObject<ProductTypeToCategoryMap>(
+    const map = await CustomObjectController.readCustomObject<ProductTypeToCategoryMap>(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
       SHARED_SHOP_PRODUCT_TYPE_TO_CATEGORY_KEY
@@ -181,7 +180,7 @@ export const saveProductTypeToCategoryMap = async (
   map: ProductTypeToCategoryMap
 ): Promise<void> => {
   try {
-    await createOrUpdateCustomObject(
+    await CustomObjectController.createOrUpdateCustomObject(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
       SHARED_SHOP_PRODUCT_TYPE_TO_CATEGORY_KEY,
@@ -201,7 +200,7 @@ export const getProductTypeToSkuAttributeMap = async (
   apiRoot: ByProjectKeyRequestBuilder
 ): Promise<ProductTypeToSkuAttributeMap> => {
   try {
-    const storedMap = await readCustomObject<StoredProductTypeToSkuAttributeMap>(
+    const storedMap = await CustomObjectController.readCustomObject<StoredProductTypeToSkuAttributeMap>(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
       SHARED_SHOP_PRODUCT_TYPE_TO_SKU_ATTRIBUTE_KEY
@@ -240,7 +239,7 @@ export const saveProductTypeToSkuAttributeMap = async (
       );
     }
 
-    await createOrUpdateCustomObject(
+    await CustomObjectController.createOrUpdateCustomObject(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
       SHARED_SHOP_PRODUCT_TYPE_TO_SKU_ATTRIBUTE_KEY,
@@ -261,7 +260,7 @@ export const getProductTypeToProductAttributeMap = async (
 ): Promise<ProductTypeToProductAttributeMap> => {
   try {
     const storedMap =
-      await readCustomObject<StoredProductTypeToProductAttributeMap>(
+      await CustomObjectController.readCustomObject<StoredProductTypeToProductAttributeMap>(
         apiRoot,
         SHARED_SHOP_CONTAINER_KEY,
         SHARED_SHOP_PRODUCT_TYPE_TO_PRODUCT_ATTRIBUTE_KEY
@@ -302,7 +301,7 @@ export const saveProductTypeToProductAttributeMap = async (
       );
     }
 
-    await createOrUpdateCustomObject(
+    await CustomObjectController. createOrUpdateCustomObject(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
       SHARED_SHOP_PRODUCT_TYPE_TO_PRODUCT_ATTRIBUTE_KEY,

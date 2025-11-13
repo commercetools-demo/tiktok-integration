@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { CommercetoolsClient, CommercetoolsStorage, Utils } from '../shared';
+import { CommercetoolsClient } from 'common-tiktok';
+import { CommercetoolsStorage, Utils } from '../shared';
 import { assertError, assertString } from '../utils/assert.utils';
 const CONNECT_APPLICATION_URL_KEY = 'CONNECT_SERVICE_URL';
 

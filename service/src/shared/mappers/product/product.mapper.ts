@@ -42,11 +42,11 @@ import {
   USE_NO_CHANNEL_FOR_MAIN_PRICE,
 } from './product-contants';
 import {
-  ShopConfigurationData,
   ProductTypeToCategoryMap,
   ProductTypeToSkuAttributeMap,
   ProductTypeToProductAttributeMap,
 } from '../../interfaces';
+import { Types as SharedTypes } from 'common-tiktok';
 
 // Cache for mapper data to avoid repeated custom object reads
 let categoryMapCache: ProductTypeToCategoryMap | null = null;
@@ -279,7 +279,7 @@ const commercetoolsVariantToTiktokSKU = async (
   apiRoot: ByProjectKeyRequestBuilder,
   productTypeId: string,
   variant: ProductVariant,
-  shopConfig: ShopConfigurationData,
+  shopConfig: SharedTypes.ShopConfigurationData,
   locale: string
 ): Promise<Product202309CreateProductRequestBodySkus | undefined> => {
   const listPrice = commercetoolsVariantToListPrice(
@@ -322,7 +322,7 @@ const commercetoolsProductTypeToTiktokCategory = async (
 
 const commercetoolsVariantToTiktokSKUInventory = (
   variant: ProductVariant,
-  shopConfig: ShopConfigurationData
+  shopConfig: SharedTypes.ShopConfigurationData
 ): Product202309CreateProductRequestBodySkusInventory[] => {
   let quantity = undefined;
   const inventory = Object.keys(variant.availability?.channels ?? {}).find(
@@ -372,7 +372,7 @@ export const commercetoolsPriceToTiktokPrice = (
 
 export const commercetoolsVariantToPrice = (
   variant: ProductVariant,
-  shopConfig: ShopConfigurationData
+  shopConfig: SharedTypes.ShopConfigurationData
 ): Product202309CreateProductRequestBodySkusPrice | undefined => {
   if (!shopConfig || !shopConfig.shop_region) {
     return undefined;

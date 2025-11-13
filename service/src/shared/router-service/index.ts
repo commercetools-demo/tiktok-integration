@@ -6,7 +6,7 @@ import type {
   Product202309GetCategoryRulesResponse
 } from '../interfaces/tiktok/models';
 import { logger } from '../utils/logger';
-import { createApiRoot } from '../commercetools/client/create.client';
+import { CommercetoolsClient } from 'common-tiktok';
 import { readConfiguration } from '../utils/config.utils';
 import { getJwtToken } from '../commercetools-storage/controller/token.controller';
 
@@ -44,7 +44,7 @@ const getRouterServiceUrl = (): string => {
 const getAuthToken = async (): Promise<string> => {
   try {
     const config = readConfiguration();
-    const apiRoot = createApiRoot(config);
+    const apiRoot = CommercetoolsClient.createApiRoot(config);
     const token = await getJwtToken(apiRoot);
 
     if (!token) {

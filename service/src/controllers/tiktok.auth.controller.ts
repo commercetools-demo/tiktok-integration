@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
 import {
-  ChannelController,
-  CommercetoolsClient,
   CommercetoolsStorage,
   RouterService,
-  StoreController,
   Utils,
 } from '../shared';
+import { CommercetoolsClient, ChannelController, StoreController } from 'common-tiktok';
 import { logger } from '../utils/logger.utils';
 
 export const connectProject = async (req: Request, res: Response) => {

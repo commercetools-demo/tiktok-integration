@@ -1,12 +1,11 @@
 import { Request, Response } from 'express';
 import {
-  CommercetoolsClient,
   CommercetoolsStorage,
   Mappers,
-  ProductController,
   RouterService,
   Utils,
 } from '../shared';
+import { CommercetoolsClient, ProductController } from 'common-tiktok';
 import { logger } from '../utils/logger.utils';
 
 export const fullProductSync = async (req: Request, res: Response) => {

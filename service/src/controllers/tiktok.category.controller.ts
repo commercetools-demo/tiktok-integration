@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { logger } from '../utils/logger.utils';
-import { CommercetoolsClient, CommercetoolsStorage, RouterService, Utils } from '../shared';
+import { CommercetoolsClient } from 'common-tiktok';
+import { CommercetoolsStorage, RouterService, Utils } from '../shared';
 
 export const getCategories = async (req: Request, res: Response) => {
   const {

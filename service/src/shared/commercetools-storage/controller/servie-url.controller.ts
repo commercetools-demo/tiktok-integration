@@ -3,7 +3,7 @@ import {
   SHARED_SHOP_CONTAINER_KEY,
   SHARED_SHOP_SERVICE_URL_VARIABLE_KEY,
 } from '../../constants';
-import { readCustomObject } from '../../commercetools/controllers/custom-object.controller';
+import { CustomObjectController } from 'common-tiktok';
 
 export async function createServiceURLStorageLink(
   apiRoot: ByProjectKeyRequestBuilder,
@@ -28,7 +28,7 @@ export async function getServiceURLStorageLink(
   if (isDevelopment) {
     return 'localhost:8080/service';
   }
-  const response = await readCustomObject<string | null>(
+  const response = await CustomObjectController.readCustomObject<string | null>(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
     SHARED_SHOP_SERVICE_URL_VARIABLE_KEY,

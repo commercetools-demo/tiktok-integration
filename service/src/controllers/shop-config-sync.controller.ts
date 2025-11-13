@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { CommercetoolsClient, CommercetoolsStorage, Utils } from '../shared';
+import { CommercetoolsClient } from 'common-tiktok';
+import { CommercetoolsStorage, Utils } from '../shared';
 import CustomError from '../errors/custom.error';
 
 export const shopConfigSync = async (req: Request, res: Response) => {

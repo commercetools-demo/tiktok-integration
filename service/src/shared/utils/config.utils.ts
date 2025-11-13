@@ -1,4 +1,4 @@
-import type { Config } from '../interfaces/config.interface';
+import type { Types as SharedTypes } from 'common-tiktok';
 
 /**
  * Read the configuration env vars
@@ -6,7 +6,7 @@ import type { Config } from '../interfaces/config.interface';
  *
  * @returns The configuration with the correct env vars
  */
-export const readConfiguration = (): Config => {
+export const readConfiguration = (): SharedTypes.Config => {
   const envVars = {
     clientId: process.env.CTP_CLIENT_ID as string,
     clientSecret: process.env.CTP_CLIENT_SECRET as string,

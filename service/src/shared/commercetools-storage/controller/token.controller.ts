@@ -1,9 +1,8 @@
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import { SHARED_SHOP_CONTAINER_KEY } from '../../constants';
 import {
-  createOrUpdateCustomObject,
-  readCustomObject,
-} from '../../commercetools/controllers/custom-object.controller';
+  CustomObjectController
+} from 'common-tiktok';
 import { getAccessTokenVariableKey, getJwtTokenVariableKey } from '../../utils';
 import { AccessTokenData, JwtTokenData } from '../../interfaces';
 import { TokenResponse } from '../../interfaces';
@@ -30,7 +29,7 @@ export const storeAccessToken = async (
   };
 
   // Store access token
-  await createOrUpdateCustomObject(
+  await CustomObjectController.createOrUpdateCustomObject(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
     getAccessTokenVariableKey(),
@@ -46,7 +45,7 @@ export const storeAccessToken = async (
 export const getAccessToken = async (
   apiRoot: ByProjectKeyRequestBuilder,
 ): Promise<string | null> => {
-  const tokenData = await readCustomObject<AccessTokenData>(
+  const tokenData = await CustomObjectController.readCustomObject<AccessTokenData>(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
     getAccessTokenVariableKey(),
@@ -71,7 +70,7 @@ export const getTokensNeedingRefresh = async (
     const now = Math.floor(Date.now() / 1000);
     const expiringIn24Hours = now + 86400; // 24 hours from now
 
-    const tokenData = await readCustomObject<AccessTokenData>(
+    const tokenData = await CustomObjectController.readCustomObject<AccessTokenData>(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
       getAccessTokenVariableKey(),
@@ -106,7 +105,7 @@ export const updateRefreshedToken = async (
   newTokenData: TokenResponse,
 ): Promise<void> => {
   // Get existing token data to preserve metadata
-  const existingData = await readCustomObject<AccessTokenData>(
+  const existingData = await CustomObjectController.readCustomObject<AccessTokenData>(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
     getAccessTokenVariableKey(),
@@ -122,7 +121,7 @@ export const updateRefreshedToken = async (
     created_at: existingData?.created_at || now,
   };
 
-  await createOrUpdateCustomObject(
+  await CustomObjectController.createOrUpdateCustomObject(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
     getAccessTokenVariableKey(),
@@ -150,7 +149,7 @@ export const storeJwtToken = async (
     updated_at: now,
   };
 
-  await createOrUpdateCustomObject(
+  await CustomObjectController.createOrUpdateCustomObject(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
     getJwtTokenVariableKey(),
@@ -169,7 +168,7 @@ export const getJwtToken = async (
   apiRoot: ByProjectKeyRequestBuilder,
 ): Promise<string | null> => {
   try {
-    const tokenData = await readCustomObject<JwtTokenData>(
+    const tokenData = await CustomObjectController.readCustomObject<JwtTokenData>(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
       getJwtTokenVariableKey(),
@@ -206,7 +205,7 @@ export const getJwtTokenNeedingRefresh = async (
     const now = Math.floor(Date.now() / 1000);
     const expiringIn24Hours = now + 86400; // 24 hours from now
 
-    const tokenData = await readCustomObject<JwtTokenData>(
+    const tokenData = await CustomObjectController.readCustomObject<JwtTokenData>(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
       getJwtTokenVariableKey(),

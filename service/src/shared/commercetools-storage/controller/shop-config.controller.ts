@@ -1,23 +1,22 @@
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import { SHARED_SHOP_CONTAINER_KEY } from '../../constants';
-import { ShopConfigurationData } from '../../interfaces';
+import { Types as SharedTypes } from 'common-tiktok';
 import { getConfigurationVariableKey } from '../../utils';
 import {
-  createOrUpdateCustomObject,
-  readCustomObject,
-} from '../../commercetools/controllers/custom-object.controller';
+  CustomObjectController,
+} from 'common-tiktok';
 import { logger } from '../../utils/logger';
 
 export const storeShopConfiguration = async (
   apiRoot: ByProjectKeyRequestBuilder,
-  data: ShopConfigurationData,
+  data: SharedTypes.ShopConfigurationData,
 ): Promise<void> => {
-  let configData: ShopConfigurationData =
-    (await readCustomObject<ShopConfigurationData>(
+  let configData: SharedTypes.ShopConfigurationData =
+    (await CustomObjectController.readCustomObject<SharedTypes.ShopConfigurationData>(
       apiRoot,
       SHARED_SHOP_CONTAINER_KEY,
       getConfigurationVariableKey(),
-    )) || ({} as ShopConfigurationData);
+    )) || ({} as SharedTypes.ShopConfigurationData);
 
   logger.info('Config data: ${configData}', { configData });
 
@@ -39,7 +38,7 @@ export const storeShopConfiguration = async (
 
   logger.info('Config data to store: ${configData}', { configData });
 
-  await createOrUpdateCustomObject(
+  await CustomObjectController.createOrUpdateCustomObject(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
     getConfigurationVariableKey(),
@@ -49,8 +48,8 @@ export const storeShopConfiguration = async (
 
 export const getShopConfiguration = async (
   apiRoot: ByProjectKeyRequestBuilder,
-): Promise<ShopConfigurationData | null> => {
-  return readCustomObject<ShopConfigurationData>(
+): Promise<SharedTypes.ShopConfigurationData | null> => {
+  return CustomObjectController.readCustomObject<SharedTypes.ShopConfigurationData>(
     apiRoot,
     SHARED_SHOP_CONTAINER_KEY,
     getConfigurationVariableKey(),
