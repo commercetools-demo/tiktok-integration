@@ -1540,7 +1540,7 @@ combined-stream@^1.0.8, combined-stream@~1.0.6:
   dependencies:
     delayed-stream "~1.0.0"
 
-"common-tiktok@link:../shared":
+"common-connect@link:../shared":
   version "0.0.0"
   uid ""
 
