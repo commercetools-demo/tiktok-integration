@@ -1,0 +1,28 @@
+{
+  "name": "common-tiktok",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "rimraf ./build && tsc",
+    "watch": "rimraf ./build && tsc --watch",
+    "lint": "eslint . --ext .ts",
+    "test": "echo 'No tests for now'",
+    "prettier": "prettier --write '**/*.{js,ts}'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@commercetools-backend/loggers": "^24.9.0",
+    "@commercetools/platform-sdk": "^8.18.0",
+    "@commercetools/sdk-client-v2": "^3.0.0",
+    "rimraf": "^5.0.1"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.11",
+    "jest": "^29.5.0",
+    "typescript": "^5.1.3"
+  }
+}
