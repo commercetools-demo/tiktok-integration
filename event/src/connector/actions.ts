@@ -6,8 +6,8 @@ import {
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import { RouterService } from '../shared';
 
-const CUSTOMER_CREATE_SUBSCRIPTION_KEY =
-  'myconnector-customerCreateSubscription';
+const TIKTOK_CONNECTOR_SUBSCRIPTION_KEY =
+  'tiktok-connector-subscription';
 
 export async function announcePubsubTopic(
   projectKey: string,
@@ -68,7 +68,7 @@ async function createSubscription(
     .subscriptions()
     .post({
       body: {
-        key: CUSTOMER_CREATE_SUBSCRIPTION_KEY,
+        key: TIKTOK_CONNECTOR_SUBSCRIPTION_KEY,
         destination,
         messages: [
           {
@@ -112,7 +112,7 @@ export async function deleteCustomerCreateSubscription(
     .subscriptions()
     .get({
       queryArgs: {
-        where: `key = "${CUSTOMER_CREATE_SUBSCRIPTION_KEY}"`,
+        where: `key = "${TIKTOK_CONNECTOR_SUBSCRIPTION_KEY}"`,
       },
     })
     .execute();
@@ -122,7 +122,7 @@ export async function deleteCustomerCreateSubscription(
 
     await apiRoot
       .subscriptions()
-      .withKey({ key: CUSTOMER_CREATE_SUBSCRIPTION_KEY })
+      .withKey({ key: TIKTOK_CONNECTOR_SUBSCRIPTION_KEY })
       .delete({
         queryArgs: {
           version: subscription.version,
