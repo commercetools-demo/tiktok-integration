@@ -47,7 +47,7 @@ A scheduled job (runs every 12 hours) that:
 ### Prerequisites
 
 1. **TikTok Authorization URL**: Obtain this from the commercetools partner account and send it to the TikTok Shop owner
-2. **Router Service**: Must be deployed, configured, and installed
+2. **Router Service**: Must be deployed, configured, and installed (Deployed in the same gcp project)
 3. **Commercetools Project**: An active commercetools Composable Commerce project
 4. **Terraform**: For provisioning custom types in commercetools
 
