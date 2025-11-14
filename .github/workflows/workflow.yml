@@ -43,7 +43,7 @@ jobs:
           LATEST_TAG=${{ github.ref_name }}
           # Replace invalid characters (dots, slashes, etc.) with hyphens
           CLEAN_TAG=$(echo "$LATEST_TAG" | sed 's/[^a-zA-Z0-9_-]/-/g')
-          DEPLOYMENT_KEY="admintools-$CLEAN_TAG"
+          DEPLOYMENT_KEY="tiktok-integration-$CLEAN_TAG"
           echo "key=$DEPLOYMENT_KEY" >> $GITHUB_OUTPUT
           echo "Generated deployment key: $DEPLOYMENT_KEY"
             
