@@ -76,12 +76,26 @@ type TUseConnectProject = () => {
     ct_client_secret: string,
     ct_region: string
   ) => Promise<string>;
+  getAuthorizationLink: () => Promise<string>;
   loading: boolean;
 };
 
 export const useConnectProject: TUseConnectProject = () => {
   const [loading, setLoading] = useState(false);
   const { serviceUrl } = useServiceUrlFetcher();
+
+  const getAuthorizationLink = async () => {
+    if (!serviceUrl) {
+      throw new Error('Service URL is not available');
+    }
+    const response = await fetch(`${serviceUrl}/authorization-link`, {
+      method: 'GET',
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to get authorization link: ${response.statusText}`);
+    }
+    return await response.text();
+  };
 
   const connectProject = async (
     token: string,
@@ -116,6 +130,7 @@ export const useConnectProject: TUseConnectProject = () => {
 
   return {
     connectProject,
+    getAuthorizationLink,
     loading,
   };
 };

@@ -7,6 +7,7 @@ import {
   selectiveProductSync,
 } from '../controllers/product-sync.controller';
 import { shopConfigSync } from '../controllers/shop-config-sync.controller';
+import { getAuthorizationLink } from '../shared/router-service';
 
 const serviceRouter = Router();
 
@@ -43,6 +44,16 @@ serviceRouter.get('/shop-config-sync', async (req, res) => {
     logger.error('Error full syncing', error);
     return res.status(500).send(error.message);
   });
+});
+
+serviceRouter.get('/authorization-link', async (req, res) => {
+  try {
+    const authorizationLink = await getAuthorizationLink();
+    return res.status(200).send(authorizationLink);
+  } catch (error) {
+    logger.error('Error getting authorization link', error);
+    return res.status(500).send((error as Error).message);
+  }
 });
 
 export default serviceRouter;

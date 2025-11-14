@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import Spacings from '@commercetools-uikit/spacings';
 import Welcome from './components/welcome';
-import ConnectProject from './components/connect-project';
 import ConfigWizard from './components/config-wizard';
 import MappersList from './components/mappers/mappers-list';
 import AttributeMappersList from './components/mappers/attribute-mappers-list';
@@ -16,7 +15,7 @@ type ApplicationRoutesProps = {
 
 const RoutesContent = () => {
   const match = useRouteMatch();
-  const { showConfigWizard, showConnectProject } = useServiceUrl();
+  const { showConfigWizard } = useServiceUrl();
 
   /**
    * When using routes, there is a good chance that you might want to
@@ -44,15 +43,7 @@ const RoutesContent = () => {
         <Route path={`${match.path}/mappers`} exact>
           <MappersList />
         </Route>
-        <Route>
-          {showConfigWizard ? (
-            <ConfigWizard />
-          ) : showConnectProject ? (
-            <ConnectProject />
-          ) : (
-            <Welcome />
-          )}
-        </Route>
+        <Route>{showConfigWizard ? <ConfigWizard /> : <Welcome />}</Route>
       </Switch>
     </Spacings.Inset>
   );

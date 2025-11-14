@@ -16,8 +16,14 @@ import {
   useChannelsFetcher,
   useChannelCustomUpdater,
 } from '../../hooks/use-channels-connector';
+import { useShowNotification } from '@commercetools-frontend/actions-global';
+import {
+  DOMAINS,
+  NOTIFICATION_KINDS_SIDE,
+} from '@commercetools-frontend/constants';
 
-const ConfigWizard = () => {
+const StoreConfigWizard = () => {
+  const showNotification = useShowNotification();
   const { dataLocale } = useApplicationContext((context) => ({
     dataLocale: context.dataLocale,
   }));
@@ -32,8 +38,8 @@ const ConfigWizard = () => {
   const [selectedStoreId, setSelectedStoreId] = useState<string>(
     mcTiktokStore || ''
   );
-  const [error, setError] = useState<string>('');
-  const [success, setSuccess] = useState<boolean>(false);
+  // const [error, setError] = useState<string>('');
+  // const [success, setSuccess] = useState<boolean>(false);
 
   // Check if the selection has changed from the original
 
@@ -69,12 +75,13 @@ const ConfigWizard = () => {
 
   const handleSubmit = async () => {
     if (!selectedStoreId || !selectedStore) {
-      setError('Please select a store');
+      showNotification({
+        kind: NOTIFICATION_KINDS_SIDE.error,
+        domain: DOMAINS.SIDE,
+        text: 'Please select a store',
+      });
       return;
     }
-
-    setError('');
-    setSuccess(false);
 
     try {
       // Update store custom field
@@ -113,15 +120,22 @@ const ConfigWizard = () => {
         });
       }
 
-      setSuccess(true);
+      showNotification({
+        kind: NOTIFICATION_KINDS_SIDE.success,
+        domain: DOMAINS.SIDE,
+        text: 'Configuration updated successfully! Reloading...',
+      });
       // Reload the page after a short delay to reflect changes
       setTimeout(() => {
         window.location.reload();
       }, 1500);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to update configuration'
-      );
+      showNotification({
+        kind: NOTIFICATION_KINDS_SIDE.error,
+        domain: DOMAINS.SIDE,
+        text:
+          err instanceof Error ? err.message : 'Failed to update configuration',
+      });
     }
   };
 
@@ -154,9 +168,7 @@ const ConfigWizard = () => {
               value={selectedStoreId}
               options={storeOptions}
               onChange={(event) => {
-                setSelectedStoreId(event.target.value as string || '');
-                setSuccess(false);
-                setError('');
+                setSelectedStoreId((event.target.value as string) || '');
               }}
               isRequired
               isDisabled={isSubmitting}
@@ -214,31 +226,19 @@ const ConfigWizard = () => {
           </Spacings.Stack>
         </Card>
 
-        {error && (
-          <Card theme="light" type="flat">
-            <Text.Body tone="critical">{error}</Text.Body>
-          </Card>
-        )}
-
-        {success && (
-          <Card theme="light" type="flat">
-            <Text.Body tone="positive">
-              Configuration updated successfully! Reloading...
-            </Text.Body>
-          </Card>
-        )}
-
-        <PrimaryButton
-          label="Submit"
-          onClick={handleSubmit}
-          isDisabled={isSubmitting || !selectedStoreId}
-          iconRight={isSubmitting ? <LoadingSpinner /> : undefined}
-        />
+        <Spacings.Inline scale="m">
+          <PrimaryButton
+            label="Submit"
+            onClick={handleSubmit}
+            isDisabled={isSubmitting || !selectedStoreId}
+            iconRight={isSubmitting ? <LoadingSpinner /> : undefined}
+          />
+        </Spacings.Inline>
       </Spacings.Stack>
     </Constraints.Horizontal>
   );
 };
 
-ConfigWizard.displayName = 'ConfigWizard';
+StoreConfigWizard.displayName = 'StoreConfigWizard';
 
-export default ConfigWizard;
+export default StoreConfigWizard;

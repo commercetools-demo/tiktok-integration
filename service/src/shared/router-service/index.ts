@@ -117,6 +117,37 @@ export const authorizeProject = async (
 
 
 /**
+ * Authorize a project with the router service
+ * @param shop_doc_id - The shop document ID from Firestore
+ * @param service_url - The service URL for callbacks
+ * @returns The authorization response data
+ */
+export const getAuthorizationLink = async (
+): Promise<string> => {
+  const url = getRouterServiceUrl();
+
+  const response = await fetch(`${url}/authorization-link`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    logger.error('Failed to get authorization link with router service', { error });
+    throw new Error(`Router service get authorization link failed: ${error}`);
+  }
+
+  const data: string = await response.text();
+
+  logger.info('Authorization link retrieved successfully with router service');
+
+  return data;
+};
+
+
+/**
  * Create a product via router service
  * @param access_token - The TikTok access token
  * @param shop_cipher - The TikTok shop cipher

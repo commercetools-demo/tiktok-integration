@@ -40,7 +40,7 @@ export const refreshAccessToken = async (
   logger.info('Refreshing access token via router service');
 
   const response = await fetch(
-    `${url}/tiktok/refresh-access-token?refresh_token=${encodeURIComponent(refresh_token)}`,
+    `${url}/refresh-access-token?refresh_token=${encodeURIComponent(refresh_token)}`,
     {
       method: 'GET',
       headers: {

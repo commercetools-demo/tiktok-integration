@@ -13,16 +13,17 @@ import {
 } from '../hooks/use-tiktok-config';
 import { useStoresFetcher } from '../hooks/use-stores-connector';
 import { useChannelsFetcher } from '../hooks/use-channels-connector';
+import { TChannel } from '../types/generated/ctp';
 
 type ServiceUrlContextValue = {
   serviceUrl?: string;
   configuration?: TTikTokConfiguration;
   connectionNotInitialized: boolean;
   mcTiktokStore?: string;
-  mcDistributionTiktokChannel?: string;
-  mcSupplyTiktokChannel?: string;
+  mcDistributionTiktokChannel?: TChannel;
+  mcSupplyTiktokChannel?: TChannel;
+  storedTiktokWarehouseId?: string;
   showConfigWizard: boolean;
-  showConnectProject: boolean;
   loading: boolean;
   error?: ApolloError;
 };
@@ -49,12 +50,14 @@ export const ServiceUrlProvider = ({ children }: ServiceUrlProviderProps) => {
     useState(false);
   const [mcTiktokStore, setMcTiktokStore] = useState<string | undefined>();
   const [mcDistributionTiktokChannel, setMcDistributionTiktokChannel] =
-    useState<string | undefined>();
+    useState<TChannel | undefined>();
   const [mcSupplyTiktokChannel, setMcSupplyTiktokChannel] = useState<
+    TChannel | undefined
+  >();
+  const [storedTiktokWarehouseId, setStoredTiktokWarehouseId] = useState<
     string | undefined
   >();
   const [showConfigWizard, setShowConfigWizard] = useState(false);
-  const [showConnectProject, setShowConnectProject] = useState(false);
 
   // Helper function to get custom field value
   const getCustomFieldValue = (
@@ -71,14 +74,6 @@ export const ServiceUrlProvider = ({ children }: ServiceUrlProviderProps) => {
       return field.value;
     }
   };
-
-  useEffect(() => {
-    if (!configuration?.isInitialized) {
-      setShowConnectProject(true);
-    } else {
-      setShowConnectProject(false);
-    }
-  }, [configuration]);
 
   useEffect(() => {
     // Check if configuration is not initialized
@@ -122,7 +117,7 @@ export const ServiceUrlProvider = ({ children }: ServiceUrlProviderProps) => {
               return isTikTokChannel === true;
             });
             if (distributionChannel) {
-              setMcDistributionTiktokChannel(distributionChannel.id);
+              setMcDistributionTiktokChannel(distributionChannel as TChannel);
             }
           }
 
@@ -138,7 +133,13 @@ export const ServiceUrlProvider = ({ children }: ServiceUrlProviderProps) => {
               return isTikTokChannel === true;
             });
             if (supplyChannel) {
-              setMcSupplyTiktokChannel(supplyChannel.id);
+              setMcSupplyTiktokChannel(supplyChannel as TChannel);
+              const warehouseId = supplyChannel.custom?.customFieldsRaw?.find(
+                (field) => field.name === 'warehouseId'
+              )?.value;
+              if (warehouseId) {
+                setStoredTiktokWarehouseId(warehouseId);
+              }
             }
           }
         }
@@ -147,7 +148,11 @@ export const ServiceUrlProvider = ({ children }: ServiceUrlProviderProps) => {
 
     // Determine if config wizard should be shown
     setShowConfigWizard(
-      !mcTiktokStore || !mcDistributionTiktokChannel || !mcSupplyTiktokChannel
+      !mcTiktokStore ||
+        !mcDistributionTiktokChannel ||
+        !mcSupplyTiktokChannel ||
+        !configuration?.isInitialized ||
+        !storedTiktokWarehouseId
     );
   }, [
     configuration,
@@ -170,8 +175,8 @@ export const ServiceUrlProvider = ({ children }: ServiceUrlProviderProps) => {
         mcTiktokStore,
         mcDistributionTiktokChannel,
         mcSupplyTiktokChannel,
+        storedTiktokWarehouseId,
         showConfigWizard,
-        showConnectProject,
         loading,
         error: serviceUrlError,
       }}

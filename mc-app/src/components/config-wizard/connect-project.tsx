@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApplicationContext } from '@commercetools-frontend/application-shell-connectors';
 import Constraints from '@commercetools-uikit/constraints';
 import Spacings from '@commercetools-uikit/spacings';
@@ -18,9 +18,9 @@ const ConnectProject = () => {
     environment: context.environment,
   }));
   const { serviceUrl } = useServiceUrl();
-  const { connectProject, loading } = useConnectProject();
+  const { connectProject, getAuthorizationLink, loading } = useConnectProject();
   const { createApiClient, loading: creatingApiClient } = useCreateApiClient(project?.key || '');
-  
+  const [authorizationLink, setAuthorizationLink] = useState<string>('');
   const [token, setToken] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<boolean>(false);
@@ -72,11 +72,34 @@ const ConnectProject = () => {
     }
   };
 
+  useEffect(() => {
+    getAuthorizationLink().then((link) => {
+      setAuthorizationLink(link);
+    }).catch((err) => {
+      setError(err instanceof Error ? err.message : 'Failed to get authorization link');
+    });
+  }, []);
+
   return (
     <Constraints.Horizontal max={16}>
       <Spacings.Stack scale="xl">
-        <Text.Headline as="h1">Connect Project</Text.Headline>
+        <Text.Headline as="h1">Configuration Wizard</Text.Headline>
+        <Text.Body>
+          Connect your project to your TikTok account.
+        </Text.Body>
 
+        {authorizationLink && (
+          <Card theme="light" type="raised">
+            <Spacings.Stack scale="m">
+              <Text.Subheadline as="h4">Use this link to authorize your project</Text.Subheadline>
+              <Text.Body>
+                <a href={authorizationLink} target="_blank" rel="noopener noreferrer">
+                  {authorizationLink}
+                </a>
+              </Text.Body>
+            </Spacings.Stack>
+          </Card>
+        )}
         <Card theme="light" type="raised">
           <Spacings.Stack scale="m">
             <TextField
