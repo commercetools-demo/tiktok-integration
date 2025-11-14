@@ -33,7 +33,6 @@ type TUseServiceUrlFetcher = () => {
 };
 
 export const useServiceUrlFetcher: TUseServiceUrlFetcher = () => {
-  const isDevelopment = process.env.NODE_ENV === 'development';
   const { data, error, loading } = useMcQuery<
     TFetchServiceUrlQuery,
     TFetchServiceUrlQueryVariables
@@ -49,6 +48,7 @@ export const useServiceUrlFetcher: TUseServiceUrlFetcher = () => {
 
   // Parse the value from the custom object
   let serviceUrl: string | undefined;
+
   if (data?.customObject?.value) {
     try {
       // The value in custom objects is stored as a JSON string
@@ -58,8 +58,6 @@ export const useServiceUrlFetcher: TUseServiceUrlFetcher = () => {
       // If parsing fails, use the value directly
       serviceUrl = data.customObject.value;
     }
-  } else if (isDevelopment) {
-    serviceUrl = 'http://localhost:8080/service';
   }
 
   return {
@@ -77,6 +75,11 @@ type TUseConnectProject = () => {
     ct_region: string
   ) => Promise<string>;
   getAuthorizationLink: () => Promise<string>;
+  fullProductCheck: () => Promise<{
+    importableProducts: string[];
+    unimportableProducts: { id: string; error: string }[];
+  }>;
+  selectiveProductSync: (productIds: string[]) => Promise<string>;
   loading: boolean;
 };
 
@@ -128,9 +131,55 @@ export const useConnectProject: TUseConnectProject = () => {
     }
   };
 
+  const fullProductCheck = async () => {
+    if (!serviceUrl) {
+      throw new Error('Service URL is not available');
+    }
+    setLoading(true);
+    try {
+      const response = await fetch(`${serviceUrl}/full-product-check`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to check products: ${response.statusText}`);
+      }
+
+      return await response.json();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const selectiveProductSync = async (productIds: string[]) => {
+    if (!serviceUrl) {
+      throw new Error('Service URL is not available');
+    }
+    setLoading(true);
+    try {
+      const response = await fetch(`${serviceUrl}/selective-product-sync`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productIds }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to sync products: ${response.statusText}`);
+      }
+
+      return await response.text();
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     connectProject,
     getAuthorizationLink,
+    fullProductCheck,
+    selectiveProductSync,
     loading,
   };
 };

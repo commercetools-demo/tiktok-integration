@@ -95,6 +95,11 @@ const Welcome = () => {
               content={intl.formatMessage(messages.cardMapperContent)}
               linkTo={`${match.url}/mappers`}
             />
+            <InfoCard
+              title={intl.formatMessage(messages.productSynchronizationTitle)}
+              content={intl.formatMessage(messages.productSynchronizationContent)}
+              linkTo={`${match.url}/product-synchronization`}
+            />
           </Grid>
         </Spacings.Stack>
       </Spacings.Stack>

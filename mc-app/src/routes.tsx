@@ -8,6 +8,7 @@ import AttributeMappersList from './components/mappers/attribute-mappers-list';
 import AttributeMapperNew from './components/mappers/attribute-mapper-new';
 import AttributeMapperDetails from './components/mappers/attribute-mapper-details';
 import { ServiceUrlProvider, useServiceUrl } from './contexts';
+import ProductSynchronization from './components/product-syncronization';
 
 type ApplicationRoutesProps = {
   children?: ReactNode;
@@ -42,6 +43,9 @@ const RoutesContent = () => {
         </Route>
         <Route path={`${match.path}/mappers`} exact>
           <MappersList />
+        </Route>
+        <Route path={`${match.path}/product-synchronization`} exact>
+          <ProductSynchronization />
         </Route>
         <Route>{showConfigWizard ? <ConfigWizard /> : <Welcome />}</Route>
       </Switch>

@@ -3,12 +3,12 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
   title: {
     id: 'Welcome.title',
-    defaultMessage: 'Develop applications for the Merchant Center',
+    defaultMessage: 'Welcome to the TikTok Connector',
   },
   subtitle: {
     id: 'Welcome.subtitle',
     defaultMessage:
-      'Welcome to Custom Applications! To get started, inspect the source code to get familiar with the setup, the folder structure, the development tools, etc. and read the README file for additional information.',
+      'Using this connector, you can synchronize products between commercetools and TikTok.',
   },
   cardMapperTitle: {
     id: 'Welcome.cardMapperTitle',
@@ -17,5 +17,13 @@ export default defineMessages({
   cardMapperContent: {
     id: 'Welcome.cardMapperContent',
     defaultMessage: 'Learn more about the mapper.',
+  },
+  productSynchronizationTitle: {
+    id: 'Welcome.productSynchronizationTitle',
+    defaultMessage: 'Product Synchronization',
+  },
+  productSynchronizationContent: {
+    id: 'Welcome.productSynchronizationContent',
+    defaultMessage: 'Synchronize products between commercetools and TikTok.',
   },
 });

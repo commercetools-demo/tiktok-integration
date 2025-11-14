@@ -1,4 +1,4 @@
-import { PERMISSIONS, entryPointUriPath } from './src/constants';
+import { PERMISSIONS } from './src/constants';
 
 /**
  * @type {import('@commercetools-frontend/application-config').ConfigOptionsForCustomApplication}
@@ -26,7 +26,7 @@ const config = {
     view: ['view_products', 'view_stores', 'view_key_value_documents','view_api_clients'],
     manage: ['manage_products', 'manage_stores', 'manage_key_value_documents','manage_api_clients'],
   },
-  icon: '${path:@commercetools-frontend/assets/application-icons/rocket.svg}',
+  icon: '${path:@tabler/icons/outline/brand-tiktok.svg}',
   mainMenuLink: {
     defaultLabel: 'Tiktok Connect',
     labelAllLocales: [],

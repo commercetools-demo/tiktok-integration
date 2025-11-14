@@ -21,18 +21,4 @@ export async function createServiceURLStorageLink(
     .execute();
 }
 
-export async function getServiceURLStorageLink(
-  apiRoot: ByProjectKeyRequestBuilder
-): Promise<string | null> {
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  if (isDevelopment) {
-    return 'localhost:8080/service';
-  }
-  const response = await readCustomObject<string | null>(
-    apiRoot,
-    SHARED_SHOP_CONTAINER_KEY,
-    SHARED_SHOP_SERVICE_URL_VARIABLE_KEY
-  );
 
-  return response;
-}
