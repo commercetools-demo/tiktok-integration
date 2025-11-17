@@ -8,6 +8,7 @@ import {
 } from '../controllers/product-sync.controller';
 import { shopConfigSync } from '../controllers/shop-config-sync.controller';
 import { getAuthorizationLink } from '../shared/router-service';
+import { handleTiktokWebhook } from '../controllers/webhook.controller';
 
 const serviceRouter = Router();
 
@@ -52,6 +53,16 @@ serviceRouter.get('/authorization-link', async (req, res) => {
     return res.status(200).send(authorizationLink);
   } catch (error) {
     logger.error('Error getting authorization link', error);
+    return res.status(500).send((error as Error).message);
+  }
+});
+
+serviceRouter.post('/webhook', async (req, res) => {
+  try {
+    const webhookResponse = await handleTiktokWebhook(req);
+    return res.status(200).send(webhookResponse);
+  } catch (error) {
+    logger.error('Error handling webhook', error);
     return res.status(500).send((error as Error).message);
   }
 });

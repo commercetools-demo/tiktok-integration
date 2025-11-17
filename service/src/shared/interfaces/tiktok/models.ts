@@ -1,4 +1,35 @@
 import localVarRequest from 'request';
+
+export * from './order/V202406/AddExternalOrderReferencesRequestBody';
+export * from './order/V202406/AddExternalOrderReferencesRequestBodyOrders';
+export * from './order/V202406/AddExternalOrderReferencesRequestBodyOrdersExternalOrder';
+export * from './order/V202406/AddExternalOrderReferencesRequestBodyOrdersExternalOrderLineItems';
+export * from './order/V202406/AddExternalOrderReferencesResponse';
+export * from './order/V202406/AddExternalOrderReferencesResponseData';
+export * from './order/V202406/AddExternalOrderReferencesResponseDataErrors';
+export * from './order/V202406/AddExternalOrderReferencesResponseDataErrorsDetail';
+export * from './order/V202406/AddExternalOrderReferencesResponseDataErrorsDetailExternalOrder';
+export * from './order/V202406/GetExternalOrderReferencesResponse';
+export * from './order/V202406/GetExternalOrderReferencesResponseData';
+export * from './order/V202406/GetExternalOrderReferencesResponseDataExternalOrders';
+export * from './order/V202406/GetExternalOrderReferencesResponseDataExternalOrdersLineItems';
+export * from './order/V202406/SearchOrderByExternalOrderReferenceResponse';
+export * from './order/V202406/SearchOrderByExternalOrderReferenceResponseData';
+export * from './order/V202406/SearchOrderByExternalOrderReferenceResponseDataOrders';
+export * from './order/V202406/SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrder';
+export * from './order/V202406/SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrderLineItems';
+export * from './order/V202507/GetOrderDetailResponse';
+export * from './order/V202507/GetOrderDetailResponseData';
+export * from './order/V202507/GetOrderDetailResponseDataOrders';
+export * from './order/V202507/GetOrderDetailResponseDataOrdersHandlingDuration';
+export * from './order/V202507/GetOrderDetailResponseDataOrdersLineItems';
+export * from './order/V202507/GetOrderDetailResponseDataOrdersLineItemsCombinedListingSkus';
+export * from './order/V202507/GetOrderDetailResponseDataOrdersLineItemsItemTax';
+export * from './order/V202507/GetOrderDetailResponseDataOrdersPackages';
+export * from './order/V202507/GetOrderDetailResponseDataOrdersPayment';
+export * from './order/V202507/GetOrderDetailResponseDataOrdersRecipientAddress';
+export * from './order/V202507/GetOrderDetailResponseDataOrdersRecipientAddressDeliveryPreferences';
+export * from './order/V202507/GetOrderDetailResponseDataOrdersRecipientAddressDistrictInfo';
 export * from './product/V202309/ActivateProductRequestBody';
 export * from './product/V202309/ActivateProductResponse';
 export * from './product/V202309/ActivateProductResponseData';
@@ -415,7 +446,36 @@ export interface RequestDetailedFile {
         contentType?: string;
     }
 }
-
+import { Order202406AddExternalOrderReferencesRequestBody } from './order/V202406/AddExternalOrderReferencesRequestBody';
+import { Order202406AddExternalOrderReferencesRequestBodyOrders } from './order/V202406/AddExternalOrderReferencesRequestBodyOrders';
+import { Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrder } from './order/V202406/AddExternalOrderReferencesRequestBodyOrdersExternalOrder';
+import { Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrderLineItems } from './order/V202406/AddExternalOrderReferencesRequestBodyOrdersExternalOrderLineItems';
+import { Order202406AddExternalOrderReferencesResponse } from './order/V202406/AddExternalOrderReferencesResponse';
+import { Order202406AddExternalOrderReferencesResponseData } from './order/V202406/AddExternalOrderReferencesResponseData';
+import { Order202406AddExternalOrderReferencesResponseDataErrors } from './order/V202406/AddExternalOrderReferencesResponseDataErrors';
+import { Order202406AddExternalOrderReferencesResponseDataErrorsDetail } from './order/V202406/AddExternalOrderReferencesResponseDataErrorsDetail';
+import { Order202406AddExternalOrderReferencesResponseDataErrorsDetailExternalOrder } from './order/V202406/AddExternalOrderReferencesResponseDataErrorsDetailExternalOrder';
+import { Order202406GetExternalOrderReferencesResponse } from './order/V202406/GetExternalOrderReferencesResponse';
+import { Order202406GetExternalOrderReferencesResponseData } from './order/V202406/GetExternalOrderReferencesResponseData';
+import { Order202406GetExternalOrderReferencesResponseDataExternalOrders } from './order/V202406/GetExternalOrderReferencesResponseDataExternalOrders';
+import { Order202406GetExternalOrderReferencesResponseDataExternalOrdersLineItems } from './order/V202406/GetExternalOrderReferencesResponseDataExternalOrdersLineItems';
+import { Order202406SearchOrderByExternalOrderReferenceResponse } from './order/V202406/SearchOrderByExternalOrderReferenceResponse';
+import { Order202406SearchOrderByExternalOrderReferenceResponseData } from './order/V202406/SearchOrderByExternalOrderReferenceResponseData';
+import { Order202406SearchOrderByExternalOrderReferenceResponseDataOrders } from './order/V202406/SearchOrderByExternalOrderReferenceResponseDataOrders';
+import { Order202406SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrder } from './order/V202406/SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrder';
+import { Order202406SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrderLineItems } from './order/V202406/SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrderLineItems';
+import { Order202507GetOrderDetailResponse } from './order/V202507/GetOrderDetailResponse';
+import { Order202507GetOrderDetailResponseData } from './order/V202507/GetOrderDetailResponseData';
+import { Order202507GetOrderDetailResponseDataOrders } from './order/V202507/GetOrderDetailResponseDataOrders';
+import { Order202507GetOrderDetailResponseDataOrdersHandlingDuration } from './order/V202507/GetOrderDetailResponseDataOrdersHandlingDuration';
+import { Order202507GetOrderDetailResponseDataOrdersLineItems } from './order/V202507/GetOrderDetailResponseDataOrdersLineItems';
+import { Order202507GetOrderDetailResponseDataOrdersLineItemsCombinedListingSkus } from './order/V202507/GetOrderDetailResponseDataOrdersLineItemsCombinedListingSkus';
+import { Order202507GetOrderDetailResponseDataOrdersLineItemsItemTax } from './order/V202507/GetOrderDetailResponseDataOrdersLineItemsItemTax';
+import { Order202507GetOrderDetailResponseDataOrdersPackages } from './order/V202507/GetOrderDetailResponseDataOrdersPackages';
+import { Order202507GetOrderDetailResponseDataOrdersPayment } from './order/V202507/GetOrderDetailResponseDataOrdersPayment';
+import { Order202507GetOrderDetailResponseDataOrdersRecipientAddress } from './order/V202507/GetOrderDetailResponseDataOrdersRecipientAddress';
+import { Order202507GetOrderDetailResponseDataOrdersRecipientAddressDeliveryPreferences } from './order/V202507/GetOrderDetailResponseDataOrdersRecipientAddressDeliveryPreferences';
+import { Order202507GetOrderDetailResponseDataOrdersRecipientAddressDistrictInfo } from './order/V202507/GetOrderDetailResponseDataOrdersRecipientAddressDistrictInfo';
 export type RequestFile = string | Buffer | fs.ReadStream | RequestDetailedFile;import { Product202309ActivateProductRequestBody } from './product/V202309/ActivateProductRequestBody';
 import { Product202309ActivateProductResponse } from './product/V202309/ActivateProductResponse';
 import { Product202309ActivateProductResponseData } from './product/V202309/ActivateProductResponseData';
@@ -839,6 +899,36 @@ let enumsMap: {[index: string]: any} = {
 }
 
 let typeMap: {[index: string]: any} = {
+    "Order202406AddExternalOrderReferencesRequestBody": Order202406AddExternalOrderReferencesRequestBody,
+    "Order202406AddExternalOrderReferencesRequestBodyOrders": Order202406AddExternalOrderReferencesRequestBodyOrders,
+    "Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrder": Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrder,
+    "Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrderLineItems": Order202406AddExternalOrderReferencesRequestBodyOrdersExternalOrderLineItems,
+    "Order202406AddExternalOrderReferencesResponse": Order202406AddExternalOrderReferencesResponse,
+    "Order202406AddExternalOrderReferencesResponseData": Order202406AddExternalOrderReferencesResponseData,
+    "Order202406AddExternalOrderReferencesResponseDataErrors": Order202406AddExternalOrderReferencesResponseDataErrors,
+    "Order202406AddExternalOrderReferencesResponseDataErrorsDetail": Order202406AddExternalOrderReferencesResponseDataErrorsDetail,
+    "Order202406AddExternalOrderReferencesResponseDataErrorsDetailExternalOrder": Order202406AddExternalOrderReferencesResponseDataErrorsDetailExternalOrder,
+    "Order202406GetExternalOrderReferencesResponse": Order202406GetExternalOrderReferencesResponse,
+    "Order202406GetExternalOrderReferencesResponseData": Order202406GetExternalOrderReferencesResponseData,
+    "Order202406GetExternalOrderReferencesResponseDataExternalOrders": Order202406GetExternalOrderReferencesResponseDataExternalOrders,
+    "Order202406GetExternalOrderReferencesResponseDataExternalOrdersLineItems": Order202406GetExternalOrderReferencesResponseDataExternalOrdersLineItems,
+    "Order202406SearchOrderByExternalOrderReferenceResponse": Order202406SearchOrderByExternalOrderReferenceResponse,
+    "Order202406SearchOrderByExternalOrderReferenceResponseData": Order202406SearchOrderByExternalOrderReferenceResponseData,
+    "Order202406SearchOrderByExternalOrderReferenceResponseDataOrders": Order202406SearchOrderByExternalOrderReferenceResponseDataOrders,
+    "Order202406SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrder": Order202406SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrder,
+    "Order202406SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrderLineItems": Order202406SearchOrderByExternalOrderReferenceResponseDataOrdersExternalOrderLineItems,
+    "Order202507GetOrderDetailResponse": Order202507GetOrderDetailResponse,
+    "Order202507GetOrderDetailResponseData": Order202507GetOrderDetailResponseData,
+    "Order202507GetOrderDetailResponseDataOrders": Order202507GetOrderDetailResponseDataOrders,
+    "Order202507GetOrderDetailResponseDataOrdersHandlingDuration": Order202507GetOrderDetailResponseDataOrdersHandlingDuration,
+    "Order202507GetOrderDetailResponseDataOrdersLineItems": Order202507GetOrderDetailResponseDataOrdersLineItems,
+    "Order202507GetOrderDetailResponseDataOrdersLineItemsCombinedListingSkus": Order202507GetOrderDetailResponseDataOrdersLineItemsCombinedListingSkus,
+    "Order202507GetOrderDetailResponseDataOrdersLineItemsItemTax": Order202507GetOrderDetailResponseDataOrdersLineItemsItemTax,
+    "Order202507GetOrderDetailResponseDataOrdersPackages": Order202507GetOrderDetailResponseDataOrdersPackages,
+    "Order202507GetOrderDetailResponseDataOrdersPayment": Order202507GetOrderDetailResponseDataOrdersPayment,
+    "Order202507GetOrderDetailResponseDataOrdersRecipientAddress": Order202507GetOrderDetailResponseDataOrdersRecipientAddress,
+    "Order202507GetOrderDetailResponseDataOrdersRecipientAddressDeliveryPreferences": Order202507GetOrderDetailResponseDataOrdersRecipientAddressDeliveryPreferences,
+    "Order202507GetOrderDetailResponseDataOrdersRecipientAddressDistrictInfo": Order202507GetOrderDetailResponseDataOrdersRecipientAddressDistrictInfo,
     "Product202309ActivateProductRequestBody": Product202309ActivateProductRequestBody,
     "Product202309ActivateProductResponse": Product202309ActivateProductResponse,
     "Product202309ActivateProductResponseData": Product202309ActivateProductResponseData,
