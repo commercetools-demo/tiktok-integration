@@ -59,8 +59,7 @@ serviceRouter.get('/authorization-link', async (req, res) => {
 
 serviceRouter.post('/webhook', async (req, res) => {
   try {
-    const webhookResponse = await handleTiktokWebhook(req);
-    return res.status(200).send(webhookResponse);
+    await handleTiktokWebhook(req, res);
   } catch (error) {
     logger.error('Error handling webhook', error);
     return res.status(500).send((error as Error).message);
