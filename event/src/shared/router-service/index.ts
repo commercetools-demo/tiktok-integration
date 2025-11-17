@@ -1,7 +1,5 @@
 import { AppProjectMapping, TokenResponse } from '../interfaces';
 import type {
-  Order202406AddExternalOrderReferencesRequestBody,
-  Order202507GetOrderDetailResponseDataOrders,
   Product202309CreateProductResponse,
   Product202309DeactivateProductsResponse,
   Product202309DeleteProductsResponse,
@@ -112,106 +110,7 @@ export const createProduct = async (
   return data;
 };
 
-/**
- * Get orders via router service
- * @param access_token - The TikTok access token
- * @param shop_cipher - The TikTok shop cipher
- * @param orderIds - Array of order IDs to fetch
- * @returns The orders response
- */
-export const getOrders = async (
-  access_token: string,
-  shop_cipher: string,
-  orderIds: string[]
-): Promise<Order202507GetOrderDetailResponseDataOrders[]> => {
-  const baseUrl = getRouterServiceUrl();
-  const jwtToken = await getAuthToken();
 
-  logger.info('Getting orders via router service', {
-    access_token: access_token.substring(0, 10) + '...',
-    shop_cipher: shop_cipher.substring(0, 10) + '...',
-    orderIds,
-  });
-
-  const url = new URL(`${baseUrl}/tiktok/orders`);
-  url.searchParams.append('access_token', access_token);
-  url.searchParams.append('shop_cipher', shop_cipher);
-
-  const response = await fetch(url.toString(), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${jwtToken}`,
-    },
-    body: JSON.stringify({ orderIds }),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    if (response.status === 401) {
-      logger.error('Authentication failed with router service', { error });
-      throw new Error('Authentication failed. Please re-authorize the project.');
-    }
-    logger.error('Failed to get orders via router service', { error });
-    throw new Error(`Get orders failed: ${error}`);
-  }
-
-  const data = await response.json();
-  logger.info('Orders retrieved successfully via router service');
-
-  return data.orders;
-};
-
-/**
- * Add external order reference via router service
- * @param access_token - The TikTok access token
- * @param shop_cipher - The TikTok shop cipher
- * @param requestBody - The request body containing order references
- * @returns The response from TikTok API
- */
-export const addExternalOrderReference = async (
-  access_token: string,
-  shop_cipher: string,
-  requestBody: any
-): Promise<Order202406AddExternalOrderReferencesRequestBody> => {
-  const baseUrl = getRouterServiceUrl();
-  const jwtToken = await getAuthToken();
-
-  logger.info('Adding external order reference via router service', {
-    access_token: access_token.substring(0, 10) + '...',
-    shop_cipher: shop_cipher.substring(0, 10) + '...',
-  });
-
-  const url = new URL(`${baseUrl}/tiktok/orders/external-reference`);
-  url.searchParams.append('access_token', access_token);
-  url.searchParams.append('shop_cipher', shop_cipher);
-
-  const response = await fetch(url.toString(), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${jwtToken}`,
-    },
-    body: JSON.stringify(requestBody),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    if (response.status === 401) {
-      logger.error('Authentication failed with router service', { error });
-      throw new Error('Authentication failed. Please re-authorize the project.');
-    }
-    logger.error('Failed to add external order reference via router service', {
-      error,
-    });
-    throw new Error(`Add external order reference failed: ${error}`);
-  }
-
-  const data = await response.json();
-  logger.info('External order reference added successfully via router service');
-
-  return data;
-};
 
 /**
  * Search products via router service

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import CustomError from '../errors/custom.error';
 import { logger } from '../utils/logger.utils';
-import { resourceMessage, resourceTiktokWebhook } from './message.controller';
+import { resourceMessage } from './message.controller';
 
 /**
  * Exposed event POST endpoint.
@@ -48,9 +48,6 @@ export const post = async (request: Request, response: Response) => {
       switch (jsonData.notificationType) {
         case 'Message':
           await resourceMessage(jsonData);
-          break;
-        case 'TiktokWebhook':
-          resourceTiktokWebhook(jsonData);
           break;
       }
     }

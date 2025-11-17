@@ -3,29 +3,13 @@ import {
   inventoryEntryMessageHandler,
   InventoryEntryMessageType,
 } from './inventory/inventory-message.router';
-import {
-  orderStatusChange,
-  reverseStatusUpdate,
-} from './order/tiktok.order.controller';
 import { productTailoringMessageHandler, ProductTailoringMessageType } from './product-tailoring/product-tailoring-message.router';
 import {
   ProductMessageType,
   productMessageHandler,
 } from './product/product-message.router';
 
-export type TiktokWebhookOrderStatusChangeMessageType = {
-  type: number;
-  notificationType: string;
-  tts_notification_id: string;
-  shop_id: string;
-  timestamp: number;
-  data: {
-    is_on_hold_order?: boolean;
-    order_id: string;
-    order_status: string;
-    update_time: number;
-  };
-};
+
 
 export const resourceMessage = async (
   message: ProductMessageType | InventoryEntryMessageType | ProductTailoringMessageType
@@ -52,25 +36,5 @@ export const resourceMessage = async (
       id
     );
     logger.info(productTailoringId);
-  }
-};
-
-export const resourceTiktokWebhook = async (
-  message: TiktokWebhookOrderStatusChangeMessageType
-) => {
-  if (message.shop_id !== process.env.TIKTOK_SHOP_ID) {
-    return;
-  }
-  try {
-    switch (message.type) {
-      case 1:
-        await orderStatusChange(message);
-        break;
-      case 2:
-        await reverseStatusUpdate(message);
-        break;
-    }
-  } catch (error) {
-    logger.error('Error processing webhook', error);
   }
 };
