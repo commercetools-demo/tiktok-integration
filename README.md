@@ -1,5 +1,7 @@
 # TikTok Shop Integration for Commercetools
 
+> Moved to https://github.com/commercetools/tiktok-integration
+
 > **NOTE**: This is NOT an official commercetools code and NOT production ready. Use it at your own risk.
 
 ## Overview
